@@ -1,0 +1,18 @@
+[
+  {
+    "listing": "/index.html",
+    "items": [
+      "/about.html",
+      "/semana_1/notebooks/Nb_1b_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks.html",
+      "/semana_1/notebooks/Nb_1c_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks_MLFlow.html",
+      "/semana_2/notebooks/Nb_2a_Implementando_una_CNN_usando_Keras.html",
+      "/semana_1/notebooks/Nb_1a_Implementando_un_Perceptron_Multicapa_MLP_desde_CERO.html",
+      "/semana_3/notebooks/Nb_3b_Introduccion_explicabilidad_interpretabilidad.html",
+      "/semana_3/notebooks/Nb_3a_Introduccion_transfer_learning_finetuning.html",
+      "/semana_2/notebooks/Nb_2b_Resolviendo_desafios_con_RNNs_usando_keras.html",
+      "/semana_1/index.html",
+      "/semana_2/index.html",
+      "/semana_3/index.html"
+    ]
+  }
+]

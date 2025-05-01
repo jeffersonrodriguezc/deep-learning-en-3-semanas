@@ -23,9 +23,9 @@
   {
     "objectID": "semana_3/index.html",
     "href": "semana_3/index.html",
-    "title": "Semana 3:",
+    "title": "Semana 3: Técnicas Avanzadas y Robustez",
     "section": "",
-    "text": "Semana 3:\nContenido de la Semana 3:"
+    "text": "Semana 3: Técnicas Avanzadas y Robustez\nLa última semana se centra en refinar y aplicar técnicas avanzadas para construir modelos robustos e interpretables.\nTemas Clave:\n\nPrincipios de Generalización.\nTransferencia de Aprendizaje y Fine-tuning.\nExplicabilidad e Interpretabilidad de modelos.\nOptimización de hiperparámetros.\nEntrenamiento Adversarial y Robustez.\n\nEnfoque Práctico: Desarrollarás habilidades para mejorar la eficacia de tus modelos en entornos reales. Implementarás técnicas de transferencia de aprendizaje, fine-tuning, generalización y usarás herramientas de explicabilidad para comprender y comunicar los resultados de modelos complejos.\nMateriales de la Semana:\n\nSlides de la Semana 3 (Próximamente) # Asegúrate de la ruta correcta\nNotebook: Introducción a Transfer Learning y Finetuning\nNotebook: Introducción a Explicabilidad e Interpretabilidad\nVer Notebooks Originales en GitHub"
   },
   {
     "objectID": "semana_2/notebooks/Nb_2a_Implementando_una_CNN_usando_Keras.html",
@@ -170,16 +170,30 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Bienvenido al curso de Deep Learning Práctico en 3 semanas!",
+    "title": "Curso Práctico: Neural Networks y Deep Learning",
     "section": "",
-    "text": "Semana 1\nSemana 2\nSemana 3\n\nExplora los materiales, los notebooks y las slides para cada semana.\n\nRepositorio en GitHub: https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas"
+    "text": "¡Bienvenido al sitio web del curso práctico intensivo de Neural Networks y Deep Learning!\nEste curso está diseñado para proporcionarte una comprensión sólida y aplicada de los conceptos fundamentales de las redes neuronales y su aplicación en el campo de la inteligencia artificial, con un enfoque marcado en la implementación práctica y la resolución de problemas reales.\nA lo largo de tres semanas intensivas, explorarás desde los principios básicos hasta arquitecturas avanzadas y técnicas de vanguardia, preparándote para enfrentar desafíos complejos en el mundo del Deep Learning.\n\n\nEl curso se estructura en tres unidades clave:\n\nFundamentos de Redes Neuronales: Introduce los conceptos esenciales, la estructura y el entrenamiento de modelos, abordando el perceptrón, la retropropagación y métodos de optimización como el gradiente descendente. Sentarás las bases para entender cómo aprenden las redes mientras aplicas de manera práctica los conceptos.\nArquitecturas de Redes Neuronales: Explorarás diversas arquitecturas, incluyendo Redes Neuronales Densas (DNN), Convolucionales (CNN) y Recurrentes (RNN). Ampliarás tu visión con una introducción a arquitecturas avanzadas como transformers y desarrollarás la habilidad para seleccionar la más adecuada según el problema.\nTécnicas Avanzadas y Robustez: Te centrarás en la construcción de modelos avanzados, cubriendo la generalización, la transferencia de aprendizaje y la explicabilidad. Se introducirá el entrenamiento adversarial y técnicas para crear modelos robustos y transferibles que funcionen bien en entornos de datos diversos.\n\n\n\n\nEste curso es eminentemente práctico. A través de Implementaciones en Python y trabajo directo con notebooks, aplicarás los conceptos teóricos de inmediato. El objetivo es que no solo comprendas cómo funcionan las redes neuronales, sino que también ganes experiencia práctica en cómo construirlas y utilizarlas para resolver problemas reales.\nCada semana incluye componentes prácticos diseñados para consolidar tu aprendizaje y permitirte experimentar con diferentes arquitecturas y técnicas.\n\n\n\n\nSemana 1: Fundamentos y MLP # Enlace a la página de inicio de la semana 1\nSemana 2: Arquitecturas # Enlace a la página de inicio de la semana 2\nSemana 3: Técnicas Avanzadas y Robustez # Enlace a la página de inicio de la semana 3\n\nExplora cada sección para encontrar los materiales de la semana, los notebooks (renderizados para visualización web) y las slides.\n\nRepositorio en GitHub: https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas"
   },
   {
-    "objectID": "index.html#contenido-del-curso",
-    "href": "index.html#contenido-del-curso",
-    "title": "Bienvenido al curso de Deep Learning Práctico en 3 semanas!",
+    "objectID": "index.html#qué-exploraremos",
+    "href": "index.html#qué-exploraremos",
+    "title": "Curso Práctico: Neural Networks y Deep Learning",
     "section": "",
-    "text": "Semana 1\nSemana 2\nSemana 3\n\nExplora los materiales, los notebooks y las slides para cada semana.\n\nRepositorio en GitHub: https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas"
+    "text": "El curso se estructura en tres unidades clave:\n\nFundamentos de Redes Neuronales: Introduce los conceptos esenciales, la estructura y el entrenamiento de modelos, abordando el perceptrón, la retropropagación y métodos de optimización como el gradiente descendente. Sentarás las bases para entender cómo aprenden las redes mientras aplicas de manera práctica los conceptos.\nArquitecturas de Redes Neuronales: Explorarás diversas arquitecturas, incluyendo Redes Neuronales Densas (DNN), Convolucionales (CNN) y Recurrentes (RNN). Ampliarás tu visión con una introducción a arquitecturas avanzadas como transformers y desarrollarás la habilidad para seleccionar la más adecuada según el problema.\nTécnicas Avanzadas y Robustez: Te centrarás en la construcción de modelos avanzados, cubriendo la generalización, la transferencia de aprendizaje y la explicabilidad. Se introducirá el entrenamiento adversarial y técnicas para crear modelos robustos y transferibles que funcionen bien en entornos de datos diversos."
+  },
+  {
+    "objectID": "index.html#enfoque-práctico",
+    "href": "index.html#enfoque-práctico",
+    "title": "Curso Práctico: Neural Networks y Deep Learning",
+    "section": "",
+    "text": "Este curso es eminentemente práctico. A través de Implementaciones en Python y trabajo directo con notebooks, aplicarás los conceptos teóricos de inmediato. El objetivo es que no solo comprendas cómo funcionan las redes neuronales, sino que también ganes experiencia práctica en cómo construirlas y utilizarlas para resolver problemas reales.\nCada semana incluye componentes prácticos diseñados para consolidar tu aprendizaje y permitirte experimentar con diferentes arquitecturas y técnicas."
+  },
+  {
+    "objectID": "index.html#estructura-del-sitio",
+    "href": "index.html#estructura-del-sitio",
+    "title": "Curso Práctico: Neural Networks y Deep Learning",
+    "section": "",
+    "text": "Semana 1: Fundamentos y MLP # Enlace a la página de inicio de la semana 1\nSemana 2: Arquitecturas # Enlace a la página de inicio de la semana 2\nSemana 3: Técnicas Avanzadas y Robustez # Enlace a la página de inicio de la semana 3\n\nExplora cada sección para encontrar los materiales de la semana, los notebooks (renderizados para visualización web) y las slides.\n\nRepositorio en GitHub: https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas"
   },
   {
     "objectID": "about.html",
@@ -191,9 +205,9 @@
   {
     "objectID": "semana_1/index.html",
     "href": "semana_1/index.html",
-    "title": "Semana 1:",
+    "title": "Semana 1: Fundamentos de Redes Neuronales",
     "section": "",
-    "text": "Semana 1:\nContenido de la Semana 1:"
+    "text": "Semana 1: Fundamentos de Redes Neuronales\nEsta semana sentamos las bases del Deep Learning. Cubriremos los conceptos esenciales, la estructura y el entrenamiento de las redes neuronales.\nTemas Clave:\n\nEstructura y entrenamiento de modelos en Deep Learning\nEl Perceptrón\nProceso de Retropropagación\nMétodos de optimización (Gradiente Descendente)\n\nEnfoque Práctico: Comprenderás el funcionamiento interno de una red y aplicarás técnicas de entrenamiento en modelos simples. Realizarás implementaciones prácticas para observar cómo aprenden los modelos.\nMateriales de la Semana:\n\nSlides de la Semana 1 (Próximamente)\nNotebook: Implementando Perceptrón Multicapa desde CERO\nNotebook: MLP usando Frameworks # Enlaza al archivo .html renderizado\nNotebook: MLP usando Frameworks y MLFlow # Enlaza al archivo .html renderizado\nVer Notebooks Originales en GitHub"
   },
   {
     "objectID": "semana_1/notebooks/Nb_1b_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks.html",
@@ -233,9 +247,9 @@
   {
     "objectID": "semana_2/index.html",
     "href": "semana_2/index.html",
-    "title": "Semana 2:",
+    "title": "Semana 2: Arquitecturas de Redes Neuronales",
     "section": "",
-    "text": "Semana 2:\nContenido de la Semana 2:"
+    "text": "Semana 2: Arquitecturas de Redes Neuronales\nExpandimos nuestro conocimiento explorando diversas arquitecturas de redes neuronales y sus aplicaciones.\nTemas Clave:\n\nDiversas arquitecturas de redes neuronales (DNN, CNN, RNN).\nAplicaciones y ventajas de cada arquitectura.\nIntroducción a arquitecturas avanzadas (Transformers, GANs, Redes de Grafos).\n\nEnfoque Práctico: Aprenderás a identificar y seleccionar la arquitectura más adecuada para diferentes tipos de problemas. Implementarás modelos DNN, CNN y RNN en proyectos prácticos para experimentar con su desempeño.\nMateriales de la Semana:\n\nSlides de la Semana 2 (Próximamente) # Asegúrate de la ruta correcta\nNotebook: Implementando una CNN usando Keras\nNotebook: Resolviendo desafíos con RNNs usando Keras\nVer Notebooks Originales en GitHub"
   },
   {
     "objectID": "semana_2/notebooks/Nb_2b_Resolviendo_desafios_con_RNNs_usando_keras.html",
