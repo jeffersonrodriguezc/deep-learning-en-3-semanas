@@ -207,7 +207,7 @@
     "href": "semana_1/index.html",
     "title": "Semana 1: Fundamentos de Redes Neuronales",
     "section": "",
-    "text": "Esta semana sentamos las bases del Deep Learning. Cubriremos los conceptos esenciales, la estructura y el entrenamiento de las redes neuronales.\nTemas Clave:\n\nEstructura y entrenamiento de modelos en Deep Learning\nEl Perceptrón\nProceso de Retropropagación\nMétodos de optimización (Gradiente Descendente)\n\nEnfoque Práctico: Comprenderás el funcionamiento interno de una red y aplicarás técnicas de entrenamiento en modelos simples. Realizarás implementaciones prácticas para observar cómo aprenden los modelos.\nMateriales de la Semana:\n\nSlides de la Semana 1 (Próximamente)\nNotebook: Implementando Perceptrón Multicapa desde CERO\nNotebook: MLP usando Frameworks # Enlaza al archivo .html renderizado\nNotebook: MLP usando Frameworks y MLFlow # Enlaza al archivo .html renderizado\nVer Notebooks Originales en GitHub"
+    "text": "Esta semana sentamos las bases del Deep Learning. Cubriremos los conceptos esenciales, la estructura y el entrenamiento de las redes neuronales.\nTemas Clave:\n\nEstructura y entrenamiento de modelos en Deep Learning\nEl Perceptrón\nProceso de Retropropagación\nMétodos de optimización (Gradiente Descendente)\n\nEnfoque Práctico: Comprenderás el funcionamiento interno de una red y aplicarás técnicas de entrenamiento en modelos simples. Realizarás implementaciones prácticas para observar cómo aprenden los modelos.\nMateriales de la Semana:\n\nSlides de la Semana 1 (Próximamente)\nNotebook: Implementando Perceptrón Multicapa desde CERO\nNotebook: MLP usando Frameworks"
   },
   {
     "objectID": "semana_1/notebooks/Nb_1b_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks.html",
@@ -249,7 +249,7 @@
     "href": "semana_2/index.html",
     "title": "Semana 2: Arquitecturas de Redes Neuronales",
     "section": "",
-    "text": "Expandimos nuestro conocimiento explorando diversas arquitecturas de redes neuronales y sus aplicaciones.\nTemas Clave:\n\nDiversas arquitecturas de redes neuronales (DNN, CNN, RNN).\nAplicaciones y ventajas de cada arquitectura.\nIntroducción a arquitecturas avanzadas (Transformers, GANs, Redes de Grafos).\n\nEnfoque Práctico: Aprenderás a identificar y seleccionar la arquitectura más adecuada para diferentes tipos de problemas. Implementarás modelos DNN, CNN y RNN en proyectos prácticos para experimentar con su desempeño.\nMateriales de la Semana:\n\nSlides de la Semana 2 (Próximamente) # Asegúrate de la ruta correcta\nNotebook: Implementando una CNN usando Keras\nNotebook: Resolviendo desafíos con RNNs usando Keras"
+    "text": "Expandimos nuestro conocimiento explorando diversas arquitecturas de redes neuronales y sus aplicaciones.\nTemas Clave:\n\nDiversas arquitecturas de redes neuronales (DNN, CNN, RNN).\nAplicaciones y ventajas de cada arquitectura.\nIntroducción a arquitecturas avanzadas (Transformers, GANs, Redes de Grafos).\n\nEnfoque Práctico: Aprenderás a identificar y seleccionar la arquitectura más adecuada para diferentes tipos de problemas. Implementarás modelos DNN, CNN y RNN en proyectos prácticos para experimentar con su desempeño.\nMateriales de la Semana:\n\nSlides de la Semana 2 (Próximamente)\nNotebook: Implementando una CNN usando Keras\nNotebook: Resolviendo desafíos con RNNs usando Keras"
   },
   {
     "objectID": "semana_2/notebooks/Nb_2b_Resolviendo_desafios_con_RNNs_usando_keras.html",
