@@ -1,7 +1,19 @@
 ---
-title: "Semana 1: "
+title: "Semana 1: Fundamentos de Redes Neuronales"
 ---
+Esta semana sentamos las bases del Deep Learning. Cubriremos los conceptos esenciales, la estructura y el entrenamiento de las redes neuronales.
 
-# Semana 1: 
+**Temas Clave:**
 
-Contenido de la Semana 1:
+* Estructura y entrenamiento de modelos en Deep Learning
+* El Perceptrón
+* Proceso de Retropropagación
+* Métodos de optimización (Gradiente Descendente)
+
+**Enfoque Práctico:** Comprenderás el funcionamiento interno de una red y aplicarás técnicas de entrenamiento en modelos simples. Realizarás implementaciones prácticas para observar cómo aprenden los modelos.
+
+**Materiales de la Semana:**
+
+* [Slides de la Semana 1 (Próximamente)](slides/slides_semana_1.html) 
+* [Notebook: Implementando Perceptrón Multicapa desde CERO](notebooks/Nb_1a_Implementando_un_Perceptron_Multicapa_MLP_desde_CERO.html)
+* [Notebook: MLP usando Frameworks](notebooks/Nb_1b_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks.html) 

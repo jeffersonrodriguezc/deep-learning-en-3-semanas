@@ -1,7 +1,18 @@
 ---
-title: "Semana 2: "
+title: "Semana 2: Arquitecturas de Redes Neuronales"
 ---
+Expandimos nuestro conocimiento explorando diversas arquitecturas de redes neuronales y sus aplicaciones.
 
-# Semana 2: 
+**Temas Clave:**
 
-Contenido de la Semana 2:
+* Diversas arquitecturas de redes neuronales (DNN, CNN, RNN).
+* Aplicaciones y ventajas de cada arquitectura.
+* Introducción a arquitecturas avanzadas (Transformers, GANs, Redes de Grafos).
+
+**Enfoque Práctico:** Aprenderás a identificar y seleccionar la arquitectura más adecuada para diferentes tipos de problemas. Implementarás modelos DNN, CNN y RNN en proyectos prácticos para experimentar con su desempeño.
+
+**Materiales de la Semana:**
+
+* [Slides de la Semana 2 (Próximamente)](slides/slides_semana_2.html) 
+* [Notebook: Implementando una CNN usando Keras](notebooks/Nb_2a_Implementando_una_CNN_usando_Keras.html) 
+* [Notebook: Resolviendo desafíos con RNNs usando Keras](notebooks/Nb_2b_Resolviendo_desafios_con_RNNs_usando_keras.html)

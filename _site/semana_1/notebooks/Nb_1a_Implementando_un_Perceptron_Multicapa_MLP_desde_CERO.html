@@ -1,0 +1,2034 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.29">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Implementando un Perceptrón Multi-capa (MLP) desde CERO usando python – Deep Learning Practico en 3 Semanas</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-08799928d293638fe9563d5c5a2794e5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+
+<script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
+<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Deep Learning Practico en 3 Semanas</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../semana_1/index.html"> 
+<span class="menu-text">Semana 1</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../semana_2/index.html"> 
+<span class="menu-text">Semana 2</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../semana_3/index.html"> 
+<span class="menu-text">Semana 3</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas/"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#creación-dataset-sintético" id="toc-creación-dataset-sintético" class="nav-link active" data-scroll-target="#creación-dataset-sintético">Creación dataset sintético</a></li>
+  <li><a href="#creación-del-mlp" id="toc-creación-del-mlp" class="nav-link" data-scroll-target="#creación-del-mlp">Creación del MLP</a>
+  <ul class="collapse">
+  <li><a href="#inicialización" id="toc-inicialización" class="nav-link" data-scroll-target="#inicialización">1. Inicialización</a></li>
+  <li><a href="#propagación-hacia-adelante-forward" id="toc-propagación-hacia-adelante-forward" class="nav-link" data-scroll-target="#propagación-hacia-adelante-forward">2. Propagación hacia adelante (forward)</a></li>
+  <li><a href="#función-para-calcular-el-error" id="toc-función-para-calcular-el-error" class="nav-link" data-scroll-target="#función-para-calcular-el-error">3. Función para calcular el error</a></li>
+  <li><a href="#propagación-hacía-atrás-backward" id="toc-propagación-hacía-atrás-backward" class="nav-link" data-scroll-target="#propagación-hacía-atrás-backward">4. Propagación hacía atrás (backward)</a></li>
+  <li><a href="#entrenamiento" id="toc-entrenamiento" class="nav-link" data-scroll-target="#entrenamiento">5. Entrenamiento</a></li>
+  <li><a href="#evaluación" id="toc-evaluación" class="nav-link" data-scroll-target="#evaluación">Evaluación</a></li>
+  <li><a href="#interpretabilidad" id="toc-interpretabilidad" class="nav-link" data-scroll-target="#interpretabilidad">7. Interpretabilidad</a></li>
+  <li><a href="#clase-python-perceptronmulticapa-completo" id="toc-clase-python-perceptronmulticapa-completo" class="nav-link" data-scroll-target="#clase-python-perceptronmulticapa-completo">Clase python PerceptronMulticapa Completo</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Implementando un Perceptrón Multi-capa (MLP) desde CERO usando python</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://colab.research.google.com/github/jeffersonrodriguezc/deep-learning-en-3-semanas/blob/main/semana_1/notebooks/Nb_1a_Implementando_un_Perceptron_Multicapa_MLP_desde_CERO.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid figure-img"></a></p>
+<figcaption>Open In Colab</figcaption>
+</figure>
+</div>
+<div id="cell-3" class="cell" data-cellview="form">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Importar librerías</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#importar librerías necesarias</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm.notebook <span class="im">import</span> tqdm</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pyplot <span class="im">as</span> plt</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> make_moons</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> ConfusionMatrixDisplay</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> classification_report, confusion_matrix</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-4" class="cell" data-cellview="form">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Funciones complementarias</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_dataset(X_train, y_train, X_test, y_test):</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Tamaño de paso en la grilla de valores</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># (para la visualización del espacio de características)</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> <span class="fl">0.02</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Definir los límites del gráfico en el eje x e y basados</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># en los datos de entrenamiento</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    x_min, x_max <span class="op">=</span> X[:, <span class="dv">0</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="fl">0.5</span>, X[:, <span class="dv">0</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="fl">0.5</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    y_min, y_max <span class="op">=</span> X[:, <span class="dv">1</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="fl">0.5</span>, X[:, <span class="dv">1</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="fl">0.5</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Crear una malla de puntos para cubrir el espacio de características</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    xx, yy <span class="op">=</span> np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Creación del lienzo para visualizar los datos</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>,<span class="dv">1</span>, figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">5</span>))</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Agregar titulo a la grafica</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="st">"Dataset linealmente no separable"</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Agregar nombres a cada eje de caracteristica</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"Característica x_1"</span>)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"Característica x_2"</span>)</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Puntos de entrenamiento</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    ax.scatter(X_train[y_train <span class="op">==</span> <span class="dv">0</span>, <span class="dv">0</span>], X_train[y_train <span class="op">==</span> <span class="dv">0</span>, <span class="dv">1</span>],</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>               c<span class="op">=</span><span class="st">"#FF0000"</span>, edgecolors<span class="op">=</span><span class="st">"k"</span>, label<span class="op">=</span><span class="st">'Clase de entrenamiento 1'</span>)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    ax.scatter(X_train[y_train <span class="op">==</span> <span class="dv">1</span>, <span class="dv">0</span>], X_train[y_train <span class="op">==</span> <span class="dv">1</span>, <span class="dv">1</span>],</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>               c<span class="op">=</span><span class="st">"#0000FF"</span>, edgecolors<span class="op">=</span><span class="st">"k"</span>, label<span class="op">=</span><span class="st">'Clase de entrenamiento 2'</span>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Puntos de prueba</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    ax.scatter(X_test[y_test <span class="op">==</span> <span class="dv">0</span>, <span class="dv">0</span>], X_test[y_test <span class="op">==</span> <span class="dv">0</span>, <span class="dv">1</span>],</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>               c<span class="op">=</span><span class="st">"#FF0000"</span>, edgecolors<span class="op">=</span><span class="st">"k"</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, label<span class="op">=</span><span class="st">'Clase de prueba 1'</span>)</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    ax.scatter(X_test[y_test <span class="op">==</span> <span class="dv">1</span>, <span class="dv">0</span>], X_test[y_test <span class="op">==</span> <span class="dv">1</span>, <span class="dv">1</span>],</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>               c<span class="op">=</span><span class="st">"#0000FF"</span>, edgecolors<span class="op">=</span><span class="st">"k"</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, label<span class="op">=</span><span class="st">'Clase de prueba 2'</span>)</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Establecer los límites del gráfico para asegurar que todos los puntos sean visibles</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    ax.set_xlim(xx.<span class="bu">min</span>(), xx.<span class="bu">max</span>())</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    ax.set_ylim(yy.<span class="bu">min</span>(), yy.<span class="bu">max</span>())</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Eliminar las marcas en los ejes x e y para un gráfico más limpio</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    ax.set_xticks(())</span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    ax.set_yticks(())</span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Añadir una leyenda para identificar las clases de los</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># puntos de entrenamiento y prueba</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>    ax.legend()</span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    <span class="co"># mostrar el grafico</span></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_decision_boundary(mlp, X, y, h<span class="op">=</span><span class="fl">0.02</span>):</span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Crear una malla de puntos para el espacio de características</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>    x_min, x_max <span class="op">=</span> X[:, <span class="dv">0</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="dv">1</span>, X[:, <span class="dv">0</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>    y_min, y_max <span class="op">=</span> X[:, <span class="dv">1</span>].<span class="bu">min</span>() <span class="op">-</span> <span class="dv">1</span>, X[:, <span class="dv">1</span>].<span class="bu">max</span>() <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    xx, yy <span class="op">=</span> np.meshgrid(np.arange(x_min, x_max, h),</span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>                         np.arange(y_min, y_max, h))</span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    <span class="co"># por cada punto de la grilla, hacer una predicción del MLP</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    Z <span class="op">=</span> np.array([mlp.prediccion([np.array([xx.ravel()[i], yy.ravel()[i]])])</span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>                  <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(xx.ravel()))])</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    <span class="co"># redimensionar para que tenga el mismo shape de la grilla</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    Z <span class="op">=</span> Z.reshape(xx.shape)</span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># crear una figura de dos subplots</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>    fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>, figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">5</span>))</span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Graficar los puntos originales</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">0</span>].set_title(<span class="st">'Puntos originales'</span>)</span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">0</span>].scatter(X[:, <span class="dv">0</span>], X[:, <span class="dv">1</span>], c<span class="op">=</span>y, cmap<span class="op">=</span>plt.cm.RdBu,</span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>                  edgecolors<span class="op">=</span><span class="st">'k'</span>, alpha<span class="op">=</span><span class="fl">0.6</span>)</span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Graficar los puntos de entrenamiento</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].set_title(<span class="st">'Frontera de decisión generada por el MLP'</span>)</span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].scatter(X[:, <span class="dv">0</span>], X[:, <span class="dv">1</span>], c<span class="op">=</span>y, edgecolors<span class="op">=</span><span class="st">'k'</span>, cmap<span class="op">=</span>plt.cm.RdBu)</span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Graficar la frontera de decisión con un contorno</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>    ax[<span class="dv">1</span>].contourf(xx, yy, Z, alpha<span class="op">=</span><span class="fl">0.6</span>, cmap<span class="op">=</span>plt.cm.RdBu)</span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>    <span class="co"># mejorar la visualización</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">2</span>):</span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a>        ax[i].set_xlim(xx.<span class="bu">min</span>(), xx.<span class="bu">max</span>())</span>
+<span id="cb2-83"><a href="#cb2-83" aria-hidden="true" tabindex="-1"></a>        ax[i].set_ylim(yy.<span class="bu">min</span>(), yy.<span class="bu">max</span>())</span>
+<span id="cb2-84"><a href="#cb2-84" aria-hidden="true" tabindex="-1"></a>        ax[i].set_xticks(())</span>
+<span id="cb2-85"><a href="#cb2-85" aria-hidden="true" tabindex="-1"></a>        ax[i].set_yticks(())</span>
+<span id="cb2-86"><a href="#cb2-86" aria-hidden="true" tabindex="-1"></a>        ax[i].set_xlabel(<span class="st">"Característica x_1"</span>)</span>
+<span id="cb2-87"><a href="#cb2-87" aria-hidden="true" tabindex="-1"></a>        ax[i].set_ylabel(<span class="st">"Característica x_2"</span>)</span>
+<span id="cb2-88"><a href="#cb2-88" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-89"><a href="#cb2-89" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb2-90"><a href="#cb2-90" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-91"><a href="#cb2-91" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_cost_history(costo_historia):</span>
+<span id="cb2-92"><a href="#cb2-92" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Grafica el cambio del costo en el entrenamiento</span></span>
+<span id="cb2-93"><a href="#cb2-93" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">8</span>, <span class="dv">4</span>))</span>
+<span id="cb2-94"><a href="#cb2-94" aria-hidden="true" tabindex="-1"></a>    plt.plot(costo_historia, label<span class="op">=</span><span class="st">'Costo'</span>)</span>
+<span id="cb2-95"><a href="#cb2-95" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">'Historia del Costo'</span>)</span>
+<span id="cb2-96"><a href="#cb2-96" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'Épocas'</span>)</span>
+<span id="cb2-97"><a href="#cb2-97" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">'Costo'</span>)</span>
+<span id="cb2-98"><a href="#cb2-98" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb2-99"><a href="#cb2-99" aria-hidden="true" tabindex="-1"></a>    plt.grid(<span class="va">True</span>)</span>
+<span id="cb2-100"><a href="#cb2-100" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="creación-dataset-sintético" class="level1">
+<h1>Creación dataset sintético</h1>
+<div id="cell-6" class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creación de dataset sintético linealmente no separable</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># usando sklearn</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>X, y <span class="op">=</span> make_moons(n_samples<span class="op">=</span><span class="dv">150</span>, noise<span class="op">=</span><span class="fl">0.5</span>, random_state<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-7" class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># dividimos la información para entrenamiento y prueba</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>        X, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">42</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    )</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-8" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:464}}" data-outputid="30df885a-6d73-4943-9a98-4111c0704a54">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualización del conjunto de prueba creado</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>plot_dataset(X_train, y_train, X_test, y_test)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_1a_Implementando_un_Perceptron_Multicapa_MLP_desde_CERO_files/figure-html/cell-6-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="creación-del-mlp" class="level1">
+<h1>Creación del MLP</h1>
+<p>Nuestra implementación de un MLP en python tendrá la siguiente estructura:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PerceptronMulticapa():</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, params<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>      <span class="cf">pass</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> inicializacion(<span class="va">self</span>):</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward_pass(<span class="va">self</span>):</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> backward_pass(<span class="va">self</span>):</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> calcular_perdida_entropia_cruzada(<span class="va">self</span>):</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> actualizar_pesos(<span class="va">self</span>):</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> prediccion(<span class="va">self</span>):</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> entrenar(<span class="va">self</span>):</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> evaluar(<span class="va">self</span>):</span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="va">None</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-11" class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>params <span class="op">=</span> {}</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>params[<span class="st">'capa_entrada'</span>] <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>params[<span class="st">'capa_oculta'</span>] <span class="op">=</span> <span class="dv">50</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>params[<span class="st">'capa_salida'</span>] <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>params[<span class="st">'epochs'</span>] <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>params[<span class="st">'lr'</span>] <span class="op">=</span> <span class="fl">0.1</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<section id="inicialización" class="level2">
+<h2 class="anchored" data-anchor-id="inicialización">1. Inicialización</h2>
+<p>Asignación de atributos e inicialización de pesos y biases</p>
+<div id="cell-13" class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PerceptronMulticapa():</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, params<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Asignación de hiperparámetros</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.capa_entrada <span class="op">=</span> params[<span class="st">'capa_entrada'</span>]</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.capa_oculta <span class="op">=</span> params[<span class="st">'capa_oculta'</span>]</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.capa_salida <span class="op">=</span> params[<span class="st">'capa_salida'</span>]</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.epochs <span class="op">=</span> params[<span class="st">'epochs'</span>]</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.lr <span class="op">=</span> params[<span class="st">'lr'</span>]</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.relu <span class="op">=</span> (<span class="kw">lambda</span> x: x<span class="op">*</span>(x <span class="op">&gt;</span> <span class="dv">0</span>))</span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.derivada_relu <span class="op">=</span> (<span class="kw">lambda</span> x: <span class="dv">1</span> <span class="op">*</span> (x<span class="op">&gt;</span><span class="dv">0</span>))</span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.sigmoide <span class="op">=</span> (<span class="kw">lambda</span> x: <span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span> np.exp(<span class="op">-</span>x)))</span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.derivada_sigmoide <span class="op">=</span> (<span class="kw">lambda</span> x: x<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>x))</span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># inicialización de pesos y bias</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.inicializacion()</span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> inicializacion(<span class="va">self</span>):</span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># inicialización de pesos y bias aleatoria</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        np.random.seed(<span class="dv">42</span>) <span class="co"># fijar una semilla para reproducir resultados</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Capa Oculta</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pesos_capa_oculta <span class="op">=</span> np.random.rand(<span class="va">self</span>.capa_oculta, <span class="va">self</span>.capa_entrada)</span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.bias_capa_oculta <span class="op">=</span> np.ones((<span class="va">self</span>.capa_oculta, <span class="dv">1</span>))</span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Capa de salida</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pesos_capa_salida <span class="op">=</span> np.random.rand(<span class="va">self</span>.capa_salida, <span class="va">self</span>.capa_oculta)</span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.bias_capa_salida <span class="op">=</span> np.ones((<span class="va">self</span>.capa_salida, <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-14" class="cell">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Instanciamos nuestro perceptrón multicapa</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>mlp <span class="op">=</span>  PerceptronMulticapa(params)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-15" class="cell" data-outputid="34f3ba69-b483-4432-fad4-01e6725287ac">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Dimensión pesos capa oculta: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(mlp.pesos_capa_oculta.shape))</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Dimensión biases capa oculta: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(mlp.bias_capa_oculta.shape))</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Dimensión pesos capa salida: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(mlp.pesos_capa_salida.shape))</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Dimensión bias capa salida: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(mlp.bias_capa_salida.shape))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dimensión pesos capa oculta: (50, 2)
+Dimensión biases capa oculta: (50, 1)
+Dimensión pesos capa salida: (1, 50)
+Dimensión bias capa salida: (1, 1)</code></pre>
+</div>
+</div>
+<div id="cell-16" class="cell" data-outputid="49c561be-75fe-4586-cde7-c792eaf1e4e9">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ejemplo pesos capa salida</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>mlp.pesos_capa_salida</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="35">
+<pre><code>array([[0.03142919, 0.63641041, 0.31435598, 0.50857069, 0.90756647,
+        0.24929223, 0.41038292, 0.75555114, 0.22879817, 0.07697991,
+        0.28975145, 0.16122129, 0.92969765, 0.80812038, 0.63340376,
+        0.87146059, 0.80367208, 0.18657006, 0.892559  , 0.53934224,
+        0.80744016, 0.8960913 , 0.31800347, 0.11005192, 0.22793516,
+        0.42710779, 0.81801477, 0.86073058, 0.00695213, 0.5107473 ,
+        0.417411  , 0.22210781, 0.11986537, 0.33761517, 0.9429097 ,
+        0.32320293, 0.51879062, 0.70301896, 0.3636296 , 0.97178208,
+        0.96244729, 0.2517823 , 0.49724851, 0.30087831, 0.28484049,
+        0.03688695, 0.60956433, 0.50267902, 0.05147875, 0.27864646]])</code></pre>
+</div>
+</div>
+</section>
+<section id="propagación-hacia-adelante-forward" class="level2">
+<h2 class="anchored" data-anchor-id="propagación-hacia-adelante-forward">2. Propagación hacia adelante (forward)</h2>
+<p>Método de propagación hacia adelante</p>
+<div id="cell-18" class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> forward_pass(<span class="va">self</span>, x):</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Realizar la operacion Wx + b de la capa oculta, x = x_0</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    z <span class="op">=</span> np.matmul(<span class="va">self</span>.pesos_capa_oculta, x) <span class="op">+</span> <span class="va">self</span>.bias_capa_oculta</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Aplicar función de activación</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    h <span class="op">=</span> <span class="va">self</span>.relu(z) <span class="co"># z = x_1, h = x_2</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Aplicar la operación Wh + b para generar la salida, y = x_3</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    y <span class="op">=</span> np.matmul(<span class="va">self</span>.pesos_capa_salida, h) <span class="op">+</span> <span class="va">self</span>.bias_capa_salida</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Aplicar función de activación softmax para la clasificación</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> <span class="va">self</span>.sigmoide(y) <span class="co"># y = x_4</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> z, h, y_pred</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-19" class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Añadimos nuestro nuevo método</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">setattr</span>(PerceptronMulticapa, <span class="st">'forward_pass'</span>, forward_pass)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-20" class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># seleccionamos una muestra del dataset</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="co"># por ser solo uno se redimensiona para que tenga la estructura de entrada propia</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>x_i <span class="op">=</span> X_train[<span class="dv">0</span>,:].reshape((<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>z, h, y_pred <span class="op">=</span> mlp.forward_pass(x_i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-21" class="cell" data-outputid="b94f9f72-f3d5-4e67-8d00-5b633451a37a">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Dimensión biases capa oculta: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(z.shape))</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Dimensión de la capa oculta: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(h.shape))</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Predicción: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(y_pred))</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Capa oculta: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(h))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dimensión biases capa oculta: (50, 1)
+Dimensión de la capa oculta: (50, 1)
+Predicción: [[1.]]
+Capa oculta: [[0.72633077]
+ [1.01761811]
+ [0.99129875]
+ [0.64226347]
+ [0.91951467]
+ [0.58240149]
+ [1.22554416]
+ [0.98915428]
+ [0.88627666]
+ [1.03760999]
+ [1.17304912]
+ [0.95112959]
+ [0.83016191]
+ [0.85085938]
+ [1.20642355]
+ [1.1577875 ]
+ [0.60864823]
+ [1.01505623]
+ [1.07377182]
+ [1.06886654]
+ [0.82949748]
+ [0.61426555]
+ [0.80843687]
+ [0.89119274]
+ [1.12821114]
+ [1.03116189]
+ [0.96713639]
+ [0.82449353]
+ [0.94790496]
+ [0.87459926]
+ [1.02976633]
+ [1.1607742 ]
+ [0.86948377]
+ [0.70204454]
+ [0.59561443]
+ [1.20847428]
+ [0.64438828]
+ [0.95081357]
+ [1.26279179]
+ [1.08640592]
+ [1.05700326]
+ [1.09879949]
+ [0.97640557]
+ [0.99963981]
+ [1.13251031]
+ [0.73290002]
+ [1.0450389 ]
+ [1.0785398 ]
+ [1.0125701 ]
+ [0.96240177]]</code></pre>
+</div>
+</div>
+</section>
+<section id="función-para-calcular-el-error" class="level2">
+<h2 class="anchored" data-anchor-id="función-para-calcular-el-error">3. Función para calcular el error</h2>
+<p>Método que permite conocer el error de una predicción con respecto a la etiqueta real.</p>
+<div id="cell-23" class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calcular_perdida_entropia_cruzada(<span class="va">self</span>, y_real, y_pred):</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    epsilon <span class="op">=</span> <span class="fl">1e-12</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># asegura que los valores de las predicciones esten en un rango</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="co"># seguro para evitar logaritmos de 0 y 1</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> np.clip(y_pred, epsilon, <span class="dv">1</span> <span class="op">-</span> epsilon)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>    <span class="co"># calculo de la perdida</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>    perdida <span class="op">=</span> <span class="op">-</span>(((<span class="dv">1</span> <span class="op">-</span> y_real) <span class="op">*</span> np.log(<span class="dv">1</span> <span class="op">-</span> y_pred <span class="op">+</span> epsilon)) <span class="op">+</span> (y_real <span class="op">*</span> np.log(y_pred <span class="op">+</span> epsilon)))</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> perdida</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-24" class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Añadimos nuestro nuevo método</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="bu">setattr</span>(PerceptronMulticapa, <span class="st">'calcular_perdida_entropia_cruzada'</span>, calcular_perdida_entropia_cruzada)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-25" class="cell" data-outputid="e08723cd-09e1-47e2-fa94-e7340e04ea8e">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Probamos nuestra función de error</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>y_real <span class="op">=</span> y_train[<span class="dv">0</span>]</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>error <span class="op">=</span> mlp.calcular_perdida_entropia_cruzada(y_real, y_pred)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Error: </span><span class="sc">{</span>error<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Error: [[6.67165212e-11]]</code></pre>
+</div>
+</div>
+</section>
+<section id="propagación-hacía-atrás-backward" class="level2">
+<h2 class="anchored" data-anchor-id="propagación-hacía-atrás-backward">4. Propagación hacía atrás (backward)</h2>
+<p>Método para propagar los errores hacía atrás.</p>
+<div id="cell-27" class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> backward_pass(<span class="va">self</span>, x, z, y_real, h, y_pred):</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Propagación de error en la capa de salida</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculo de error en la capa de salida g_out</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">#error_salida =  (y_pred - y_real) * self.derivada_sigmoide(y_pred)</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    error_salida <span class="op">=</span>  y_pred <span class="op">-</span> y_real</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gradiente de los pesos respecto a la capa de salida</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># X_in * g_out = error_salida * h.T</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># X_in = h es la entrada a la capa de salida</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.gradiente_pesos_capa_salida <span class="op">=</span> np.matmul(error_salida, h.T)</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gradiente de los bias respecto a la capa de salida</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.gradiente_bias_capa_salida <span class="op">=</span> error_salida</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Propagación de error en la capa oculta</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gradiente respecto a la capa oculta</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>    <span class="co"># (g_out * W) * relu'(X_in)</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># X_in en esta capa es la salida de aplicar la primera transformación</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    error_oculta <span class="op">=</span> np.matmul(<span class="va">self</span>.pesos_capa_salida.T, error_salida) <span class="op">*</span> <span class="va">self</span>.derivada_relu(z)</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>    <span class="co"># gradientes con respecto a la capa oculta, de nuevo g_out * X_in</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.gradiente_pesos_capa_oculta <span class="op">=</span> np.matmul(error_oculta, x.T)</span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.gradiente_bias_capa_oculta <span class="op">=</span> error_oculta</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-28" class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Añadimos nuestro nuevo método</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="bu">setattr</span>(PerceptronMulticapa, <span class="st">'backward_pass'</span>, backward_pass)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-29" class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># calcular propagación de errores</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>mlp.backward_pass(x_i, z, y_real, h, y_pred)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-30" class="cell" data-outputid="4efe9d4d-8793-423b-df3a-8aa68ede7545">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Dimensión gradientes capa oculta: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(mlp.gradiente_pesos_capa_oculta.shape))</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Gradientes capa oculta: </span><span class="sc">{}</span><span class="st">'</span>.<span class="bu">format</span>(mlp.gradiente_pesos_capa_oculta))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Dimensión gradientes capa oculta: (50, 2)
+Gradientes capa oculta: [[-8.14789923e-13  9.33629314e-13]
+ [-1.64987027e-11  1.89050846e-11]
+ [-8.14956162e-12  9.33819800e-12]
+ [-1.31845056e-11  1.51075026e-11]
+ [-2.35283225e-11  2.69599942e-11]
+ [-6.46280811e-12  7.40542677e-12]
+ [-1.06390243e-11  1.21907558e-11]
+ [-1.95873816e-11  2.24442561e-11]
+ [-5.93150715e-12  6.79663407e-12]
+ [-1.99567547e-12  2.28675032e-12]
+ [-7.51169840e-12  8.60730064e-12]
+ [-4.17960177e-12  4.78920839e-12]
+ [-2.41020651e-11  2.76174187e-11]
+ [-2.09502196e-11  2.40058678e-11]
+ [-1.64207563e-11  1.88157695e-11]
+ [-2.25922909e-11  2.58874398e-11]
+ [-2.08348990e-11  2.38737273e-11]
+ [-4.83675923e-12  5.54221410e-12]
+ [-2.31392593e-11  2.65141851e-11]
+ [-1.39822466e-11  1.60215964e-11]
+ [-2.09325850e-11  2.39856612e-11]
+ [-2.32308329e-11  2.66191149e-11]
+ [-8.24412154e-12  9.44654975e-12]
+ [-2.85305512e-12  3.26918119e-12]
+ [-5.90913412e-12  6.77099787e-12]
+ [-1.10726102e-11  1.26875814e-11]
+ [-2.12067279e-11  2.42997885e-11]
+ [-2.23141195e-11  2.55686963e-11]
+ [-1.80231392e-13  2.06518646e-13]
+ [-1.32409334e-11  1.51721606e-11]
+ [-1.08212247e-11  1.23995306e-11]
+ [-5.75806219e-12  6.59789168e-12]
+ [-3.10746496e-12  3.56069743e-12]
+ [-8.75254746e-12  1.00291310e-11]
+ [-2.44445826e-11  2.80098934e-11]
+ [-8.37891553e-12  9.60100382e-12]
+ [-1.34494535e-11  1.54110939e-11]
+ [-1.82255044e-11  2.08837453e-11]
+ [-9.42696189e-12  1.08019107e-11]
+ [-2.51930882e-11  2.88675707e-11]
+ [-2.49510873e-11  2.85902733e-11]
+ [-6.52736216e-12  7.47939620e-12]
+ [-1.28909822e-11  1.47711680e-11]
+ [-7.80015802e-12  8.93783290e-12]
+ [-7.38438363e-12  8.46141666e-12]
+ [-9.56280359e-13  1.09575653e-12]
+ [-1.58027281e-11  1.81076003e-11]
+ [-1.30317663e-11  1.49324859e-11]
+ [-1.33456744e-12  1.52921783e-12]
+ [-7.22380571e-12  8.27741800e-12]]</code></pre>
+</div>
+</div>
+</section>
+<section id="entrenamiento" class="level2">
+<h2 class="anchored" data-anchor-id="entrenamiento">5. Entrenamiento</h2>
+<p>Método para iterar sobre todo el conjunto de datos y entrenar la red. Antes se deberá generar otro método que haga la respectiva actualización de pesos, una vez ya los gradientes son calculados.</p>
+<div id="cell-32" class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> actualizar_pesos(<span class="va">self</span>):</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># actualizar pesos aplicando gradiente descendiente</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.pesos_capa_salida <span class="op">-=</span> <span class="va">self</span>.lr <span class="op">*</span> <span class="va">self</span>.gradiente_pesos_capa_salida</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.bias_capa_salida <span class="op">-=</span> <span class="va">self</span>.lr <span class="op">*</span> <span class="va">self</span>.gradiente_bias_capa_salida</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.pesos_capa_oculta <span class="op">-=</span> <span class="va">self</span>.lr <span class="op">*</span> <span class="va">self</span>.gradiente_pesos_capa_oculta</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.bias_capa_oculta <span class="op">-=</span> <span class="va">self</span>.lr <span class="op">*</span> <span class="va">self</span>.gradiente_bias_capa_oculta</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> entrenar(<span class="va">self</span>, X, y):</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>    <span class="co"># almacenar el costo de cada iteración</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.costo_historia <span class="op">=</span> []</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># iterar sobre el número de épocas</span></span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> iteracion <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="va">self</span>.epochs), desc<span class="op">=</span><span class="st">'Iteraciones'</span>):</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># iterar sobre los datos de entrenamiento</span></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>        error_total <span class="op">=</span> <span class="dv">0</span> <span class="co"># error para la iteración i</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>        <span class="co"># iterar sobre todo el conjunto de datos</span></span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i, (x_i, y_i) <span class="kw">in</span> tqdm(<span class="bu">enumerate</span>(<span class="bu">zip</span>(X,y)), desc<span class="op">=</span><span class="st">'Datos'</span>, leave<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a>            <span class="co"># asegurar de que la entrada y la salida solo tenga una columna</span></span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a>            x_i <span class="op">=</span> x_i.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a>            y_i <span class="op">=</span> y_i.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a>            <span class="co"># aplicar propagación hacia adelante</span></span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a>            z, h, y_pred <span class="op">=</span> <span class="va">self</span>.forward_pass(x_i)</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a>            <span class="co"># calcular la perdida de entropia cruzada</span></span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a>            perdida <span class="op">=</span> <span class="va">self</span>.calcular_perdida_entropia_cruzada(y_i, y_pred)</span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a>            error_total <span class="op">+=</span> perdida</span>
+<span id="cb28-26"><a href="#cb28-26" aria-hidden="true" tabindex="-1"></a>            <span class="co"># aplicar propagación hacia atras</span></span>
+<span id="cb28-27"><a href="#cb28-27" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.backward_pass(x_i, z,  y_i, h, y_pred)</span>
+<span id="cb28-28"><a href="#cb28-28" aria-hidden="true" tabindex="-1"></a>            <span class="co"># actualizar pesos y bias usando gradiente descendiente</span></span>
+<span id="cb28-29"><a href="#cb28-29" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.actualizar_pesos()</span>
+<span id="cb28-30"><a href="#cb28-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-31"><a href="#cb28-31" aria-hidden="true" tabindex="-1"></a>        <span class="co"># almacenar los costos de cada iteración</span></span>
+<span id="cb28-32"><a href="#cb28-32" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.costo <span class="op">=</span> error_total <span class="op">/</span> <span class="bu">len</span>(X)</span>
+<span id="cb28-33"><a href="#cb28-33" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.costo_historia.append(<span class="va">self</span>.costo)</span>
+<span id="cb28-34"><a href="#cb28-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-35"><a href="#cb28-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">#print(f'costo: {self.costo[0][0]} en la iteración: {iteracion}')</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-33" class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Añadimos nuestros nuevos métodos</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="bu">setattr</span>(PerceptronMulticapa, <span class="st">'actualizar_pesos'</span>, actualizar_pesos)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="bu">setattr</span>(PerceptronMulticapa, <span class="st">'entrenar'</span>, entrenar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-34" class="cell" data-outputid="ad5d491c-fe80-4cef-88cc-337e4dc73af7" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;referenced_widgets&quot;:[&quot;77912adcdb714cfb8def685a6413f794&quot;,&quot;&quot;,&quot;4e92c06394fb4e62a94598a9820ba891&quot;,&quot;45c276c2eecd4d778daab87703864290&quot;,&quot;e4e91f25109d40f19ca2a02579c895f5&quot;,&quot;d936cedc94864c2696a05f6a029b41e1&quot;,&quot;5b0de8b7463644a5bca7d5deeeb28d37&quot;,&quot;216ba68717a048708d958c4f5c83d5ad&quot;,&quot;55dbd43b4c954bffa8157249bfb83a19&quot;,&quot;4bfd6b60c5154e9ab14c85c2f33dcd12&quot;,&quot;6ccdb7f26119492ba8ab551477738125&quot;,&quot;2bb9799be53949b7b2539fbb3dbbf016&quot;,&quot;59bc579b853a4c658f3e8a56449a99bf&quot;,&quot;c94fe55256294d4c81f36292798bbb9b&quot;,&quot;493e4fbe5277402da8795903904c0a62&quot;,&quot;25eb3f62493e4ae4a311840cb56fd94e&quot;,&quot;46dd78c52fbe4bffa422786967b192c6&quot;,&quot;f0818fceba5142a4a9bb10f645e4a787&quot;,&quot;f3069c81d50d4eb88eb6c47e3d329693&quot;,&quot;0f07a557f0ed4734b1c2eb7ab0d952d7&quot;,&quot;333e9a690de14955a86bea0a8e30f9a5&quot;,&quot;41de71e94e8c47d99f8ebc8cfb4b3a94&quot;,&quot;9b8739333b3f48858f9a4ede2ede846c&quot;,&quot;52ad49dc83774e76979d19a920dec1b4&quot;,&quot;5dfa2814804b4b2f8bf0c99df5ad329c&quot;,&quot;8fbe737585774560b6d42b58588953f8&quot;,&quot;ca42bdfee24540c49dd8326eaf63a17c&quot;,&quot;64bf90e9dd4f4bffaa08e99f0203c6ba&quot;,&quot;d2ca4ac67f0f410d930e4d14022724db&quot;,&quot;647e44d4e2a84e57b320fe7ebf618eb6&quot;,&quot;ad122f994caf4f19bdab47a2ff1b6287&quot;,&quot;0501eaf5c64e46e08d28b4fca2de6bd7&quot;,&quot;a3058624250a49029c8c3eb76844f7a8&quot;,&quot;80b8311b44ac4e1e8c19ea2000008b6a&quot;,&quot;af1a03cf2cf645ef883d4a3d69ff3859&quot;,&quot;a5dbe3ff848f492b9f05fe032dca0526&quot;,&quot;f4ef1e3d427547988130c0d5011cb93f&quot;,&quot;37d640286adf423bbae7c2665b3155f4&quot;,&quot;ce513d432e8849eea093d5f490731acd&quot;,&quot;b155cc3f5d3e42aca45f422615129f2b&quot;,&quot;d15b28fe4f154b20a9f4668de3efb1b8&quot;,&quot;ed45f9372b644065939f1538ea984735&quot;,&quot;960a9774751d412fa907176454d883a6&quot;,&quot;0fe627f85bd4456c942ee719a4552b2a&quot;,&quot;4a757e94ee3b417eb1782a8204d7724d&quot;,&quot;2e9a8c2cb7254ceea94186f7f19aeda4&quot;,&quot;eaaee5ced71b48b992a087313ba1c354&quot;,&quot;b4107f7131ce443eabcb046b59963a2a&quot;,&quot;06576bf36f1c4a0db89e2ae36cc9b3ac&quot;,&quot;d41b1df1e6c043f7b336210e7f134f8b&quot;,&quot;6c9bb4f4bc6a4166b175149140fdbceb&quot;,&quot;58150ed1b3d34271a4a0e02c09656401&quot;,&quot;37fe59aa54d2438e816afa2b45767410&quot;]}}">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># realizamos el respectivo entrenamiento</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>mlp.entrenar(X_train, y_train)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"77912adcdb714cfb8def685a6413f794","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"4e92c06394fb4e62a94598a9820ba891","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"45c276c2eecd4d778daab87703864290","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"e4e91f25109d40f19ca2a02579c895f5","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"d936cedc94864c2696a05f6a029b41e1","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"5b0de8b7463644a5bca7d5deeeb28d37","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"216ba68717a048708d958c4f5c83d5ad","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"55dbd43b4c954bffa8157249bfb83a19","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"4bfd6b60c5154e9ab14c85c2f33dcd12","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"6ccdb7f26119492ba8ab551477738125","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"2bb9799be53949b7b2539fbb3dbbf016","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"59bc579b853a4c658f3e8a56449a99bf","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"c94fe55256294d4c81f36292798bbb9b","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"493e4fbe5277402da8795903904c0a62","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"25eb3f62493e4ae4a311840cb56fd94e","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"46dd78c52fbe4bffa422786967b192c6","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"f0818fceba5142a4a9bb10f645e4a787","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"f3069c81d50d4eb88eb6c47e3d329693","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"0f07a557f0ed4734b1c2eb7ab0d952d7","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"333e9a690de14955a86bea0a8e30f9a5","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"41de71e94e8c47d99f8ebc8cfb4b3a94","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"9b8739333b3f48858f9a4ede2ede846c","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"52ad49dc83774e76979d19a920dec1b4","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"5dfa2814804b4b2f8bf0c99df5ad329c","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"8fbe737585774560b6d42b58588953f8","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"ca42bdfee24540c49dd8326eaf63a17c","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"64bf90e9dd4f4bffaa08e99f0203c6ba","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"d2ca4ac67f0f410d930e4d14022724db","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"647e44d4e2a84e57b320fe7ebf618eb6","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"ad122f994caf4f19bdab47a2ff1b6287","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"0501eaf5c64e46e08d28b4fca2de6bd7","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"a3058624250a49029c8c3eb76844f7a8","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"80b8311b44ac4e1e8c19ea2000008b6a","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"af1a03cf2cf645ef883d4a3d69ff3859","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"a5dbe3ff848f492b9f05fe032dca0526","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"f4ef1e3d427547988130c0d5011cb93f","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"37d640286adf423bbae7c2665b3155f4","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"ce513d432e8849eea093d5f490731acd","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"b155cc3f5d3e42aca45f422615129f2b","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"d15b28fe4f154b20a9f4668de3efb1b8","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"ed45f9372b644065939f1538ea984735","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"960a9774751d412fa907176454d883a6","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"0fe627f85bd4456c942ee719a4552b2a","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"4a757e94ee3b417eb1782a8204d7724d","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"2e9a8c2cb7254ceea94186f7f19aeda4","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"eaaee5ced71b48b992a087313ba1c354","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"b4107f7131ce443eabcb046b59963a2a","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"06576bf36f1c4a0db89e2ae36cc9b3ac","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"d41b1df1e6c043f7b336210e7f134f8b","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"6c9bb4f4bc6a4166b175149140fdbceb","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"58150ed1b3d34271a4a0e02c09656401","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+<div class="cell-output cell-output-display">
+<script type="application/vnd.jupyter.widget-view+json">
+{"model_id":"37fe59aa54d2438e816afa2b45767410","version_major":2,"version_minor":0,"quarto_mimetype":"application/vnd.jupyter.widget-view+json"}
+</script>
+</div>
+</div>
+<div id="cell-35" class="cell" data-outputid="f5334d66-ea75-4d98-973c-c2bda419f939">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f'Costo final: </span><span class="sc">{</span>mlp<span class="sc">.</span>costo<span class="sc">}</span><span class="ss">'</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Costo final: [[0.44965122]]</code></pre>
+</div>
+</div>
+<div id="cell-36" class="cell" data-outputid="24dc3c7c-cbb6-4b9f-d042-ba634a70263e">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Visualizar el cambio del costo durante el entrenamiento</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>plot_cost_history(np.array(mlp.costo_historia).ravel())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_1a_Implementando_un_Perceptron_Multicapa_MLP_desde_CERO_files/figure-html/cell-27-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="evaluación" class="level2">
+<h2 class="anchored" data-anchor-id="evaluación">Evaluación</h2>
+<p>Para evaluar nuestro modelo con la información de test, creamos primero la función de predicción y seguidamente evaluamos el rendimiento en test.</p>
+<div id="cell-38" class="cell">
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prediccion(<span class="va">self</span>, X):</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>    predicciones <span class="op">=</span> []</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> x_i <span class="kw">in</span> X:</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>        x_i <span class="op">=</span> x_i.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)  <span class="co"># Asegurar que x_i sea una columna</span></span>
+<span id="cb34-5"><a href="#cb34-5" aria-hidden="true" tabindex="-1"></a>        z, _, y_pred <span class="op">=</span> <span class="va">self</span>.forward_pass(x_i)</span>
+<span id="cb34-6"><a href="#cb34-6" aria-hidden="true" tabindex="-1"></a>        predicciones.append(y_pred)</span>
+<span id="cb34-7"><a href="#cb34-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.array(predicciones).flatten()</span>
+<span id="cb34-8"><a href="#cb34-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-9"><a href="#cb34-9" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> evaluar(<span class="va">self</span>, X, y, umbral):</span>
+<span id="cb34-10"><a href="#cb34-10" aria-hidden="true" tabindex="-1"></a>    <span class="co"># generar predicciones</span></span>
+<span id="cb34-11"><a href="#cb34-11" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> <span class="va">self</span>.prediccion(X)</span>
+<span id="cb34-12"><a href="#cb34-12" aria-hidden="true" tabindex="-1"></a>    <span class="co"># convertir a 0 y 1 bajo un umbral</span></span>
+<span id="cb34-13"><a href="#cb34-13" aria-hidden="true" tabindex="-1"></a>    y_pred <span class="op">=</span> np.where(y_pred <span class="op">&gt;=</span> umbral, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb34-14"><a href="#cb34-14" aria-hidden="true" tabindex="-1"></a>    <span class="co"># generar reporte de clasificación y matriz de confusión</span></span>
+<span id="cb34-15"><a href="#cb34-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(classification_report(y, y_pred))</span>
+<span id="cb34-16"><a href="#cb34-16" aria-hidden="true" tabindex="-1"></a>    cm <span class="op">=</span> confusion_matrix(y, y_pred)</span>
+<span id="cb34-17"><a href="#cb34-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-18"><a href="#cb34-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># visualizacion de la matriz de confusion</span></span>
+<span id="cb34-19"><a href="#cb34-19" aria-hidden="true" tabindex="-1"></a>    ConfusionMatrixDisplay(cm).plot()</span>
+<span id="cb34-20"><a href="#cb34-20" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb34-21"><a href="#cb34-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-22"><a href="#cb34-22" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> y_pred, cm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-39" class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Añadimos nuestros nuevos métodos</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="bu">setattr</span>(PerceptronMulticapa, <span class="st">'prediccion'</span>, prediccion)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="bu">setattr</span>(PerceptronMulticapa, <span class="st">'evaluar'</span>, evaluar)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-40" class="cell" data-outputid="987df30a-fcec-41c7-fe3d-f064b103d50f">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># evaluar y visualizar la matriz de confusion usando sklearn</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>y_pred, cm <span class="op">=</span> mlp.evaluar(X_test, y_test, umbral<span class="op">=</span><span class="fl">0.5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              precision    recall  f1-score   support
+
+           0       0.81      0.81      0.81        26
+           1       0.74      0.74      0.74        19
+
+    accuracy                           0.78        45
+   macro avg       0.77      0.77      0.77        45
+weighted avg       0.78      0.78      0.78        45
+</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_1a_Implementando_un_Perceptron_Multicapa_MLP_desde_CERO_files/figure-html/cell-30-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="interpretabilidad" class="level2">
+<h2 class="anchored" data-anchor-id="interpretabilidad">7. Interpretabilidad</h2>
+<p>Gráficamos algunos aspectos de interpretabilidad como la frontera de decisión generada.</p>
+<div id="cell-42" class="cell" data-outputid="0f88d5a8-e080-4ccf-a7d7-15118e1aa1d5">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>plot_decision_boundary(mlp, X, y, h<span class="op">=</span><span class="fl">0.02</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_1a_Implementando_un_Perceptron_Multicapa_MLP_desde_CERO_files/figure-html/cell-31-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="clase-python-perceptronmulticapa-completo" class="level2">
+<h2 class="anchored" data-anchor-id="clase-python-perceptronmulticapa-completo">Clase python PerceptronMulticapa Completo</h2>
+<div id="cell-44" class="cell">
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PerceptronMulticapa():</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, params<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb39-3"><a href="#cb39-3" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Asignación de hiperparámetros</span></span>
+<span id="cb39-4"><a href="#cb39-4" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.capa_entrada <span class="op">=</span> params[<span class="st">'capa_entrada'</span>]</span>
+<span id="cb39-5"><a href="#cb39-5" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.capa_oculta <span class="op">=</span> params[<span class="st">'capa_oculta'</span>]</span>
+<span id="cb39-6"><a href="#cb39-6" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.capa_salida <span class="op">=</span> params[<span class="st">'capa_salida'</span>]</span>
+<span id="cb39-7"><a href="#cb39-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.epochs <span class="op">=</span> params[<span class="st">'epochs'</span>]</span>
+<span id="cb39-8"><a href="#cb39-8" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.lr <span class="op">=</span> params[<span class="st">'lr'</span>]</span>
+<span id="cb39-9"><a href="#cb39-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.relu <span class="op">=</span> (<span class="kw">lambda</span> x: x<span class="op">*</span>(x <span class="op">&gt;</span> <span class="dv">0</span>))</span>
+<span id="cb39-10"><a href="#cb39-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.derivada_relu <span class="op">=</span> (<span class="kw">lambda</span> x: <span class="dv">1</span> <span class="op">*</span> (x<span class="op">&gt;</span><span class="dv">0</span>))</span>
+<span id="cb39-11"><a href="#cb39-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.sigmoide <span class="op">=</span> (<span class="kw">lambda</span> x: <span class="dv">1</span><span class="op">/</span>(<span class="dv">1</span> <span class="op">+</span> np.exp(<span class="op">-</span>x)))</span>
+<span id="cb39-12"><a href="#cb39-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.derivada_sigmoide <span class="op">=</span> (<span class="kw">lambda</span> x: x<span class="op">*</span>(<span class="dv">1</span><span class="op">-</span>x))</span>
+<span id="cb39-13"><a href="#cb39-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-14"><a href="#cb39-14" aria-hidden="true" tabindex="-1"></a>        <span class="co"># inicialización de pesos y bias</span></span>
+<span id="cb39-15"><a href="#cb39-15" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.inicializacion()</span>
+<span id="cb39-16"><a href="#cb39-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-17"><a href="#cb39-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> inicializacion(<span class="va">self</span>):</span>
+<span id="cb39-18"><a href="#cb39-18" aria-hidden="true" tabindex="-1"></a>        <span class="co"># inicialización de pesos y bias aleatoria</span></span>
+<span id="cb39-19"><a href="#cb39-19" aria-hidden="true" tabindex="-1"></a>        np.random.seed(<span class="dv">42</span>) <span class="co"># fijar una semilla para reproducir resultados</span></span>
+<span id="cb39-20"><a href="#cb39-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-21"><a href="#cb39-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Capa Oculta</span></span>
+<span id="cb39-22"><a href="#cb39-22" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pesos_capa_oculta <span class="op">=</span> np.random.rand(<span class="va">self</span>.capa_oculta, <span class="va">self</span>.capa_entrada)</span>
+<span id="cb39-23"><a href="#cb39-23" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.bias_capa_oculta <span class="op">=</span> np.ones((<span class="va">self</span>.capa_oculta, <span class="dv">1</span>))</span>
+<span id="cb39-24"><a href="#cb39-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-25"><a href="#cb39-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Capa de salida</span></span>
+<span id="cb39-26"><a href="#cb39-26" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pesos_capa_salida <span class="op">=</span> np.random.rand(<span class="va">self</span>.capa_salida, <span class="va">self</span>.capa_oculta)</span>
+<span id="cb39-27"><a href="#cb39-27" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.bias_capa_salida <span class="op">=</span> np.ones((<span class="va">self</span>.capa_salida, <span class="dv">1</span>))</span>
+<span id="cb39-28"><a href="#cb39-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-29"><a href="#cb39-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward_pass(<span class="va">self</span>, x):</span>
+<span id="cb39-30"><a href="#cb39-30" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Realizar la operacion Wx + b de la capa oculta, x = x_0</span></span>
+<span id="cb39-31"><a href="#cb39-31" aria-hidden="true" tabindex="-1"></a>        z <span class="op">=</span> np.matmul(<span class="va">self</span>.pesos_capa_oculta, x) <span class="op">+</span> <span class="va">self</span>.bias_capa_oculta</span>
+<span id="cb39-32"><a href="#cb39-32" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Aplicar función de activación</span></span>
+<span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>        h <span class="op">=</span> <span class="va">self</span>.relu(z) <span class="co"># z = x_1, h = x_2</span></span>
+<span id="cb39-34"><a href="#cb39-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-35"><a href="#cb39-35" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Aplicar la operación Wh + b para generar la salida, y = x_3</span></span>
+<span id="cb39-36"><a href="#cb39-36" aria-hidden="true" tabindex="-1"></a>        y <span class="op">=</span> np.matmul(<span class="va">self</span>.pesos_capa_salida, h) <span class="op">+</span> <span class="va">self</span>.bias_capa_salida</span>
+<span id="cb39-37"><a href="#cb39-37" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Aplicar función de activación softmax para la clasificación</span></span>
+<span id="cb39-38"><a href="#cb39-38" aria-hidden="true" tabindex="-1"></a>        y_pred <span class="op">=</span> <span class="va">self</span>.sigmoide(y) <span class="co"># y = x_4</span></span>
+<span id="cb39-39"><a href="#cb39-39" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-40"><a href="#cb39-40" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> z, h, y_pred</span>
+<span id="cb39-41"><a href="#cb39-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-42"><a href="#cb39-42" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> actualizar_pesos(<span class="va">self</span>):</span>
+<span id="cb39-43"><a href="#cb39-43" aria-hidden="true" tabindex="-1"></a>        <span class="co"># actualizar pesos aplicando gradiente descendiente</span></span>
+<span id="cb39-44"><a href="#cb39-44" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pesos_capa_salida <span class="op">-=</span> <span class="va">self</span>.lr <span class="op">*</span> <span class="va">self</span>.gradiente_pesos_capa_salida</span>
+<span id="cb39-45"><a href="#cb39-45" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.bias_capa_salida <span class="op">-=</span> <span class="va">self</span>.lr <span class="op">*</span> <span class="va">self</span>.gradiente_bias_capa_salida</span>
+<span id="cb39-46"><a href="#cb39-46" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.pesos_capa_oculta <span class="op">-=</span> <span class="va">self</span>.lr <span class="op">*</span> <span class="va">self</span>.gradiente_pesos_capa_oculta</span>
+<span id="cb39-47"><a href="#cb39-47" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.bias_capa_oculta <span class="op">-=</span> <span class="va">self</span>.lr <span class="op">*</span> <span class="va">self</span>.gradiente_bias_capa_oculta</span>
+<span id="cb39-48"><a href="#cb39-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-49"><a href="#cb39-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> backward_pass(<span class="va">self</span>, x, z, y_real, h, y_pred):</span>
+<span id="cb39-50"><a href="#cb39-50" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Propagación de error en la capa de salida</span></span>
+<span id="cb39-51"><a href="#cb39-51" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculo de error en la capa de salida g_out</span></span>
+<span id="cb39-52"><a href="#cb39-52" aria-hidden="true" tabindex="-1"></a>        <span class="co">#error_salida =  (y_pred - y_real) * self.derivada_sigmoide(y_pred)</span></span>
+<span id="cb39-53"><a href="#cb39-53" aria-hidden="true" tabindex="-1"></a>        error_salida <span class="op">=</span>  y_pred <span class="op">-</span> y_real</span>
+<span id="cb39-54"><a href="#cb39-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-55"><a href="#cb39-55" aria-hidden="true" tabindex="-1"></a>        <span class="co"># gradiente de los pesos respecto a la capa de salida</span></span>
+<span id="cb39-56"><a href="#cb39-56" aria-hidden="true" tabindex="-1"></a>        <span class="co"># X_in * g_out = error_salida * h.T</span></span>
+<span id="cb39-57"><a href="#cb39-57" aria-hidden="true" tabindex="-1"></a>        <span class="co"># X_in = h es la entrada a la capa de salida</span></span>
+<span id="cb39-58"><a href="#cb39-58" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.gradiente_pesos_capa_salida <span class="op">=</span> np.matmul(error_salida, h.T)</span>
+<span id="cb39-59"><a href="#cb39-59" aria-hidden="true" tabindex="-1"></a>        <span class="co"># gradiente de los bias respecto a la capa de salida</span></span>
+<span id="cb39-60"><a href="#cb39-60" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.gradiente_bias_capa_salida <span class="op">=</span> error_salida</span>
+<span id="cb39-61"><a href="#cb39-61" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-62"><a href="#cb39-62" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Propagación de error en la capa oculta</span></span>
+<span id="cb39-63"><a href="#cb39-63" aria-hidden="true" tabindex="-1"></a>        <span class="co"># gradiente respecto a la capa oculta</span></span>
+<span id="cb39-64"><a href="#cb39-64" aria-hidden="true" tabindex="-1"></a>        <span class="co"># (g_out * W) * relu'(X_in)</span></span>
+<span id="cb39-65"><a href="#cb39-65" aria-hidden="true" tabindex="-1"></a>        <span class="co"># X_in en esta capa es la salida de aplicar la primera transformación</span></span>
+<span id="cb39-66"><a href="#cb39-66" aria-hidden="true" tabindex="-1"></a>        error_oculta <span class="op">=</span> np.matmul(<span class="va">self</span>.pesos_capa_salida.T, error_salida) <span class="op">*</span> <span class="va">self</span>.derivada_relu(z)</span>
+<span id="cb39-67"><a href="#cb39-67" aria-hidden="true" tabindex="-1"></a>        <span class="co"># gradientes con respecto a la capa oculta, de nuevo g_out * X_in</span></span>
+<span id="cb39-68"><a href="#cb39-68" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.gradiente_pesos_capa_oculta <span class="op">=</span> np.matmul(error_oculta, x.T)</span>
+<span id="cb39-69"><a href="#cb39-69" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.gradiente_bias_capa_oculta <span class="op">=</span> error_oculta</span>
+<span id="cb39-70"><a href="#cb39-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-71"><a href="#cb39-71" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> entrenar(<span class="va">self</span>, X, y):</span>
+<span id="cb39-72"><a href="#cb39-72" aria-hidden="true" tabindex="-1"></a>        <span class="co"># almacenar el costo de cada iteración</span></span>
+<span id="cb39-73"><a href="#cb39-73" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.costo_historia <span class="op">=</span> []</span>
+<span id="cb39-74"><a href="#cb39-74" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-75"><a href="#cb39-75" aria-hidden="true" tabindex="-1"></a>        <span class="co"># iterar sobre el número de épocas</span></span>
+<span id="cb39-76"><a href="#cb39-76" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> iteracion <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="va">self</span>.epochs), desc<span class="op">=</span><span class="st">'Iteraciones'</span>):</span>
+<span id="cb39-77"><a href="#cb39-77" aria-hidden="true" tabindex="-1"></a>            <span class="co"># iterar sobre los datos de entrenamiento</span></span>
+<span id="cb39-78"><a href="#cb39-78" aria-hidden="true" tabindex="-1"></a>            error_total <span class="op">=</span> <span class="dv">0</span> <span class="co"># error para la iteración i</span></span>
+<span id="cb39-79"><a href="#cb39-79" aria-hidden="true" tabindex="-1"></a>            <span class="co"># iterar sobre todo el conjunto de datos</span></span>
+<span id="cb39-80"><a href="#cb39-80" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> i, (x_i, y_i) <span class="kw">in</span> tqdm(<span class="bu">enumerate</span>(<span class="bu">zip</span>(X,y)), desc<span class="op">=</span><span class="st">'Datos'</span>, leave<span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb39-81"><a href="#cb39-81" aria-hidden="true" tabindex="-1"></a>                <span class="co"># asegurar de que la entrada y la salida solo tenga una columna</span></span>
+<span id="cb39-82"><a href="#cb39-82" aria-hidden="true" tabindex="-1"></a>                x_i <span class="op">=</span> x_i.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb39-83"><a href="#cb39-83" aria-hidden="true" tabindex="-1"></a>                y_i <span class="op">=</span> y_i.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb39-84"><a href="#cb39-84" aria-hidden="true" tabindex="-1"></a>                <span class="co"># aplicar propagación hacia adelante</span></span>
+<span id="cb39-85"><a href="#cb39-85" aria-hidden="true" tabindex="-1"></a>                z, h, y_pred <span class="op">=</span> <span class="va">self</span>.forward_pass(x_i)</span>
+<span id="cb39-86"><a href="#cb39-86" aria-hidden="true" tabindex="-1"></a>                <span class="co"># calcular la perdida de entropia cruzada</span></span>
+<span id="cb39-87"><a href="#cb39-87" aria-hidden="true" tabindex="-1"></a>                perdida <span class="op">=</span> <span class="va">self</span>.calcular_perdida_entropia_cruzada(y_i, y_pred)</span>
+<span id="cb39-88"><a href="#cb39-88" aria-hidden="true" tabindex="-1"></a>                error_total <span class="op">+=</span> perdida</span>
+<span id="cb39-89"><a href="#cb39-89" aria-hidden="true" tabindex="-1"></a>                <span class="co"># aplicar propagación hacia atras</span></span>
+<span id="cb39-90"><a href="#cb39-90" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.backward_pass(x_i, z,  y_i, h, y_pred)</span>
+<span id="cb39-91"><a href="#cb39-91" aria-hidden="true" tabindex="-1"></a>                <span class="co"># actualizar pesos y bias usando gradiente descendiente</span></span>
+<span id="cb39-92"><a href="#cb39-92" aria-hidden="true" tabindex="-1"></a>                <span class="va">self</span>.actualizar_pesos()</span>
+<span id="cb39-93"><a href="#cb39-93" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-94"><a href="#cb39-94" aria-hidden="true" tabindex="-1"></a>            <span class="co"># almacenar los costos de cada iteración</span></span>
+<span id="cb39-95"><a href="#cb39-95" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.costo <span class="op">=</span> error_total <span class="op">/</span> <span class="bu">len</span>(X)</span>
+<span id="cb39-96"><a href="#cb39-96" aria-hidden="true" tabindex="-1"></a>            <span class="va">self</span>.costo_historia.append(<span class="va">self</span>.costo)</span>
+<span id="cb39-97"><a href="#cb39-97" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-98"><a href="#cb39-98" aria-hidden="true" tabindex="-1"></a>        <span class="co">#print(f'costo: {self.costo[0][0]} en la iteración: {iteracion}')</span></span>
+<span id="cb39-99"><a href="#cb39-99" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-100"><a href="#cb39-100" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> calcular_perdida_entropia_cruzada(<span class="va">self</span>, y_real, y_pred):</span>
+<span id="cb39-101"><a href="#cb39-101" aria-hidden="true" tabindex="-1"></a>        epsilon <span class="op">=</span> <span class="fl">1e-12</span></span>
+<span id="cb39-102"><a href="#cb39-102" aria-hidden="true" tabindex="-1"></a>        <span class="co"># asegura que los valores de las predicciones esten en un rango</span></span>
+<span id="cb39-103"><a href="#cb39-103" aria-hidden="true" tabindex="-1"></a>        <span class="co"># seguro para evitar logaritmos de 0 y 1</span></span>
+<span id="cb39-104"><a href="#cb39-104" aria-hidden="true" tabindex="-1"></a>        y_pred <span class="op">=</span> np.clip(y_pred, epsilon, <span class="dv">1</span> <span class="op">-</span> epsilon)</span>
+<span id="cb39-105"><a href="#cb39-105" aria-hidden="true" tabindex="-1"></a>        <span class="co"># calculo de la perdida</span></span>
+<span id="cb39-106"><a href="#cb39-106" aria-hidden="true" tabindex="-1"></a>        perdida <span class="op">=</span> <span class="op">-</span>(((<span class="dv">1</span> <span class="op">-</span> y_real) <span class="op">*</span> np.log(<span class="dv">1</span> <span class="op">-</span> y_pred <span class="op">+</span> epsilon)) <span class="op">+</span> (y_real <span class="op">*</span> np.log(y_pred <span class="op">+</span> epsilon)))</span>
+<span id="cb39-107"><a href="#cb39-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-108"><a href="#cb39-108" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> perdida</span>
+<span id="cb39-109"><a href="#cb39-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-110"><a href="#cb39-110" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> prediccion(<span class="va">self</span>, X):</span>
+<span id="cb39-111"><a href="#cb39-111" aria-hidden="true" tabindex="-1"></a>        predicciones <span class="op">=</span> []</span>
+<span id="cb39-112"><a href="#cb39-112" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> x_i <span class="kw">in</span> X:</span>
+<span id="cb39-113"><a href="#cb39-113" aria-hidden="true" tabindex="-1"></a>            x_i <span class="op">=</span> x_i.reshape(<span class="op">-</span><span class="dv">1</span>, <span class="dv">1</span>)  <span class="co"># Asegurar que x_i sea una columna</span></span>
+<span id="cb39-114"><a href="#cb39-114" aria-hidden="true" tabindex="-1"></a>            z, _, y_pred <span class="op">=</span> <span class="va">self</span>.forward_pass(x_i)</span>
+<span id="cb39-115"><a href="#cb39-115" aria-hidden="true" tabindex="-1"></a>            predicciones.append(y_pred)</span>
+<span id="cb39-116"><a href="#cb39-116" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> np.array(predicciones).flatten()</span>
+<span id="cb39-117"><a href="#cb39-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-118"><a href="#cb39-118" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> evaluar(<span class="va">self</span>, X, y, umbral):</span>
+<span id="cb39-119"><a href="#cb39-119" aria-hidden="true" tabindex="-1"></a>        <span class="co"># generar predicciones</span></span>
+<span id="cb39-120"><a href="#cb39-120" aria-hidden="true" tabindex="-1"></a>        y_pred <span class="op">=</span> <span class="va">self</span>.prediccion(X)</span>
+<span id="cb39-121"><a href="#cb39-121" aria-hidden="true" tabindex="-1"></a>        <span class="co"># convertir a 0 y 1 bajo un umbral</span></span>
+<span id="cb39-122"><a href="#cb39-122" aria-hidden="true" tabindex="-1"></a>        y_pred <span class="op">=</span> np.where(y_pred <span class="op">&gt;=</span> umbral, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb39-123"><a href="#cb39-123" aria-hidden="true" tabindex="-1"></a>        <span class="co"># generar reporte de clasificación y matriz de confusión</span></span>
+<span id="cb39-124"><a href="#cb39-124" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(classification_report(y, y_pred))</span>
+<span id="cb39-125"><a href="#cb39-125" aria-hidden="true" tabindex="-1"></a>        cm <span class="op">=</span> confusion_matrix(y, y_pred)</span>
+<span id="cb39-126"><a href="#cb39-126" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-127"><a href="#cb39-127" aria-hidden="true" tabindex="-1"></a>        <span class="co"># visualizacion de la matriz de confusion</span></span>
+<span id="cb39-128"><a href="#cb39-128" aria-hidden="true" tabindex="-1"></a>        ConfusionMatrixDisplay(cm).plot()</span>
+<span id="cb39-129"><a href="#cb39-129" aria-hidden="true" tabindex="-1"></a>        plt.show()</span>
+<span id="cb39-130"><a href="#cb39-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb39-131"><a href="#cb39-131" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> y_pred, cm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script type="application/vnd.jupyter.widget-state+json">
+{}
+</script>
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp("https:\/\/jeffersonrodriguezc\.github\.io\/deep-learning-en-3-semanas\/");
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

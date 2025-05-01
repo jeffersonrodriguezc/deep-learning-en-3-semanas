@@ -3,6 +3,8 @@ project:
 
 website:
   title: "Deep Learning Practico en 3 Semanas"
+  repo-url: https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas/ 
+  repo-actions: [issue]
   navbar:
     left:
       - href: index.qmd
@@ -13,13 +15,16 @@ website:
         text: Semana 2
       - href: semana_3/index.qmd 
         text: Semana 3
-      - about.qmd
+    right: 
+      - icon: github
+        href: https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas/
+        aria-label: GitHub
 
 format:
   html:
     theme:
-      - cosmo
-      - brand
+      light: cosmo
+      dark: darkly
     css: styles.css
     toc: true
 

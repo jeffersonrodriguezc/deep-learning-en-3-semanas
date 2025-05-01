@@ -1,15 +1,32 @@
 ---
-title: "Bienvenido al curso de Deep Learning Práctico en 3 semanas!"
+title: "Curso Práctico: Neural Networks y Deep Learning"
+subtitle: "Aprendizaje Profundo en 3 Semanas"
+listing: default 
 ---
+¡Bienvenido al sitio web del curso práctico intensivo de Neural Networks y Deep Learning!
 
-## Contenido del curso:
+Este curso está diseñado para proporcionarte una comprensión sólida y aplicada de los conceptos fundamentales de las redes neuronales y su aplicación en el campo de la inteligencia artificial, con un enfoque marcado en la **implementación práctica** y la resolución de problemas reales.
 
--   [Semana 1]()
--   [Semana 2]()
--   [Semana 3]()
+A lo largo de **tres semanas intensivas**, explorarás desde los principios básicos hasta arquitecturas avanzadas y técnicas de vanguardia, preparándote para enfrentar desafíos complejos en el mundo del Deep Learning.
 
-Explora los materiales, los notebooks y las slides para cada semana.
+## ¿Qué Exploraremos?
 
-------------------------------------------------------------------------
+El curso se estructura en tres unidades clave:
 
-**Repositorio en GitHub:** <https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas>
+1.  **Fundamentos de Redes Neuronales:** Introduce los conceptos esenciales, la estructura y el entrenamiento de modelos, abordando el perceptrón, la retropropagación y métodos de optimización como el gradiente descendente. Sentarás las bases para entender cómo aprenden las redes mientras aplicas de manera práctica los conceptos.
+2.  **Arquitecturas de Redes Neuronales:** Explorarás diversas arquitecturas, incluyendo Redes Neuronales Densas (DNN), Convolucionales (CNN) y Recurrentes (RNN). Ampliarás tu visión con una introducción a arquitecturas avanzadas como transformers y desarrollarás la habilidad para seleccionar la más adecuada según el problema.
+3.  **Técnicas Avanzadas y Robustez:** Te centrarás en la construcción de modelos avanzados, cubriendo la generalización, la transferencia de aprendizaje, optimización de hiperparámetros y la explicabilidad. Se introducirá el entrenamiento adversarial y técnicas para crear modelos robustos y transferibles que funcionen bien en entornos de datos diversos.
+
+## Enfoque Práctico
+
+Este curso es eminentemente práctico. A través de **Implementaciones en Python y trabajo directo con notebooks**, aplicarás los conceptos teóricos de inmediato. El objetivo es que no solo comprendas *cómo* funcionan las redes neuronales, sino que también ganes experiencia práctica en *cómo construirlas y utilizarlas* para resolver problemas reales.
+
+Cada semana incluye componentes prácticos diseñados para consolidar tu aprendizaje y permitirte experimentar con diferentes arquitecturas y técnicas.
+
+## Estructura del Sitio
+
+* [Semana 1: Fundamentos y MLP](semana_1/index.html) 
+* [Semana 2: Arquitecturas neuronales profundas](semana_2/index.html) 
+* [Semana 3: Técnicas Avanzadas y Robustez](semana_3/index.html) 
+
+Explora cada sección para encontrar los materiales de la semana, los notebooks (renderizados para visualización web) y las slides correspondientes.

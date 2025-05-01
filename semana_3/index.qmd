@@ -1,7 +1,20 @@
 ---
-title: "Semana 3: "
+title: "Semana 3: Técnicas Avanzadas y Robustez"
 ---
+La última semana se centra en refinar y aplicar técnicas avanzadas para construir modelos robustos e interpretables.
 
-# Semana 3: 
+**Temas Clave:**
 
-Contenido de la Semana 3:
+* Principios de Generalización.
+* Transferencia de Aprendizaje y Fine-tuning.
+* Explicabilidad e Interpretabilidad de modelos.
+* Optimización de hiperparámetros.
+* Entrenamiento Adversarial y Robustez.
+
+**Enfoque Práctico:** Desarrollarás habilidades para mejorar la eficacia de tus modelos en entornos reales. Implementarás técnicas de transferencia de aprendizaje, fine-tuning, generalización y usarás herramientas de explicabilidad para comprender y comunicar los resultados de modelos complejos.
+
+**Materiales de la Semana:**
+
+* [Slides de la Semana 3 (Próximamente)](slides/slides_semana_3.html) 
+* [Notebook: Introducción a Transfer Learning y Finetuning](notebooks/Nb_3a_Introduccion_transfer_learning_finetuning.html)
+* [Notebook: Introducción a Explicabilidad e Interpretabilidad](notebooks/Nb_3b_Introduccion_explicabilidad_interpretabilidad.html) 
