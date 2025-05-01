@@ -25,7 +25,7 @@
     "href": "semana_3/index.html",
     "title": "Semana 3: Técnicas Avanzadas y Robustez",
     "section": "",
-    "text": "La última semana se centra en refinar y aplicar técnicas avanzadas para construir modelos robustos e interpretables.\nTemas Clave:\n\nPrincipios de Generalización.\nTransferencia de Aprendizaje y Fine-tuning.\nExplicabilidad e Interpretabilidad de modelos.\nOptimización de hiperparámetros.\nEntrenamiento Adversarial y Robustez.\n\nEnfoque Práctico: Desarrollarás habilidades para mejorar la eficacia de tus modelos en entornos reales. Implementarás técnicas de transferencia de aprendizaje, fine-tuning, generalización y usarás herramientas de explicabilidad para comprender y comunicar los resultados de modelos complejos.\nMateriales de la Semana:\n\nSlides de la Semana 3 (Próximamente) # Asegúrate de la ruta correcta\nNotebook: Introducción a Transfer Learning y Finetuning\nNotebook: Introducción a Explicabilidad e Interpretabilidad"
+    "text": "La última semana se centra en refinar y aplicar técnicas avanzadas para construir modelos robustos e interpretables.\nTemas Clave:\n\nPrincipios de Generalización.\nTransferencia de Aprendizaje y Fine-tuning.\nExplicabilidad e Interpretabilidad de modelos.\nOptimización de hiperparámetros.\nEntrenamiento Adversarial y Robustez.\n\nEnfoque Práctico: Desarrollarás habilidades para mejorar la eficacia de tus modelos en entornos reales. Implementarás técnicas de transferencia de aprendizaje, fine-tuning, generalización y usarás herramientas de explicabilidad para comprender y comunicar los resultados de modelos complejos.\nMateriales de la Semana:\n\nSlides de la Semana 3 (Próximamente)\nNotebook: Introducción a Transfer Learning y Finetuning\nNotebook: Introducción a Explicabilidad e Interpretabilidad"
   },
   {
     "objectID": "semana_2/notebooks/Nb_2a_Implementando_una_CNN_usando_Keras.html",
@@ -194,13 +194,6 @@
     "title": "Curso Práctico: Neural Networks y Deep Learning",
     "section": "Estructura del Sitio",
     "text": "Estructura del Sitio\n\nSemana 1: Fundamentos y MLP\nSemana 2: Arquitecturas neuronales profundas\nSemana 3: Técnicas Avanzadas y Robustez\n\nExplora cada sección para encontrar los materiales de la semana, los notebooks (renderizados para visualización web) y las slides.\n\nRepositorio en GitHub: https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About",
-    "section": "",
-    "text": "About this site"
   },
   {
     "objectID": "semana_1/index.html",
