@@ -1,0 +1,15 @@
+---
+title: "Bienvenido al curso de Deep Learning Práctico en 3 semanas!"
+---
+
+## Contenido del curso:
+
+-   [Semana 1]()
+-   [Semana 2]()
+-   [Semana 3]()
+
+Explora los materiales, los notebooks y las slides para cada semana.
+
+------------------------------------------------------------------------
+
+**Repositorio en GitHub:** <https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas>
