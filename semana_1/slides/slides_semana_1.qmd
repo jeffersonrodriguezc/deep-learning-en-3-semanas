@@ -1,0 +1,14 @@
+---
+title: "Semana 1: Fundamentos de Redes Neuronales"
+subtitle: "Curso Práctico de Deep Learning en 3 Semanas"
+author: "Jefferson Rodriguez" 
+format:
+  revealjs:
+    theme: default 
+    slide-number: true 
+    show-slide-number: all 
+    mouse-wheel: true # 
+    transition: fade 
+    footer: "Deep Learning en 3 Semanas - Jefferson Rodríguez" 
+editor: visual 
+---
