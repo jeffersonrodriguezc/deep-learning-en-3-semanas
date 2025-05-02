@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en"><head>
-<script src="../../site_libs/clipboard/clipboard.min.js"></script>
-<script src="../../site_libs/quarto-html/tabby.min.js"></script>
-<script src="../../site_libs/quarto-html/popper.min.js"></script>
-<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
-<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
-<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
   <meta name="generator" content="quarto-1.7.29">
 
   <meta name="author" content="Jefferson Rodriguez">
-  <title>Deep Learning Practico en 3 Semanas – Semana 1: Fundamentos de Redes Neuronales</title>
+  <meta name="dcterms.date" content="2025-05-02">
+  <title>Deep Learning Practico en 3 Semanas – Curso Práctico de Deep Learning en 3 Semanas</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/reveal.css">
   <style>
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -29,11 +30,11 @@
       vertical-align: middle;
     }
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-f563837468303362081e247dddd440d0.css">
-  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
-  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
-  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
-  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <link rel="stylesheet" href="../site_libs/revealjs/dist/theme/quarto-f563837468303362081e247dddd440d0.css">
+  <link href="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
   <style type="text/css">
     .reveal div.sourceCode {
       margin: 0;
@@ -127,8 +128,8 @@
     <div class="slides">
 
 <section id="title-slide" class="quarto-title-block center">
-  <h1 class="title">Semana 1: Fundamentos de Redes Neuronales</h1>
-  <p class="subtitle">Curso Práctico de Deep Learning en 3 Semanas</p>
+  <h1 class="title">Curso Práctico de Deep Learning en 3 Semanas</h1>
+  <p class="subtitle">Introducción a la Materia y el Curso</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -138,69 +139,89 @@ Jefferson Rodriguez
 </div>
 </div>
 
+  <p class="date">2025-05-02</p>
 </section>
 <section class="slide level2">
 
-<h3 id="qué-veremos-esta-semana">¿Qué veremos esta semana?</h3>
+<h3 id="bienvenidos-al-curso">¡Bienvenidos al Curso!</h3>
+<div class="columns">
+<div class="column">
 <ul>
-<li class="fragment">Entender la neurona artificial básica: El Perceptrón.</li>
-<li class="fragment">Comprender cómo las redes multicapa (MLP) resuelven problemas complejos.</li>
-<li class="fragment">Captar la idea principal detrás del entrenamiento: Minimizar el error.</li>
-<li class="fragment">Conocer técnicas clave para construir y entrenar tu primera red neuronal.</li>
-<li class="fragment">¡Prepararte para tu primer proyecto práctico con un MLP!</li>
+<li class="fragment">Tu Nombre</li>
+<li class="fragment">Tu Experiencia/Background (Relevante para DL/IA)</li>
+<li class="fragment">Tu Pasión por el Deep Learning</li>
+<li class="fragment">Qué te motiva a dar este curso</li>
+</ul>
+</div></div>
+</section>
+<section class="slide level2">
+
+<h3 id="qué-es-deep-learning-en-pocas-palabras">¿Qué es Deep Learning? (En pocas palabras)</h3>
+<ul>
+<li class="fragment">Una forma avanzada de inteligencia artificial.</li>
+<li class="fragment">Permite a las computadoras aprender de datos con modelos inspirados en el cerebro.</li>
+<li class="fragment">Clave para entender patrones complejos en información no estructurada (imágenes, sonido, texto).</li>
+</ul>
+<aside class="notes">
+<p>Aquí podrías usar una analogía simple o referenciar la Figura 1 de T-CDM_23_001145_01.pdf (IA -&gt; ML -&gt; DL -&gt; DS) visualmente si quieres, aunque como es un archivo separado, quizás sea mejor no depender de imágenes de otros PDFs directamente. Una simple imagen o icono genérico de una red neuronal sería genial aquí.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
+</section>
+<section class="slide level2">
+
+<h3 id="por-qué-deep-learning-hoy-su-importancia.">¿Por qué Deep Learning HOY? Su Importancia.</h3>
+<ul>
+<li class="fragment">Impulsa la <strong>innovación</strong> en múltiples industrias (salud, finanzas, automoción, entretenimiento…).</li>
+<li class="fragment">Permite <strong>automatización</strong> y <strong>análisis de datos a gran escala</strong>.</li>
+<li class="fragment">Base de productos y servicios que usamos a diario (reconocimiento facial, asistentes de voz, recomendaciones personalizadas).</li>
+<li class="fragment"><strong>¡Transforma datos en soluciones!</strong></li>
 </ul>
 </section>
 <section class="slide level2">
 
-<h3 id="explorando-dl-un-vistazo-interactivo">Explorando DL: Un Vistazo Interactivo</h3>
-<iframe src="https://playground.tensorflow.org/#activation=tanh&amp;batchSize=10&amp;dataset=circle&amp;regDataset=reg-plane&amp;learningRate=0.03&amp;regularizationRate=0&amp;noise=0&amp;networkShape=4,2&amp;seed=0.74961&amp;showTestData=false&amp;discretize=false&amp;percTrainData=50&amp;x=true&amp;y=true&amp;xTimesY=false&amp;ySquared=false&amp;cosX=false&amp;sinX=false&amp;cosY=false&amp;sinY=false&amp;collectStats=false&amp;problem=classification&amp;initZero=false&amp;hideText=false" width="100%" height="100%" frameborder="0" allowfullscreen="true"></iframe>
+<h3 id="avances-recientes-impresionantes">Avances Recientes Impresionantes</h3>
+<ul>
+<li class="fragment">(Menciona 2-3 ejemplos concretos y atractivos)
+<ul>
+<li class="fragment">Avances en generación de imágenes/texto (DALL-E, GPT-X).</li>
+<li class="fragment">Vehículos autónomos.</li>
+<li class="fragment">Diagnóstico médico asistido por IA.</li>
+<li class="fragment">Resultados en reconocimiento de voz/traducción.</li>
+</ul></li>
+</ul>
+<aside class="notes">
+<p>Aquí podrías buscar imágenes o videos cortos de estos avances e incrustarlos para hacerlo muy dinámico y visual.</p>
+<style type="text/css">
+        span.MJX_Assistive_MathML {
+          position:absolute!important;
+          clip: rect(1px, 1px, 1px, 1px);
+          padding: 1px 0 0 0!important;
+          border: 0!important;
+          height: 1px!important;
+          width: 1px!important;
+          overflow: hidden!important;
+          display:block!important;
+      }</style></aside>
 </section>
 <section class="slide level2">
 
-<h3 id="estructura-de-la-red-neuronal">Estructura de la Red Neuronal</h3>
-<iframe src="nn-animation.html" width="800" height="500" style="
-    display: block;
-    margin: 0 auto;     
-    border: none;
-    overflow: hidden;
-  " scrolling="no" allowfullscreen="">
-</iframe>
-</section>
-<section class="slide level2">
-
-<h3 id="perceptrón-el-componente-fundamental">Perceptrón: El componente fundamental</h3>
-<div class="fragment">
-<div style="text-align:center; margin:1em 0;">
-<p><iframe src="perceptron_estructura_basica.html" width="450" height="200" style="border:none; margin:auto; display:block;" scrolling="no"></iframe></p>
-</div>
-</div>
-<div class="fragment">
-<p><span class="math display">\[
-f(\mathbf{x})
-=\sum_{i=1}^3 w_i\,x_i + b
-\quad\Longrightarrow\quad
-output =
-\begin{cases}
-1, &amp; \sum_{i=1}^3 w_i\,x_i + b \ge 0,\\
-0, &amp; \text{en otro caso.}
-\end{cases}
-\]</span></p>
-</div>
-<div class="fragment">
-<p><span class="math display">\[
-y=\underbrace{g(z)}_{\text{función de activación}}
-=
-\begin{cases}
-1, &amp; z \ge 0,\\
-0, &amp; z &lt; 0,
-\end{cases}
-\quad z = f(\mathbf{x})
-\]</span></p>
-</div>
-</section>
-<section id="perceptrón-como-clasificador-básico" class="slide level2">
-<h2>Perceptrón como Clasificador básico</h2>
-<iframe src="perceptron_clasificador_basico.html" width="1000" height="500" style="border:none; overflow:hidden;" scrolling="no"></iframe>
+<h3 id="nuestro-viaje-en-3-semanas-la-hoja-de-ruta">Nuestro Viaje en 3 Semanas: La Hoja de Ruta</h3>
+<ul>
+<li class="fragment"><strong>Semana 1:</strong> Fundamentos (Perceptrón, MLP, Entrenamiento básico, Tu primer proyecto práctico).</li>
+<li class="fragment"><strong>Semana 2:</strong> Arquitecturas Especializadas (CNNs, RNNs, etc.) y sus aplicaciones prácticas.</li>
+<li class="fragment"><strong>Semana 3:</strong> Temas Avanzados (Transfer Learning, Modelos Fundacionales, Ética del DL, Proyecto Final).</li>
+<li class="fragment"><strong>Enfoque PRÁCTICO:</strong> Cada semana, ¡manos a la obra con código y ejercicios!</li>
+</ul>
+<p><a href="../semana_1/slides/slides_semana_1.html">Ir a las Diapositivas de la Semana 1</a></p>
 </section>
 <section class="slide level2">
 
@@ -210,24 +231,24 @@ y=\underbrace{g(z)}_{\text{función de activación}}
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
-<p>Deep Learning en 3 Semanas - Jefferson Rodríguez</p>
+<p>Deep Learning en 3 Semanas - Introducción</p>
 </div>
 </div></div>
 
   <script>window.backupDefine = window.define; window.define = undefined;</script>
-  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <script src="../site_libs/revealjs/dist/reveal.js"></script>
   <!-- reveal.js plugins -->
-  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
-  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
-  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
-  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
-  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../site_libs/revealjs/plugin/quarto-support/support.js"></script>
   
 
-  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
-  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
-  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
-  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script src="../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../site_libs/revealjs/plugin/math/math.js"></script>
   <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
 
   <script>

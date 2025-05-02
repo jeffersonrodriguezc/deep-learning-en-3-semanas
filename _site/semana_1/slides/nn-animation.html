@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Simulación Cargas en Red</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js"></script>
+  <style>
+    html, body {
+      margin: 0; padding: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;             /* quita barras */
+      display: flex; justify-content: center; align-items: center;
+      background: transparent;
+    }
+    #nn-canvas {
+      width: 800px; height: 500px;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="nn-canvas"></div>
+  <script>
+    new p5(p => {
+      const layers     = [3, 4, 1];                   // neuronas por capa
+      const layerNames = ['Neurona', 'Umbral'];       // SOLO dos nombres
+      const margin     = 80;
+      const w = 800, h = 500;
+      let nodes = [], links = [], charges = [];
+
+      p.setup = () => {
+        p.createCanvas(w, h).parent('nn-canvas');
+        // 1) posiciones de nodos
+        layers.forEach((count, li) => {
+          const x = margin + li * (w - 2*margin) / (layers.length - 1);
+          for (let i = 0; i < count; i++){
+            const y = (count===1)
+              ? h/2
+              : margin + i * (h - 2*margin) / (count - 1);
+            nodes.push({x, y, layer: li});
+          }
+        });
+        // 2) enlaces completos entre capas
+        nodes.forEach(a => nodes.forEach(b => {
+          if (b.layer === a.layer + 1) links.push([a,b]);
+        }));
+        // 3) partículas
+        for (let k=0; k<40; k++){
+          charges.push({ t: p.random(), link: p.random(links) });
+        }
+      };
+
+      p.draw = () => {
+        p.clear();
+        // aristas
+        p.stroke(0);
+        links.forEach(([a,b]) => p.line(a.x,a.y,b.x,b.y));
+        // nodos
+        nodes.forEach(n => {
+          p.fill(255); p.stroke(0);
+          p.ellipse(n.x,n.y,30);
+        });
+        // cargas
+        charges.forEach(c => {
+          c.t = (c.t + 0.01) % 1;
+          const [a,b] = c.link;
+          const x = p.lerp(a.x,b.x,c.t),
+                y = p.lerp(a.y,b.y,c.t);
+          p.noStroke(); p.fill('rgba(255,100,0,0.8)');
+          p.ellipse(x,y,10);
+        });
+        // etiquetas de capa (solo 2)
+        p.noStroke(); p.fill(0);
+        p.textAlign(p.CENTER, p.BOTTOM);
+        p.textSize(18);
+        layerNames.forEach((name, li) => {
+          const x = margin + li * (w - 2*margin) / (layers.length - 1);
+          p.text(name, x, margin - 10);
+        });
+        // etiqueta "Axón" sobre la zona de conexiones finales
+        const x1 = margin + 1 * (w - 2*margin) / (layers.length - 1);
+        const x2 = margin + 2 * (w - 2*margin) / (layers.length - 1);
+        const midX = (x1 + x2) / 2;
+        p.textAlign(p.CENTER, p.CENTER);
+        p.text('Axón', midX, h/2);
+      };
+    }, 'nn-canvas');
+  </script>
+</body>
+</html>
+
+
+

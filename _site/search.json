@@ -63,6 +63,13 @@
     "text": "Visualización de los features maps\n\nvisualizacion_feature_maps(cnn_keras, image=X_test[randint(0, 100),:,:,:])\n\n\n1/1 ━━━━━━━━━━━━━━━━━━━━ 0s 64ms/step"
   },
   {
+    "objectID": "semana_1/slides/slides_semana_1.html#perceptrón-como-clasificador-básico",
+    "href": "semana_1/slides/slides_semana_1.html#perceptrón-como-clasificador-básico",
+    "title": "Semana 1: Fundamentos de Redes Neuronales",
+    "section": "Perceptrón como Clasificador básico",
+    "text": "Perceptrón como Clasificador básico"
+  },
+  {
     "objectID": "semana_1/notebooks/Nb_1b_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks.html",
     "href": "semana_1/notebooks/Nb_1b_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks.html",
     "title": "Implementado un Perceptrón multi-capa usando frameworks",

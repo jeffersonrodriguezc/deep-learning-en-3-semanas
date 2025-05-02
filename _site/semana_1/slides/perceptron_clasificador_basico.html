@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8"/>
+  <title>Perceptrón Clasificador Interactivo</title>
+  <style>
+    body { margin:0; padding:20px; font-family:sans-serif; }
+    #container { display:flex; gap:2rem; align-items:flex-start; }
+    #controls { min-width:200px; font-size:16px; }
+    #formula-reminder {
+      margin: 10px 0; font-size:16px; line-height:1.4;
+    }
+    #test-calc {
+      margin-bottom:20px; font-size:16px; line-height:1.4;
+    }
+    #test-calc input { width: 70px; margin-left:0.5rem; }
+    #plots { }
+    #labels { display:flex; gap:1rem; margin-bottom:4px; }
+    #labels div { width:300px; text-align:center; font-size:18px; }
+    .canvases { display:flex; gap:1rem; align-items:center; }
+    .plot-area { position: relative; width:300px; height:300px; }
+    .plot-area canvas {
+      position:absolute; top:0; left:0;
+      width:300px; height:300px;
+    }
+    /* Leyenda z */
+    #legend-html {
+      position: relative; width:50px; height:300px;
+      background: linear-gradient(
+        to bottom,
+        rgb(0,0,150) 0%, rgb(255,0,255) 50%, rgb(255,150,0) 100%
+      ); border:1px solid #000;
+    }
+    #legend-html span {
+      position:absolute; left:55px; font-size:12px;
+    }
+    #legend-html .val-plus3{ top:-5px }
+    #legend-html .val-0    { top:140px }
+    #legend-html .val-neg3 { top:285px }
+    #legend-html .lab-z    {
+      position:absolute; bottom:-20px; left:-5px;
+      width:60px; text-align:center; font-size:14px;
+    }
+    /* Leyenda y */
+    #legend-y {
+      position: relative; width:30px; height:300px;
+      background: linear-gradient(
+        to bottom,
+        rgb(100,160,240) 50%, rgb(255,100,80) 50%
+      ); border:1px solid #000;
+    }
+    #legend-y span {
+      position:absolute; left:35px; font-size:12px;
+    }
+    #legend-y .val-1 { top:-5px }
+    #legend-y .val-0 { bottom:-5px }
+    #legend-y .lab-y {
+      position:absolute; bottom:-20px; left:-5px;
+      width:30px; text-align:center; font-size:14px;
+    }
+  </style>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$','$'], ['\\(','\\)']] }
+    };
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+<div id="container">
+
+  <!-- Sliders -->
+  <div id="controls">
+    <label>w₁: <input id="w1" type="range" min="-5" max="5" step="0.1" value="2"></label>
+    <span id="w1v">2.0</span><br>
+    <label>w₂: <input id="w2" type="range" min="-5" max="5" step="0.1" value="1"></label>
+    <span id="w2v">1.0</span><br>
+    <label>bias: <input id="b"  type="range" min="-5" max="5" step="0.1" value="0"></label>
+    <span id="bv">0.0</span>
+
+    <!-- Fórmula en LaTeX -->
+    <div id="formula-reminder">
+        $$
+        \begin{aligned}
+          z &= f(x),\\[2pt]
+          z &= w_1\,x_1 + w_2\,x_2 + b,\\[2pt]
+          y = g(z) &=
+            \begin{cases}
+              1, & z \ge 0,\\
+              0, & z < 0~.
+            \end{cases}
+        \end{aligned}
+        $$
+    </div>
+
+    <!-- Cálculo de prueba -->
+    <div id="test-calc">
+      <div>
+        x₁: <input id="x1-test" type="number" step="0.1" value="0">
+      </div>
+      <div>
+        x₂: <input id="x2-test" type="number" step="0.1" value="0">
+      </div>
+      <div>
+        <strong>z =</strong> <span id="z-formula">…</span>
+      </div>
+      <div>
+        <strong>y =</strong> <span id="y-formula">…</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Plots -->
+  <div id="plots">
+    <div id="labels">
+      <div>z</div><div>y</div>
+    </div>
+    <div class="canvases">
+
+      <!-- Plot z -->
+      <div class="plot-area">
+        <canvas id="canvas-z-data"></canvas>
+        <canvas id="canvas-z-axes"></canvas>
+      </div>
+
+      <!-- Legend z -->
+      <div id="legend-html">
+        <span class="val-plus3">+3</span>
+        <span class="val-0">0</span>
+        <span class="val-neg3">−3</span>
+        <span class="lab-z">z = f(x)</span>
+      </div>
+
+      <!-- Plot y -->
+      <div class="plot-area">
+        <canvas id="canvas-y-data"></canvas>
+        <canvas id="canvas-y-axes"></canvas>
+      </div>
+
+      <!-- Legend y -->
+      <div id="legend-y">
+        <span class="val-1">1</span>
+        <span class="val-0">0</span>
+        <span class="lab-y">y</span>
+      </div>
+
+    </div>
+  </div>
+  
+</div>
+
+<script>
+(() => {
+  // Referencias
+  const [w1s,w2s,bs] = ["w1","w2","b"].map(id=>document.getElementById(id));
+  const [w1v,w2v,bv] = ["w1v","w2v","bv"].map(id=>document.getElementById(id));
+  const x1tIn = document.getElementById("x1-test");
+  const x2tIn = document.getElementById("x2-test");
+  const zFo    = document.getElementById("z-formula");
+  const yFo    = document.getElementById("y-formula");
+
+  // Canvases
+  const czd = document.getElementById("canvas-z-data"),
+        czA = document.getElementById("canvas-z-axes"),
+        cyd = document.getElementById("canvas-y-data"),
+        cyA = document.getElementById("canvas-y-axes");
+  [czd, czA, cyd, cyA].forEach(c=>{
+    c.width  = 300;
+    c.height = 300;
+  });
+  const gzd = czd.getContext("2d"), gza = czA.getContext("2d");
+  const gyd = cyd.getContext("2d"), gya = cyA.getContext("2d");
+
+  // Dibuja ejes (unificado con las dimensiones reales del canvas)
+  function drawAxes(ctx){
+    const W = ctx.canvas.width  - 1;
+    const H = ctx.canvas.height - 1;
+    const CX = W / 2;
+    const CY = H / 2;
+
+    ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+    ctx.strokeStyle = "#000";
+    ctx.fillStyle   = "#000";
+    ctx.lineWidth   = 2;
+    ctx.font        = "16px sans-serif";
+
+    // Ejes
+    ctx.beginPath();
+    ctx.moveTo(0, CY);    ctx.lineTo(W, CY);
+    ctx.moveTo(CX, 0);    ctx.lineTo(CX, H);
+    ctx.stroke();
+
+    // Ticks y etiquetas en -1, 0, +1
+    [-1,0,1].forEach(v => {
+      const xPix = CX * (1 + v);
+      const yPix = CY * (1 - v);
+
+      // Tick en X
+      ctx.beginPath();
+      ctx.moveTo(xPix, CY - 6);
+      ctx.lineTo(xPix, CY + 6);
+      ctx.stroke();
+      ctx.textAlign    = "center";
+      ctx.textBaseline = "top";
+      ctx.fillText(v, xPix, CY + 8);
+
+      // Tick en Y
+      ctx.beginPath();
+      ctx.moveTo(CX - 6, yPix);
+      ctx.lineTo(CX + 6, yPix);
+      ctx.stroke();
+      ctx.textAlign    = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(v, CX - 8, yPix);
+    });
+
+    // Rótulos x₁, x₂
+    ctx.textAlign    = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("x₁", CX, H);
+    ctx.textAlign    = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText("x₂", 0, CY);
+  }
+
+  // Dibuja mapas (sin tocar)
+  function drawData(ctx, isZ, w1,w2,b){
+    const img = ctx.createImageData(300,300);
+    for(let i=0;i<300;i++)for(let j=0;j<300;j++){
+      const idx = (j*300 + i)*4;
+      const x1 = (i/299)*2 - 1;
+      const x2 = 1 - (j/299)*2;
+      if(isZ){
+        let z = w1*x1 + w2*x2 + b;
+        let t = Math.max(-3, Math.min(3, z)) / 3;
+        let r = t>0 ? 255*(1-t) : 255;
+        let g = t>0 ? 150*(1-t) : 150;
+        let bcol = t>0 ? 150 : 255*(1+t);
+        img.data[idx  ] = r;
+        img.data[idx+1] = g;
+        img.data[idx+2] = bcol;
+        img.data[idx+3] = 255;
+      } else {
+        let inside = (w1*x1 + w2*x2 + b) >= 0;
+        let [r,g,bcol] = inside ? [100,160,240] : [255,100,80];
+        img.data[idx  ] = r;
+        img.data[idx+1] = g;
+        img.data[idx+2] = bcol;
+        img.data[idx+3] = 255;
+      }
+    }
+    ctx.putImageData(img,0,0);
+  }
+
+  // Dibuja frontera (unificado con dimensiones)
+  function drawBoundary(ctx,w1,w2,b){
+    const W  = ctx.canvas.width  - 1;
+    const H  = ctx.canvas.height - 1;
+    const CX = W / 2;
+    const CY = H / 2;
+
+    ctx.save();
+    ctx.beginPath();
+    for(let iPix = 0; iPix <= W; iPix++){
+      const x1 = (iPix / W)*2 - 1;
+      const x2 = -(w1*x1 + b)/w2;
+      const jPix = CY*(1 - x2);
+      if(iPix === 0) ctx.moveTo(iPix, jPix);
+      else           ctx.lineTo(iPix, jPix);
+    }
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth   = 2;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // Render completo
+  function render(){
+    const w1 = +w1s.value,
+          w2 = +w2s.value,
+          b  = +bs.value;
+    w1v.textContent = w1.toFixed(1);
+    w2v.textContent = w2.toFixed(1);
+    bv.textContent  = b.toFixed(1);
+
+    // Plot z
+    drawData(gzd, true, w1,w2,b);
+    drawBoundary(gza, w1,w2,b);
+    drawAxes(gza);
+
+    // Plot y
+    drawData(gyd, false, w1,w2,b);
+    drawBoundary(gya, w1,w2,b);
+    drawAxes(gya);
+
+    // Cálculo puntual
+    const x1t = parseFloat(x1tIn.value),
+          x2t = parseFloat(x2tIn.value);
+    const zt = w1*x1t + w2*x2t + b,
+          yt = zt >= 0 ? 1 : 0;
+    zFo.textContent = `${w1.toFixed(1)}·${x1t.toFixed(1)} + ${w2.toFixed(1)}·${x2t.toFixed(1)} + ${b.toFixed(1)} = ${zt.toFixed(2)}`;
+    yFo.textContent = yt;
+  }
+
+  // Listeners
+  [w1s,w2s,bs,x1tIn,x2tIn].forEach(el => el.addEventListener("input", render));
+  render();
+})();
+</script>
+  <!-- Diagrama inline SVG -->
+  <div style="text-align:center; margin-top:20px;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="300" height="120" viewBox="0 0 300 120">
+      <!-- Círculos x₁,x₂ -->
+      <circle cx="50" cy="30"  r="20" fill="none" stroke="#000" stroke-width="2"/>
+      <text   x="50" y="35"   text-anchor="middle" font-size="16px">x₁</text>
+      <circle cx="50" cy="90"  r="20" fill="none" stroke="#000" stroke-width="2"/>
+      <text   x="50" y="95"   text-anchor="middle" font-size="16px">x₂</text>
+      <!-- Pesos -->
+      <text   x="100" y="30"  font-size="14px">w₁</text>
+      <text   x="100" y="90"  font-size="14px">w₂</text>
+      <!-- Definición flecha -->
+      <defs>
+        <marker id="arrow" markerWidth="6" markerHeight="6" refX="5" refY="3"
+                orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L6,3 L0,6 Z" fill="#000"/>
+        </marker>
+      </defs>
+      <!-- Flechas a z -->
+      <line x1="70"  y1="30"  x2="130" y2="60" stroke="#000" stroke-width="2"
+            marker-end="url(#arrow)"/>
+      <line x1="70"  y1="90"  x2="130" y2="60" stroke="#000" stroke-width="2"
+            marker-end="url(#arrow)"/>
+      <!-- Nodo z -->
+      <circle cx="150" cy="60" r="25" fill="#ddd" stroke="#000" stroke-width="2"/>
+      <text   x="150" y="65"  text-anchor="middle" font-size="18px">z</text>
+      <!-- Flecha a y -->
+      <line x1="175" y1="60"  x2="225" y2="60" stroke="#000" stroke-width="2"
+            marker-end="url(#arrow)"/>
+      <!-- Nodo y -->
+      <circle cx="250" cy="60" r="20" fill="none" stroke="#000" stroke-width="2"/>
+      <text   x="250" y="65"  text-anchor="middle" font-size="18px">y</text>
+    </svg>
+  </div>
+</body>
+</html>
+
+
+
+
+
+

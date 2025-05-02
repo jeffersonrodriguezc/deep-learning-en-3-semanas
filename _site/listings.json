@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/introduccion/intro_curso.html",
       "/semana_1/notebooks/Nb_1b_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks.html",
       "/semana_1/notebooks/Nb_1c_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks_MLFlow.html",
       "/semana_2/notebooks/Nb_2a_Implementando_una_CNN_usando_Keras.html",

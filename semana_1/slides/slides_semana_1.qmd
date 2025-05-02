@@ -4,11 +4,111 @@ subtitle: "Curso Práctico de Deep Learning en 3 Semanas"
 author: "Jefferson Rodriguez" 
 format:
   revealjs:
+    sanetize: false
+    self-contained: false
+    incremental: true
     theme: default 
     slide-number: true 
     show-slide-number: all 
-    mouse-wheel: true # 
-    transition: fade 
+    mouse-wheel: true 
+    transition: fade  
     footer: "Deep Learning en 3 Semanas - Jefferson Rodríguez" 
+    dependencies:
+      - src: https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js
+        defer: true
 editor: visual 
+resources:
+  - nn-animation.html  
+  - perceptron_estructura_basica.html
+  - perceptron_clasificador_basico.html
+
+---
+
+### ¿Qué veremos esta semana?
+
+* Entender la neurona artificial básica: El Perceptrón.
+* Comprender cómo las redes multicapa (MLP) resuelven problemas complejos.
+* Captar la idea principal detrás del entrenamiento: Minimizar el error.
+* Conocer técnicas clave para construir y entrenar tu primera red neuronal.
+* ¡Prepararte para tu primer proyecto práctico con un MLP!
+
+---
+
+### Explorando DL: Un Vistazo Interactivo
+
+```{=html}
+<iframe src="https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.74961&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false" width="100%" height="100%" frameborder="0" allowfullscreen="true"></iframe>
+```
+---
+
+### Estructura de la Red Neuronal
+
+```{=html}
+<iframe
+  src="nn-animation.html"
+  width="800"
+  height="500"
+  style="
+    display: block;
+    margin: 0 auto;     
+    border: none;
+    overflow: hidden;
+  "
+  scrolling="no"
+  allowfullscreen>
+</iframe>
+```
+---
+
+### Perceptrón: El componente fundamental
+
+::: {.fragment}
+<div style="text-align:center; margin:1em 0;">
+  <iframe
+    src="perceptron_estructura_basica.html"
+    width="450"
+    height="200"
+    style="border:none; margin:auto; display:block;"
+    scrolling="no"
+  ></iframe>
+</div>
+:::
+
+::: {.fragment}
+$$
+f(\mathbf{x})
+=\sum_{i=1}^3 w_i\,x_i + b
+\quad\Longrightarrow\quad
+output =
+\begin{cases}
+1, & \sum_{i=1}^3 w_i\,x_i + b \ge 0,\\
+0, & \text{en otro caso.}
+\end{cases}
+$$
+:::
+
+::: {.fragment}
+$$
+y=\underbrace{g(z)}_{\text{función de activación}}
+=
+\begin{cases}
+1, & z \ge 0,\\
+0, & z < 0,
+\end{cases}
+\quad z = f(\mathbf{x})
+$$
+:::
+---
+
+## Perceptrón como Clasificador básico
+
+```{=html}
+<iframe
+  src="perceptron_clasificador_basico.html"
+  width="1000"
+  height="500"
+  style="border:none; overflow:hidden;"
+  scrolling="no"
+></iframe>
+```
 ---

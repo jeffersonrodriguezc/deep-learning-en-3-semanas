@@ -1,0 +1,71 @@
+---
+title: "Curso Práctico de Deep Learning en 3 Semanas" 
+subtitle: "Introducción a la Materia y el Curso"
+author: "Jefferson Rodriguez"
+date: today 
+format:
+  revealjs:
+    incremental: true
+    theme: default #
+    slide-number: true
+    show-slide-number: all
+    mouse-wheel: true
+    transition: fade
+    footer: "Deep Learning en 3 Semanas - Introducción" 
+editor: visual
+---
+
+### ¡Bienvenidos al Curso!
+
+::: columns
+::: column
+* Tu Nombre
+* Tu Experiencia/Background (Relevante para DL/IA)
+* Tu Pasión por el Deep Learning
+* Qué te motiva a dar este curso
+:::
+:::
+
+---
+
+### ¿Qué es Deep Learning? (En pocas palabras)
+* Una forma avanzada de inteligencia artificial.
+* Permite a las computadoras aprender de datos con modelos inspirados en el cerebro.
+* Clave para entender patrones complejos en información no estructurada (imágenes, sonido, texto).
+
+::: notes
+Aquí podrías usar una analogía simple o referenciar la Figura 1 de T-CDM_23_001145_01.pdf (IA -> ML -> DL -> DS) visualmente si quieres, aunque como es un archivo separado, quizás sea mejor no depender de imágenes de otros PDFs directamente. Una simple imagen o icono genérico de una red neuronal sería genial aquí.
+:::
+
+---
+
+### ¿Por qué Deep Learning HOY? Su Importancia.
+* Impulsa la **innovación** en múltiples industrias (salud, finanzas, automoción, entretenimiento...).
+* Permite **automatización** y **análisis de datos a gran escala**.
+* Base de productos y servicios que usamos a diario (reconocimiento facial, asistentes de voz, recomendaciones personalizadas).
+* **¡Transforma datos en soluciones!**
+
+---
+
+### Avances Recientes Impresionantes
+* (Menciona 2-3 ejemplos concretos y atractivos)
+    * Avances en generación de imágenes/texto (DALL-E, GPT-X).
+    * Vehículos autónomos.
+    * Diagnóstico médico asistido por IA.
+    * Resultados en reconocimiento de voz/traducción.
+
+::: notes
+Aquí podrías buscar imágenes o videos cortos de estos avances e incrustarlos para hacerlo muy dinámico y visual.
+:::
+
+---
+
+### Nuestro Viaje en 3 Semanas: La Hoja de Ruta
+* **Semana 1:** Fundamentos (Perceptrón, MLP, Entrenamiento básico, Tu primer proyecto práctico).
+* **Semana 2:** Arquitecturas Especializadas (CNNs, RNNs, etc.) y sus aplicaciones prácticas.
+* **Semana 3:** Temas Avanzados (Transfer Learning, Modelos Fundacionales, Ética del DL, Proyecto Final).
+* **Enfoque PRÁCTICO:** Cada semana, ¡manos a la obra con código y ejercicios!
+
+[Ir a las Diapositivas de la Semana 1](../semana_1/slides/slides_semana_1.html)
+
+---
