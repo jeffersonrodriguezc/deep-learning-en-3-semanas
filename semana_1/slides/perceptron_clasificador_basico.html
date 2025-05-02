@@ -165,93 +165,146 @@
         czA = document.getElementById("canvas-z-axes"),
         cyd = document.getElementById("canvas-y-data"),
         cyA = document.getElementById("canvas-y-axes");
-  [czd, czA, cyd, cyA].forEach(c=>c.width=c.height=300);
+  [czd, czA, cyd, cyA].forEach(c=>{
+    c.width  = 300;
+    c.height = 300;
+  });
   const gzd = czd.getContext("2d"), gza = czA.getContext("2d");
   const gyd = cyd.getContext("2d"), gya = cyA.getContext("2d");
 
-  // Dibuja ejes
+  // Dibuja ejes (unificado con las dimensiones reales del canvas)
   function drawAxes(ctx){
-    ctx.clearRect(0,0,300,300);
-    ctx.strokeStyle="#000"; ctx.fillStyle="#000"; ctx.lineWidth=2;
-    ctx.font="16px sans-serif";
+    const W = ctx.canvas.width  - 1;
+    const H = ctx.canvas.height - 1;
+    const CX = W / 2;
+    const CY = H / 2;
+
+    ctx.clearRect(0,0, ctx.canvas.width, ctx.canvas.height);
+    ctx.strokeStyle = "#000";
+    ctx.fillStyle   = "#000";
+    ctx.lineWidth   = 2;
+    ctx.font        = "16px sans-serif";
+
+    // Ejes
     ctx.beginPath();
-    ctx.moveTo(0,150); ctx.lineTo(300,150);
-    ctx.moveTo(150,0); ctx.lineTo(150,300);
+    ctx.moveTo(0, CY);    ctx.lineTo(W, CY);
+    ctx.moveTo(CX, 0);    ctx.lineTo(CX, H);
     ctx.stroke();
-    [-1,0,1].forEach(v=>{
-      const x=150+150*v;
-      ctx.beginPath(); ctx.moveTo(x,144); ctx.lineTo(x,156); ctx.stroke();
-      ctx.textAlign="center"; ctx.textBaseline="top"; ctx.fillText(v,x,156);
+
+    // Ticks y etiquetas en -1, 0, +1
+    [-1,0,1].forEach(v => {
+      const xPix = CX * (1 + v);
+      const yPix = CY * (1 - v);
+
+      // Tick en X
+      ctx.beginPath();
+      ctx.moveTo(xPix, CY - 6);
+      ctx.lineTo(xPix, CY + 6);
+      ctx.stroke();
+      ctx.textAlign    = "center";
+      ctx.textBaseline = "top";
+      ctx.fillText(v, xPix, CY + 8);
+
+      // Tick en Y
+      ctx.beginPath();
+      ctx.moveTo(CX - 6, yPix);
+      ctx.lineTo(CX + 6, yPix);
+      ctx.stroke();
+      ctx.textAlign    = "right";
+      ctx.textBaseline = "middle";
+      ctx.fillText(v, CX - 8, yPix);
     });
-    [-1,0,1].forEach(v=>{
-      const y=150-150*v;
-      ctx.beginPath(); ctx.moveTo(144,y); ctx.lineTo(156,y); ctx.stroke();
-      ctx.textAlign="right"; ctx.textBaseline="middle"; ctx.fillText(v,144,y);
-    });
-    ctx.textAlign="center"; ctx.textBaseline="bottom"; ctx.fillText("x₁",150,298);
-    ctx.textAlign="left"; ctx.textBaseline="middle"; ctx.fillText("x₂",2,150);
+
+    // Rótulos x₁, x₂
+    ctx.textAlign    = "center";
+    ctx.textBaseline = "bottom";
+    ctx.fillText("x₁", CX, H);
+    ctx.textAlign    = "left";
+    ctx.textBaseline = "middle";
+    ctx.fillText("x₂", 0, CY);
   }
 
-  // Dibuja mapas
+  // Dibuja mapas (sin tocar)
   function drawData(ctx, isZ, w1,w2,b){
-    const img=ctx.createImageData(300,300);
+    const img = ctx.createImageData(300,300);
     for(let i=0;i<300;i++)for(let j=0;j<300;j++){
-      const idx=(j*300+i)*4;
-      const x1=(i/299)*2-1, x2=1-(j/299)*2;
+      const idx = (j*300 + i)*4;
+      const x1 = (i/299)*2 - 1;
+      const x2 = 1 - (j/299)*2;
       if(isZ){
-        let z=w1*x1+w2*x2+b, t=Math.max(-3,Math.min(3,z))/3;
-        let r=t>0?255*(1-t):255, g=t>0?150*(1-t):150, bcol=t>0?150:255*(1+t);
-        img.data[idx]=r; img.data[idx+1]=g; img.data[idx+2]=bcol; img.data[idx+3]=255;
+        let z = w1*x1 + w2*x2 + b;
+        let t = Math.max(-3, Math.min(3, z)) / 3;
+        let r = t>0 ? 255*(1-t) : 255;
+        let g = t>0 ? 150*(1-t) : 150;
+        let bcol = t>0 ? 150 : 255*(1+t);
+        img.data[idx  ] = r;
+        img.data[idx+1] = g;
+        img.data[idx+2] = bcol;
+        img.data[idx+3] = 255;
       } else {
-        let inside=(w1*x1+w2*x2+b)>=0;
-        let [r,g,bcol]=inside?[100,160,240]:[255,100,80];
-        img.data[idx]=r; img.data[idx+1]=g; img.data[idx+2]=bcol; img.data[idx+3]=255;
+        let inside = (w1*x1 + w2*x2 + b) >= 0;
+        let [r,g,bcol] = inside ? [100,160,240] : [255,100,80];
+        img.data[idx  ] = r;
+        img.data[idx+1] = g;
+        img.data[idx+2] = bcol;
+        img.data[idx+3] = 255;
       }
     }
     ctx.putImageData(img,0,0);
   }
 
-  // Dibuja frontera
+  // Dibuja frontera (unificado con dimensiones)
   function drawBoundary(ctx,w1,w2,b){
-    ctx.save(); ctx.strokeStyle="#000"; ctx.lineWidth=2; ctx.beginPath();
-    for(let i=0;i<300;i++){
-      const x1=(i/299)*2-1, x2=-(w1*x1+b)/w2;
-      const j=Math.round((1-x2)/2*299);
-      ctx[i===0?"moveTo":"lineTo"](i,j);
+    const W  = ctx.canvas.width  - 1;
+    const H  = ctx.canvas.height - 1;
+    const CX = W / 2;
+    const CY = H / 2;
+
+    ctx.save();
+    ctx.beginPath();
+    for(let iPix = 0; iPix <= W; iPix++){
+      const x1 = (iPix / W)*2 - 1;
+      const x2 = -(w1*x1 + b)/w2;
+      const jPix = CY*(1 - x2);
+      if(iPix === 0) ctx.moveTo(iPix, jPix);
+      else           ctx.lineTo(iPix, jPix);
     }
-    ctx.stroke(); ctx.restore();
+    ctx.strokeStyle = "#000";
+    ctx.lineWidth   = 2;
+    ctx.stroke();
+    ctx.restore();
   }
 
   // Render completo
   function render(){
-    const w1=+w1s.value, w2=+w2s.value, b=+bs.value;
-    w1v.textContent=w1.toFixed(1);
-    w2v.textContent=w2.toFixed(1);
-    bv.textContent=b.toFixed(1);
+    const w1 = +w1s.value,
+          w2 = +w2s.value,
+          b  = +bs.value;
+    w1v.textContent = w1.toFixed(1);
+    w2v.textContent = w2.toFixed(1);
+    bv.textContent  = b.toFixed(1);
 
     // Plot z
-    gzd.clearRect(0,0,300,300);
-    drawData(gzd,true,w1,w2,b);
-    gza.clearRect(0,0,300,300);
-    drawBoundary(gza,w1,w2,b);
+    drawData(gzd, true, w1,w2,b);
+    drawBoundary(gza, w1,w2,b);
     drawAxes(gza);
 
     // Plot y
-    gyd.clearRect(0,0,300,300);
-    drawData(gyd,false,w1,w2,b);
-    gya.clearRect(0,0,300,300);
-    drawBoundary(gya,w1,w2,b);
+    drawData(gyd, false, w1,w2,b);
+    drawBoundary(gya, w1,w2,b);
     drawAxes(gya);
 
     // Cálculo puntual
-    const x1t=parseFloat(x1tIn.value), x2t=parseFloat(x2tIn.value);
-    const zt=w1*x1t+w2*x2t+b, yt=zt>=0?1:0;
-    zFo.textContent=`${w1.toFixed(1)}·${x1t.toFixed(1)} + ${w2.toFixed(1)}·${x2t.toFixed(1)} + ${b.toFixed(1)} = ${zt.toFixed(2)}`;
-    yFo.textContent=yt;
+    const x1t = parseFloat(x1tIn.value),
+          x2t = parseFloat(x2tIn.value);
+    const zt = w1*x1t + w2*x2t + b,
+          yt = zt >= 0 ? 1 : 0;
+    zFo.textContent = `${w1.toFixed(1)}·${x1t.toFixed(1)} + ${w2.toFixed(1)}·${x2t.toFixed(1)} + ${b.toFixed(1)} = ${zt.toFixed(2)}`;
+    yFo.textContent = yt;
   }
 
   // Listeners
-  [w1s,w2s,bs,x1tIn,x2tIn].forEach(el=>el.addEventListener("input",render));
+  [w1s,w2s,bs,x1tIn,x2tIn].forEach(el => el.addEventListener("input", render));
   render();
 })();
 </script>
