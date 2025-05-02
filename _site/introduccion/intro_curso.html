@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.7.29">
 
   <meta name="author" content="Jefferson Rodriguez">
-  <meta name="dcterms.date" content="2025-05-02">
+  <meta name="dcterms.date" content="2025-05-03">
   <title>Deep Learning Practico en 3 Semanas – Curso Práctico de Deep Learning en 3 Semanas</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -139,42 +139,53 @@ Jefferson Rodriguez
 </div>
 </div>
 
-  <p class="date">2025-05-02</p>
+  <p class="date">2025-05-03</p>
 </section>
 <section class="slide level2">
 
 <h3 id="bienvenidos-al-curso">¡Bienvenidos al Curso!</h3>
-<div class="columns">
-<div class="column">
 <ul>
-<li class="fragment">Tu Nombre</li>
-<li class="fragment">Tu Experiencia/Background (Relevante para DL/IA)</li>
-<li class="fragment">Tu Pasión por el Deep Learning</li>
-<li class="fragment">Qué te motiva a dar este curso</li>
+<li class="fragment">👤 Jefferson Rodríguez, Colombiano.</li>
+<li class="fragment">💼 Ingeniero en Sistemas, MSc en Ciencias de la Computación, actualmente doctorando en Deep Learning y Ciberseguridad en la Universidad de Cagliari. Experiencia en ciencia de datos, Visión por computadora, biometría, esteganografía y watermarking</li>
+<li class="fragment">🎯 Mi intención es contribuir con el desarrollo de su formación en esta maestría y ser una apoyo para su proyectos de grado.</li>
 </ul>
-</div></div>
 </section>
 <section class="slide level2">
 
 <h3 id="qué-es-deep-learning-en-pocas-palabras">¿Qué es Deep Learning? (En pocas palabras)</h3>
 <ul>
-<li class="fragment">Una forma avanzada de inteligencia artificial.</li>
+<li class="fragment">Una forma avanzada de inteligencia artificial que aprende a partir de grandes volúmenes de datos.</li>
 <li class="fragment">Permite a las computadoras aprender de datos con modelos inspirados en el cerebro.</li>
 <li class="fragment">Clave para entender patrones complejos en información no estructurada (imágenes, sonido, texto).</li>
+<li class="fragment">Se basa en el paradigma de programación diferenciable (differentiable programming).</li>
 </ul>
-<aside class="notes">
-<p>Aquí podrías usar una analogía simple o referenciar la Figura 1 de T-CDM_23_001145_01.pdf (IA -&gt; ML -&gt; DL -&gt; DS) visualmente si quieres, aunque como es un archivo separado, quizás sea mejor no depender de imágenes de otros PDFs directamente. Una simple imagen o icono genérico de una red neuronal sería genial aquí.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
+</section>
+<section class="slide level2">
+
+<h3 id="cómo-se-conecta-con-otras-áreas-y-su-evolución">¿Cómo se conecta con otras áreas? y su evolución</h3>
+<div class="small">
+<ul>
+<li class="fragment">Inteligencia Artificial (IA) ⟶ Aprendizaje Automático (ML) ⟶ Deep Learning (DL)</li>
+</ul>
+</div>
+<div class="fragment">
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="dl_timeline.png" style="width:100.0%" height="400"></p>
+<figcaption>DL Timeline</figcaption>
+</figure>
+</div>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="en-qué-se-diferencia-de-machine-learning">¿En qué se diferencia de Machine Learning?</h3>
+<div class="quarto-figure quarto-figure-center">
+<figure>
+<p><img data-src="ml_vs_dl.png" style="width:100.0%" height="500"></p>
+<figcaption>Comparación entre ML y DL</figcaption>
+</figure>
+</div>
 </section>
 <section class="slide level2">
 
@@ -188,43 +199,35 @@ Jefferson Rodriguez
 </section>
 <section class="slide level2">
 
+<h3 id="qué-está-pasando-hoy-con-dl">¿Qué está pasando hoy con DL?</h3>
+<ul>
+<li class="fragment">Modelos con miles de millones de parámetros.</li>
+<li class="fragment">Entrenamiento en miles de GPUs.</li>
+<li class="fragment">Costos de entrenamiento millonarios (pero también acceso gratuito gracias al open source).</li>
+<li class="fragment">Resultados sorprendentes: DALL·E, GPT, Stable Diffusion.</li>
+<li class="fragment"><strong>¡No siempre necesitas ser masivo! DL también funciona en casos comunes.</strong></li>
+</ul>
+</section>
+<section class="slide level2">
+
 <h3 id="avances-recientes-impresionantes">Avances Recientes Impresionantes</h3>
 <ul>
-<li class="fragment">(Menciona 2-3 ejemplos concretos y atractivos)
-<ul>
-<li class="fragment">Avances en generación de imágenes/texto (DALL-E, GPT-X).</li>
-<li class="fragment">Vehículos autónomos.</li>
-<li class="fragment">Diagnóstico médico asistido por IA.</li>
-<li class="fragment">Resultados en reconocimiento de voz/traducción.</li>
-</ul></li>
+<li class="fragment">Modelos generativos (texto, imagen, música): ChatGPT, DALL·E, Midjourney.</li>
+<li class="fragment">Vehículos autónomos (Tesla, Waymo).</li>
+<li class="fragment">Diagnóstico médico asistido por IA (detección de cáncer, retinopatía).</li>
+<li class="fragment">Traducción y reconocimiento de voz en tiempo real.</li>
 </ul>
-<aside class="notes">
-<p>Aquí podrías buscar imágenes o videos cortos de estos avances e incrustarlos para hacerlo muy dinámico y visual.</p>
-<style type="text/css">
-        span.MJX_Assistive_MathML {
-          position:absolute!important;
-          clip: rect(1px, 1px, 1px, 1px);
-          padding: 1px 0 0 0!important;
-          border: 0!important;
-          height: 1px!important;
-          width: 1px!important;
-          overflow: hidden!important;
-          display:block!important;
-      }</style></aside>
 </section>
 <section class="slide level2">
 
 <h3 id="nuestro-viaje-en-3-semanas-la-hoja-de-ruta">Nuestro Viaje en 3 Semanas: La Hoja de Ruta</h3>
 <ul>
-<li class="fragment"><strong>Semana 1:</strong> Fundamentos (Perceptrón, MLP, Entrenamiento básico, Tu primer proyecto práctico).</li>
-<li class="fragment"><strong>Semana 2:</strong> Arquitecturas Especializadas (CNNs, RNNs, etc.) y sus aplicaciones prácticas.</li>
-<li class="fragment"><strong>Semana 3:</strong> Temas Avanzados (Transfer Learning, Modelos Fundacionales, Ética del DL, Proyecto Final).</li>
-<li class="fragment"><strong>Enfoque PRÁCTICO:</strong> Cada semana, ¡manos a la obra con código y ejercicios!</li>
+<li class="fragment"><p><strong>Semana 1:</strong> Fundamentos (Perceptrón, MLP, Entrenamiento básico, Tu primer proyecto práctico).</p></li>
+<li class="fragment"><p><strong>Semana 2:</strong> Arquitecturas Especializadas (CNNs, RNNs, etc.) y sus aplicaciones prácticas.</p></li>
+<li class="fragment"><p><strong>Semana 3:</strong> Temas Avanzados (Transfer Learning, Modelos Fundacionales, Ética del DL, Proyecto Final).</p></li>
+<li class="fragment"><p><strong>Enfoque PRÁCTICO:</strong> Cada semana, ¡manos a la obra con código y ejercicios!</p></li>
+<li class="fragment"><p><a href="../semana_1/slides/slides_semana_1.html">Ir a las Diapositivas de la Semana 1</a></p></li>
 </ul>
-<p><a href="../semana_1/slides/slides_semana_1.html">Ir a las Diapositivas de la Semana 1</a></p>
-</section>
-<section class="slide level2">
-
 
 
 </section>

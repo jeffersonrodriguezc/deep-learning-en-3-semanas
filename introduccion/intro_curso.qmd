@@ -17,25 +17,33 @@ editor: visual
 
 ### ¡Bienvenidos al Curso!
 
-::: columns
-::: column
-* Tu Nombre
-* Tu Experiencia/Background (Relevante para DL/IA)
-* Tu Pasión por el Deep Learning
-* Qué te motiva a dar este curso
-:::
-:::
+* 👤 Jefferson Rodríguez, Colombiano.
+* 💼 Ingeniero en Sistemas, MSc en Ciencias de la Computación, actualmente doctorando en Deep Learning y Ciberseguridad en la Universidad de Cagliari. Experiencia en ciencia de datos, Visión por computadora, biometría, esteganografía y watermarking
+* 🎯 Mi intención es contribuir con el desarrollo de su formación en esta maestría y ser una apoyo para
+su proyectos de grado.
 
 ---
 
 ### ¿Qué es Deep Learning? (En pocas palabras)
-* Una forma avanzada de inteligencia artificial.
+* Una forma avanzada de inteligencia artificial que aprende a partir de grandes volúmenes de datos.
 * Permite a las computadoras aprender de datos con modelos inspirados en el cerebro.
 * Clave para entender patrones complejos en información no estructurada (imágenes, sonido, texto).
+* Se basa en el paradigma de programación diferenciable (differentiable programming).
 
-::: notes
-Aquí podrías usar una analogía simple o referenciar la Figura 1 de T-CDM_23_001145_01.pdf (IA -> ML -> DL -> DS) visualmente si quieres, aunque como es un archivo separado, quizás sea mejor no depender de imágenes de otros PDFs directamente. Una simple imagen o icono genérico de una red neuronal sería genial aquí.
+---
+
+### ¿Cómo se conecta con otras áreas? y su evolución
+::: {.small}
+* Inteligencia Artificial (IA) ⟶ Aprendizaje Automático (ML) ⟶ Deep Learning (DL)
 :::
+::: {.fragment}
+![DL Timeline](dl_timeline.png){width=100% height=400px}
+:::
+
+---
+
+### ¿En qué se diferencia de Machine Learning?
+![Comparación entre ML y DL](ml_vs_dl.png){width=100% height=500px}
 
 ---
 
@@ -47,16 +55,20 @@ Aquí podrías usar una analogía simple o referenciar la Figura 1 de T-CDM_23_0
 
 ---
 
-### Avances Recientes Impresionantes
-* (Menciona 2-3 ejemplos concretos y atractivos)
-    * Avances en generación de imágenes/texto (DALL-E, GPT-X).
-    * Vehículos autónomos.
-    * Diagnóstico médico asistido por IA.
-    * Resultados en reconocimiento de voz/traducción.
+### ¿Qué está pasando hoy con DL?
+* Modelos con miles de millones de parámetros.
+* Entrenamiento en miles de GPUs.
+* Costos de entrenamiento millonarios (pero también acceso gratuito gracias al open source).
+* Resultados sorprendentes: DALL·E, GPT, Stable Diffusion.
+* **¡No siempre necesitas ser masivo! DL también funciona en casos comunes.**
 
-::: notes
-Aquí podrías buscar imágenes o videos cortos de estos avances e incrustarlos para hacerlo muy dinámico y visual.
-:::
+---
+
+### Avances Recientes Impresionantes
+  * Modelos generativos (texto, imagen, música): ChatGPT, DALL·E, Midjourney.
+  * Vehículos autónomos (Tesla, Waymo).
+  * Diagnóstico médico asistido por IA (detección de cáncer, retinopatía).
+  * Traducción y reconocimiento de voz en tiempo real.
 
 ---
 
@@ -66,6 +78,4 @@ Aquí podrías buscar imágenes o videos cortos de estos avances e incrustarlos 
 * **Semana 3:** Temas Avanzados (Transfer Learning, Modelos Fundacionales, Ética del DL, Proyecto Final).
 * **Enfoque PRÁCTICO:** Cada semana, ¡manos a la obra con código y ejercicios!
 
-[Ir a las Diapositivas de la Semana 1](../semana_1/slides/slides_semana_1.html)
-
----
+* [Ir a las Diapositivas de la Semana 1](../semana_1/slides/slides_semana_1.html)
