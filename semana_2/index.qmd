@@ -16,3 +16,4 @@ Expandimos nuestro conocimiento explorando diversas arquitecturas de redes neuro
 * [Slides de la Semana 2 (Próximamente)](slides/slides_semana_2.html) 
 * [Notebook: Implementando una CNN usando Keras](notebooks/Nb_2a_Implementando_una_CNN_usando_Keras.html) 
 * [Notebook: Resolviendo desafíos con RNNs usando Keras](notebooks/Nb_2b_Resolviendo_desafios_con_RNNs_usando_keras.html)
+* [Notebook: Traducción usando Transformers y Keras](notebooks/Nb_2c_Traduccion_usando_transformers_keras.html)
