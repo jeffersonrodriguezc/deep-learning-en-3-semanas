@@ -60,7 +60,7 @@
     "href": "semana_2/index.html",
     "title": "Semana 2: Arquitecturas de Redes Neuronales",
     "section": "",
-    "text": "Expandimos nuestro conocimiento explorando diversas arquitecturas de redes neuronales y sus aplicaciones.\nTemas Clave:\n\nDiversas arquitecturas de redes neuronales (DNN, CNN, RNN).\nAplicaciones y ventajas de cada arquitectura.\nIntroducción a arquitecturas avanzadas (Transformers, GANs, Redes de Grafos).\n\nEnfoque Práctico: Aprenderás a identificar y seleccionar la arquitectura más adecuada para diferentes tipos de problemas. Implementarás modelos DNN, CNN y RNN en proyectos prácticos para experimentar con su desempeño.\nMateriales de la Semana:\n\nSlides de la Semana 2 (Próximamente)\nNotebook: Implementando una CNN usando Keras\nNotebook: Resolviendo desafíos con RNNs usando Keras"
+    "text": "Expandimos nuestro conocimiento explorando diversas arquitecturas de redes neuronales y sus aplicaciones.\nTemas Clave:\n\nDiversas arquitecturas de redes neuronales (DNN, CNN, RNN).\nAplicaciones y ventajas de cada arquitectura.\nIntroducción a arquitecturas avanzadas (Transformers, GANs, Redes de Grafos).\n\nEnfoque Práctico: Aprenderás a identificar y seleccionar la arquitectura más adecuada para diferentes tipos de problemas. Implementarás modelos DNN, CNN y RNN en proyectos prácticos para experimentar con su desempeño.\nMateriales de la Semana:\n\nSlides de la Semana 2 (Próximamente)\nNotebook: Implementando una CNN usando Keras\nNotebook: Resolviendo desafíos con RNNs usando Keras\nNotebook: Traducción usando Transformers y Keras"
   },
   {
     "objectID": "semana_1/notebooks/Nb_1c_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks_MLFlow.html",
