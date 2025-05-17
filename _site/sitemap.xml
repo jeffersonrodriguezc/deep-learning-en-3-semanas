@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://jeffersonrodriguezc.github.io/deep-learning-en-3-semanas/semana_3/notebooks/Nb_3b_Introduccion_explicabilidad_interpretabilidad.html</loc>
-    <lastmod>2025-05-01T20:20:10.283Z</lastmod>
+    <lastmod>2025-05-17T08:44:04.236Z</lastmod>
   </url>
   <url>
     <loc>https://jeffersonrodriguezc.github.io/deep-learning-en-3-semanas/semana_3/index.html</loc>
@@ -10,11 +10,11 @@
   </url>
   <url>
     <loc>https://jeffersonrodriguezc.github.io/deep-learning-en-3-semanas/semana_2/notebooks/Nb_2b_Resolviendo_desafios_con_RNNs_usando_keras.html</loc>
-    <lastmod>2025-05-01T20:20:10.202Z</lastmod>
+    <lastmod>2025-05-09T19:43:16.207Z</lastmod>
   </url>
   <url>
     <loc>https://jeffersonrodriguezc.github.io/deep-learning-en-3-semanas/semana_2/index.html</loc>
-    <lastmod>2025-05-01T20:55:48.840Z</lastmod>
+    <lastmod>2025-05-08T20:12:50.154Z</lastmod>
   </url>
   <url>
     <loc>https://jeffersonrodriguezc.github.io/deep-learning-en-3-semanas/semana_1/notebooks/Nb_1c_Implementando_un_Percentron_Multiplicapa_MLP_usando_frameworks_MLFlow.html</loc>
@@ -46,7 +46,7 @@
   </url>
   <url>
     <loc>https://jeffersonrodriguezc.github.io/deep-learning-en-3-semanas/semana_2/notebooks/Nb_2a_Implementando_una_CNN_usando_Keras.html</loc>
-    <lastmod>2025-05-01T20:20:10.200Z</lastmod>
+    <lastmod>2025-05-09T19:43:16.200Z</lastmod>
   </url>
   <url>
     <loc>https://jeffersonrodriguezc.github.io/deep-learning-en-3-semanas/semana_2/notebooks/Nb_2c_Traduccion_usando_transformers_keras.html</loc>
@@ -54,6 +54,6 @@
   </url>
   <url>
     <loc>https://jeffersonrodriguezc.github.io/deep-learning-en-3-semanas/semana_3/notebooks/Nb_3a_Introduccion_transfer_learning_finetuning.html</loc>
-    <lastmod>2025-05-01T20:20:10.278Z</lastmod>
+    <lastmod>2025-05-14T10:58:53.568Z</lastmod>
   </url>
 </urlset>
