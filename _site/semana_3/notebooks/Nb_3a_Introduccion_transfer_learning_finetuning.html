@@ -345,7 +345,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#método-manual---usando-embebidos-directamente" id="toc-método-manual---usando-embebidos-directamente" class="nav-link" data-scroll-target="#método-manual---usando-embebidos-directamente">Método manual - Usando embebidos directamente</a></li>
   <li><a href="#método-modular---usando-arquitecturas" id="toc-método-modular---usando-arquitecturas" class="nav-link" data-scroll-target="#método-modular---usando-arquitecturas">Método Modular - Usando arquitecturas</a></li>
   </ul></li>
-  <li><a href="#pre-training-en-datos-tabulares-usando-tabnet" id="toc-pre-training-en-datos-tabulares-usando-tabnet" class="nav-link" data-scroll-target="#pre-training-en-datos-tabulares-usando-tabnet">Pre-training en Datos tabulares usando TabNet</a></li>
+  <li><a href="#pre-training-en-datos-tabulares-usando-tabnet-y-tabpnf" id="toc-pre-training-en-datos-tabulares-usando-tabnet-y-tabpnf" class="nav-link" data-scroll-target="#pre-training-en-datos-tabulares-usando-tabnet-y-tabpnf">Pre-training en Datos tabulares usando TabNet y TabPNF</a>
+  <ul class="collapse">
+  <li><a href="#diferencias-clave" id="toc-diferencias-clave" class="nav-link" data-scroll-target="#diferencias-clave">📌 Diferencias clave</a></li>
+  <li><a href="#observaciones-clave" id="toc-observaciones-clave" class="nav-link" data-scroll-target="#observaciones-clave">🧠 Observaciones clave:</a></li>
+  </ul></li>
   <li><a href="#conclusiones" id="toc-conclusiones" class="nav-link" data-scroll-target="#conclusiones"><strong>Conclusiones</strong></a></li>
   </ul>
 <div class="toc-actions"><ul><li><a href="https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
@@ -394,38 +398,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>os.kill(os.getpid(), <span class="dv">9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-5" class="cell" data-cellview="form" data-outputid="12efe9d4-42b0-4252-b234-fd420d835c07" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-execution_count="1">
+<div id="cell-5" class="cell" data-cellview="form" data-outputid="98ae99c3-447b-4a73-c0c8-a8c4df55bdaf" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Instalar librerías necesarias</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip <span class="op">-</span>q install keras<span class="op">-</span>nlp</span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip <span class="op">-</span>q install gensim</span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip <span class="op">-</span>q install pytorch<span class="op">-</span>tabnet</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"KERAS_BACKEND"</span>] <span class="op">=</span> <span class="st">"tensorflow"</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> keras_hub</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow_datasets <span class="im">as</span> tfds</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras <span class="im">import</span> layers, models, optimizers, callbacks</span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras.applications <span class="im">import</span> VGG16</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras.datasets <span class="im">import</span> mnist</span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras.utils <span class="im">import</span> to_categorical</span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras <span class="im">import</span> backend <span class="im">as</span> K</span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gensim.models <span class="im">import</span> KeyedVectors</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> clear_output</span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> fetch_covtype</span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pytorch_tabnet.tab_model <span class="im">import</span> TabNetClassifier</span>
-<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>clear_output()</span>
-<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Se han importado todas las librerías correctamente"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install tabpfn</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install wget</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>os.environ[<span class="st">"KERAS_BACKEND"</span>] <span class="op">=</span> <span class="st">"tensorflow"</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> keras_hub</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow_datasets <span class="im">as</span> tfds</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras <span class="im">import</span> layers, models, optimizers, callbacks</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras.applications <span class="im">import</span> VGG16</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras.datasets <span class="im">import</span> mnist</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras.utils <span class="im">import</span> to_categorical</span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras <span class="im">import</span> backend <span class="im">as</span> K</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> gensim.models <span class="im">import</span> KeyedVectors</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> clear_output</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> accuracy_score</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.model_selection <span class="im">import</span> train_test_split</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.datasets <span class="im">import</span> fetch_covtype</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pytorch_tabnet.tab_model <span class="im">import</span> TabNetClassifier</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pytorch_tabnet.pretraining <span class="im">import</span> TabNetPretrainer</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tabpfn <span class="im">import</span> TabPFNClassifier</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> sklearn.metrics <span class="im">import</span> roc_auc_score</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>clear_output()</span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Se han importado todas las librerías correctamente"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Se han importado todas las librerías correctamente</code></pre>
 </div>
@@ -474,7 +486,37 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>      plt.imshow(test_images[i], cmap<span class="op">=</span>plt.cm.gray)</span>
 <span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>      pred <span class="op">=</span> np.argmax(model.predict(np.expand_dims(test_images[i], axis<span class="op">=</span><span class="dv">0</span>), verbose<span class="op">=</span><span class="va">False</span>))</span>
 <span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>      plt.xlabel(<span class="ss">f"Pred: </span><span class="sc">{</span>pred<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>  plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>  plt.show()</span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> leer_datos_phishing():</span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> zipfile</span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    <span class="im">import</span> wget</span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> scipy.io <span class="im">import</span> arff</span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Dataset 1: Phishing Websites (.arff -&gt; CSV manual en GitHub alternativo)</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>    url1 <span class="op">=</span> <span class="st">"https://archive.ics.uci.edu/static/public/327/phishing+websites.zip"</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>    wget.download(url1)</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Dataset 2: PhiUSIIL (CSV)</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>    url2 <span class="op">=</span> <span class="st">"https://archive.ics.uci.edu/static/public/967/phiusiil+phishing+url+dataset.zip"</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>    wget.download(url2)</span>
+<span id="cb6-59"><a href="#cb6-59" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-60"><a href="#cb6-60" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> zipfile.ZipFile(<span class="st">"phishing+websites.zip"</span>, <span class="st">'r'</span>) <span class="im">as</span> zip_ref:</span>
+<span id="cb6-61"><a href="#cb6-61" aria-hidden="true" tabindex="-1"></a>        zip_ref.extractall(<span class="st">"./phishing"</span>)</span>
+<span id="cb6-62"><a href="#cb6-62" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-63"><a href="#cb6-63" aria-hidden="true" tabindex="-1"></a>    data, meta <span class="op">=</span> arff.loadarff(<span class="st">'./phishing/Training Dataset.arff'</span>)</span>
+<span id="cb6-64"><a href="#cb6-64" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Convertir los datos a un DataFrame de Pandas</span></span>
+<span id="cb6-65"><a href="#cb6-65" aria-hidden="true" tabindex="-1"></a>    df1 <span class="op">=</span> pd.DataFrame(data)</span>
+<span id="cb6-66"><a href="#cb6-66" aria-hidden="true" tabindex="-1"></a>    df1 <span class="op">=</span> df1.astype(<span class="bu">int</span>)</span>
+<span id="cb6-67"><a href="#cb6-67" aria-hidden="true" tabindex="-1"></a>    df1[<span class="st">'Result'</span>] <span class="op">=</span> df1.Result.replace({<span class="op">-</span><span class="dv">1</span>:<span class="dv">0</span>})</span>
+<span id="cb6-68"><a href="#cb6-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-69"><a href="#cb6-69" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> zipfile.ZipFile(<span class="st">"phiusiil+phishing+url+dataset.zip"</span>, <span class="st">'r'</span>) <span class="im">as</span> zip_ref:</span>
+<span id="cb6-70"><a href="#cb6-70" aria-hidden="true" tabindex="-1"></a>        zip_ref.extractall(<span class="st">"./phiusiil"</span>)</span>
+<span id="cb6-71"><a href="#cb6-71" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-72"><a href="#cb6-72" aria-hidden="true" tabindex="-1"></a>    df2 <span class="op">=</span> pd.read_csv(<span class="st">"./phiusiil/PhiUSIIL_Phishing_URL_Dataset.csv"</span>)</span>
+<span id="cb6-73"><a href="#cb6-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-74"><a href="#cb6-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> df1, df2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <section id="transfer-learning-y-fine-tuning-en-clasificación-de-imágenes" class="level2">
 <h2 class="anchored" data-anchor-id="transfer-learning-y-fine-tuning-en-clasificación-de-imágenes">Transfer Learning y fine tuning en Clasificación de imágenes</h2>
@@ -1639,16 +1681,28 @@ classifier.fit(x=features, y=labels, batch_size=2)</code></pre>
 </section>
 </section>
 </section>
-<section id="pre-training-en-datos-tabulares-usando-tabnet" class="level2">
-<h2 class="anchored" data-anchor-id="pre-training-en-datos-tabulares-usando-tabnet">Pre-training en Datos tabulares usando TabNet</h2>
-<div id="cell-82" class="cell" data-outputid="46707241-ef03-4033-c4a1-dfd6f19cd524" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:443}}" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> fetch_covtype(as_frame<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> data.data.astype(np.float32)</span>
-<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> data.target.astype(<span class="bu">int</span>) <span class="op">-</span> <span class="dv">1</span>  <span class="co"># etiquetas 0‑6 para las 7 clases</span></span>
-<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>X</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
-<div id="df-47c2c229-fab9-4b15-bdbf-41caf1895f28" class="colab-df-container">
+<section id="pre-training-en-datos-tabulares-usando-tabnet-y-tabpnf" class="level2">
+<h2 class="anchored" data-anchor-id="pre-training-en-datos-tabulares-usando-tabnet-y-tabpnf">Pre-training en Datos tabulares usando TabNet y TabPNF</h2>
+<p>🎯 <strong>Objetivos del ejercicio</strong></p>
+<ol type="1">
+<li><p>Aplicar pre-entrenamiento en un dataset de phishing real.</p></li>
+<li><p>Comparar dos formas distintas de aprendizaje transferido:</p></li>
+</ol>
+<ul>
+<li><p>Fine-tuning supervisado con TabNet.</p></li>
+<li><p>Inferencia con modelo fundacional TabPFN (sin ajuste).</p></li>
+</ul>
+<ol start="3" type="1">
+<li>Analizar ventajas y desventajas de cada enfoque en un escenario real.</li>
+</ol>
+<div id="cell-82" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb70"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a><span class="co"># leer datos</span></span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>df1, _ <span class="op">=</span> leer_datos_phishing()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-83" class="cell" data-outputid="ab3e3874-f259-4645-fe0c-20303b0b9f87" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:443}}" data-execution_count="12">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>df1</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="12">
+<div id="df-230531c7-bc35-4ca1-8530-28053dc13c12" class="colab-df-container">
     <div>
 
 
@@ -1656,149 +1710,149 @@ classifier.fit(x=features, y=labels, batch_size=2)</code></pre>
 <thead>
 <tr class="header">
 <th data-quarto-table-cell-role="th"></th>
-<th data-quarto-table-cell-role="th">Elevation</th>
-<th data-quarto-table-cell-role="th">Aspect</th>
-<th data-quarto-table-cell-role="th">Slope</th>
-<th data-quarto-table-cell-role="th">Horizontal_Distance_To_Hydrology</th>
-<th data-quarto-table-cell-role="th">Vertical_Distance_To_Hydrology</th>
-<th data-quarto-table-cell-role="th">Horizontal_Distance_To_Roadways</th>
-<th data-quarto-table-cell-role="th">Hillshade_9am</th>
-<th data-quarto-table-cell-role="th">Hillshade_Noon</th>
-<th data-quarto-table-cell-role="th">Hillshade_3pm</th>
-<th data-quarto-table-cell-role="th">Horizontal_Distance_To_Fire_Points</th>
+<th data-quarto-table-cell-role="th">having_IP_Address</th>
+<th data-quarto-table-cell-role="th">URL_Length</th>
+<th data-quarto-table-cell-role="th">Shortining_Service</th>
+<th data-quarto-table-cell-role="th">having_At_Symbol</th>
+<th data-quarto-table-cell-role="th">double_slash_redirecting</th>
+<th data-quarto-table-cell-role="th">Prefix_Suffix</th>
+<th data-quarto-table-cell-role="th">having_Sub_Domain</th>
+<th data-quarto-table-cell-role="th">SSLfinal_State</th>
+<th data-quarto-table-cell-role="th">Domain_registeration_length</th>
+<th data-quarto-table-cell-role="th">Favicon</th>
 <th data-quarto-table-cell-role="th">...</th>
-<th data-quarto-table-cell-role="th">Soil_Type_30</th>
-<th data-quarto-table-cell-role="th">Soil_Type_31</th>
-<th data-quarto-table-cell-role="th">Soil_Type_32</th>
-<th data-quarto-table-cell-role="th">Soil_Type_33</th>
-<th data-quarto-table-cell-role="th">Soil_Type_34</th>
-<th data-quarto-table-cell-role="th">Soil_Type_35</th>
-<th data-quarto-table-cell-role="th">Soil_Type_36</th>
-<th data-quarto-table-cell-role="th">Soil_Type_37</th>
-<th data-quarto-table-cell-role="th">Soil_Type_38</th>
-<th data-quarto-table-cell-role="th">Soil_Type_39</th>
+<th data-quarto-table-cell-role="th">popUpWidnow</th>
+<th data-quarto-table-cell-role="th">Iframe</th>
+<th data-quarto-table-cell-role="th">age_of_domain</th>
+<th data-quarto-table-cell-role="th">DNSRecord</th>
+<th data-quarto-table-cell-role="th">web_traffic</th>
+<th data-quarto-table-cell-role="th">Page_Rank</th>
+<th data-quarto-table-cell-role="th">Google_Index</th>
+<th data-quarto-table-cell-role="th">Links_pointing_to_page</th>
+<th data-quarto-table-cell-role="th">Statistical_report</th>
+<th data-quarto-table-cell-role="th">Result</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">0</td>
-<td>2596.0</td>
-<td>51.0</td>
-<td>3.0</td>
-<td>258.0</td>
-<td>0.0</td>
-<td>510.0</td>
-<td>221.0</td>
-<td>232.0</td>
-<td>148.0</td>
-<td>6279.0</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
 <td>...</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">1</td>
-<td>2590.0</td>
-<td>56.0</td>
-<td>2.0</td>
-<td>212.0</td>
-<td>-6.0</td>
-<td>390.0</td>
-<td>220.0</td>
-<td>235.0</td>
-<td>151.0</td>
-<td>6225.0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>0</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
 <td>...</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>0</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">2</td>
-<td>2804.0</td>
-<td>139.0</td>
-<td>9.0</td>
-<td>268.0</td>
-<td>65.0</td>
-<td>3180.0</td>
-<td>234.0</td>
-<td>238.0</td>
-<td>135.0</td>
-<td>6121.0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
 <td>...</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>0</td>
+<td>-1</td>
+<td>0</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">3</td>
-<td>2785.0</td>
-<td>155.0</td>
-<td>18.0</td>
-<td>242.0</td>
-<td>118.0</td>
-<td>3090.0</td>
-<td>238.0</td>
-<td>238.0</td>
-<td>122.0</td>
-<td>6211.0</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
 <td>...</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>0</td>
 </tr>
 <tr class="odd">
 <td data-quarto-table-cell-role="th">4</td>
-<td>2595.0</td>
-<td>45.0</td>
-<td>2.0</td>
-<td>153.0</td>
-<td>-1.0</td>
-<td>391.0</td>
-<td>220.0</td>
-<td>234.0</td>
-<td>150.0</td>
-<td>6172.0</td>
+<td>1</td>
+<td>0</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
 <td>...</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
+<td>-1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>0</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
 </tr>
 <tr class="even">
 <td data-quarto-table-cell-role="th">...</td>
@@ -1825,134 +1879,134 @@ classifier.fit(x=features, y=labels, batch_size=2)</code></pre>
 <td>...</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">581007</td>
-<td>2396.0</td>
-<td>153.0</td>
-<td>20.0</td>
-<td>85.0</td>
-<td>17.0</td>
-<td>108.0</td>
-<td>240.0</td>
-<td>237.0</td>
-<td>118.0</td>
-<td>837.0</td>
+<td data-quarto-table-cell-role="th">11050</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
 <td>...</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">581008</td>
-<td>2391.0</td>
-<td>152.0</td>
-<td>19.0</td>
-<td>67.0</td>
-<td>12.0</td>
-<td>95.0</td>
-<td>240.0</td>
-<td>237.0</td>
-<td>119.0</td>
-<td>845.0</td>
+<td data-quarto-table-cell-role="th">11051</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
 <td>...</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">581009</td>
-<td>2386.0</td>
-<td>159.0</td>
-<td>17.0</td>
-<td>60.0</td>
-<td>7.0</td>
-<td>90.0</td>
-<td>236.0</td>
-<td>241.0</td>
-<td>130.0</td>
-<td>854.0</td>
+<td data-quarto-table-cell-role="th">11052</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
 <td>...</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
 </tr>
 <tr class="even">
-<td data-quarto-table-cell-role="th">581010</td>
-<td>2384.0</td>
-<td>170.0</td>
-<td>15.0</td>
-<td>60.0</td>
-<td>5.0</td>
-<td>90.0</td>
-<td>230.0</td>
-<td>245.0</td>
-<td>143.0</td>
-<td>864.0</td>
+<td data-quarto-table-cell-role="th">11053</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>-1</td>
 <td>...</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
 </tr>
 <tr class="odd">
-<td data-quarto-table-cell-role="th">581011</td>
-<td>2383.0</td>
-<td>165.0</td>
-<td>13.0</td>
-<td>60.0</td>
-<td>4.0</td>
-<td>67.0</td>
-<td>231.0</td>
-<td>244.0</td>
-<td>141.0</td>
-<td>875.0</td>
+<td data-quarto-table-cell-role="th">11054</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>1</td>
 <td>...</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
-<td>0.0</td>
+<td>1</td>
+<td>1</td>
+<td>-1</td>
+<td>1</td>
+<td>-1</td>
+<td>-1</td>
+<td>-1</td>
+<td>1</td>
+<td>-1</td>
+<td>0</td>
 </tr>
 </tbody>
 </table>
 
-<p>581012 rows × 54 columns</p>
+<p>11055 rows × 31 columns</p>
 </div>
     <div class="colab-df-buttons">
 
   <div class="colab-df-container">
-    <button class="colab-df-convert" onclick="convertToInteractive('df-47c2c229-fab9-4b15-bdbf-41caf1895f28')" title="Convert this dataframe to an interactive table." style="display:none;">
+    <button class="colab-df-convert" onclick="convertToInteractive('df-230531c7-bc35-4ca1-8530-28053dc13c12')" title="Convert this dataframe to an interactive table." style="display:none;">
 
   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 -960 960 960">
     <path d="M120-120v-720h720v720H120Zm60-500h600v-160H180v160Zm220 220h160v-160H400v160Zm0 220h160v-160H400v160ZM180-400h160v-160H180v160Zm440 0h160v-160H620v160ZM180-180h160v-160H180v160Zm440 0h160v-160H620v160Z"></path>
@@ -2002,12 +2056,12 @@ classifier.fit(x=features, y=labels, batch_size=2)</code></pre>
 
     <script>
       const buttonEl =
-        document.querySelector('#df-47c2c229-fab9-4b15-bdbf-41caf1895f28 button.colab-df-convert');
+        document.querySelector('#df-230531c7-bc35-4ca1-8530-28053dc13c12 button.colab-df-convert');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       async function convertToInteractive(key) {
-        const element = document.querySelector('#df-47c2c229-fab9-4b15-bdbf-41caf1895f28');
+        const element = document.querySelector('#df-230531c7-bc35-4ca1-8530-28053dc13c12');
         const dataTable =
           await google.colab.kernel.invokeFunction('convertToInteractive',
                                                     [key], {});
@@ -2027,8 +2081,8 @@ classifier.fit(x=features, y=labels, batch_size=2)</code></pre>
   </div>
 
 
-    <div id="df-33203a10-7b8c-48fc-8098-d02d03592a3d">
-      <button class="colab-df-quickchart" onclick="quickchart('df-33203a10-7b8c-48fc-8098-d02d03592a3d')" title="Suggest charts" style="display:none;">
+    <div id="df-412bcb96-eea3-412d-8ee6-74f9da9d5132">
+      <button class="colab-df-quickchart" onclick="quickchart('df-412bcb96-eea3-412d-8ee6-74f9da9d5132')" title="Suggest charts" style="display:none;">
 
 <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px">
     <g>
@@ -2144,14 +2198,14 @@ classifier.fit(x=features, y=labels, batch_size=2)</code></pre>
         }
         (() => {
           let quickchartButtonEl =
-            document.querySelector('#df-33203a10-7b8c-48fc-8098-d02d03592a3d button');
+            document.querySelector('#df-412bcb96-eea3-412d-8ee6-74f9da9d5132 button');
           quickchartButtonEl.style.display =
             google.colab.kernel.accessAllowed ? 'block' : 'none';
         })();
       </script>
     </div>
 
-  <div id="id_86e4a15f-7d7f-42bd-a358-f5e2720213c4">
+  <div id="id_1da827ba-515a-4abd-a6b2-8992e0095565">
     <style>
       .colab-df-generate {
         background-color: #E8F0FE;
@@ -2183,7 +2237,7 @@ classifier.fit(x=features, y=labels, batch_size=2)</code></pre>
         fill: #FFFFFF;
       }
     </style>
-    <button class="colab-df-generate" onclick="generateWithVariable('X')" title="Generate code using this dataframe." style="display:none;">
+    <button class="colab-df-generate" onclick="generateWithVariable('df1')" title="Generate code using this dataframe." style="display:none;">
 
   <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewbox="0 0 24 24" width="24px">
     <path d="M7,19H8.4L18.45,9,17,7.55,7,17.6ZM5,21V16.75L18.45,3.32a2,2,0,0,1,2.83,0l1.4,1.43a1.91,1.91,0,0,1,.58,1.4,1.91,1.91,0,0,1-.58,1.4L9.25,21ZM18.45,9,17,7.55Zm-12,3A5.31,5.31,0,0,0,4.9,8.1,5.31,5.31,0,0,0,1,6.5,5.31,5.31,0,0,0,4.9,4.9,5.31,5.31,0,0,0,6.5,1,5.31,5.31,0,0,0,8.1,4.9,5.31,5.31,0,0,0,12,6.5,5.46,5.46,0,0,0,6.5,12Z"></path>
@@ -2192,12 +2246,12 @@ classifier.fit(x=features, y=labels, batch_size=2)</code></pre>
     <script>
       (() => {
       const buttonEl =
-        document.querySelector('#id_86e4a15f-7d7f-42bd-a358-f5e2720213c4 button.colab-df-generate');
+        document.querySelector('#id_1da827ba-515a-4abd-a6b2-8992e0095565 button.colab-df-generate');
       buttonEl.style.display =
         google.colab.kernel.accessAllowed ? 'block' : 'none';
 
       buttonEl.onclick = () => {
-        google.colab.notebook.generateWithVariable('X');
+        google.colab.notebook.generateWithVariable('df1');
       }
       })();
     </script>
@@ -2207,73 +2261,73 @@ classifier.fit(x=features, y=labels, batch_size=2)</code></pre>
   </div>
 </div>
 </div>
-<div id="cell-83" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a>X_train, X_valid, y_train, y_valid <span class="op">=</span> train_test_split(</span>
-<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a>    X, y, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">42</span>, stratify<span class="op">=</span>y</span>
-<span id="cb71-3"><a href="#cb71-3" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="cell-84" class="cell" data-execution_count="14">
+<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># crear conjuntos de features y labels</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> df1[<span class="st">'Result'</span>]</span>
+<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> df1.drop(columns<span class="op">=</span>[<span class="st">'Result'</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="cell-84" class="cell" data-outputid="df706074-e325-458b-9d65-08e6f19920dd" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb72"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a>clf <span class="op">=</span> TabNetClassifier(</span>
-<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a>    optimizer_fn<span class="op">=</span>torch.optim.Adam,</span>
-<span id="cb72-3"><a href="#cb72-3" aria-hidden="true" tabindex="-1"></a>    optimizer_params<span class="op">=</span><span class="bu">dict</span>(lr<span class="op">=</span><span class="fl">2e-2</span>),</span>
-<span id="cb72-4"><a href="#cb72-4" aria-hidden="true" tabindex="-1"></a>    scheduler_fn<span class="op">=</span>torch.optim.lr_scheduler.StepLR,</span>
-<span id="cb72-5"><a href="#cb72-5" aria-hidden="true" tabindex="-1"></a>    scheduler_params<span class="op">=</span>{<span class="st">"step_size"</span>:<span class="dv">10</span>, <span class="st">"gamma"</span>:<span class="fl">0.9</span>},</span>
-<span id="cb72-6"><a href="#cb72-6" aria-hidden="true" tabindex="-1"></a>    mask_type<span class="op">=</span><span class="st">'entmax'</span>, <span class="co">#sparsemax</span></span>
-<span id="cb72-7"><a href="#cb72-7" aria-hidden="true" tabindex="-1"></a>    device_name<span class="op">=</span><span class="st">'cuda'</span></span>
-<span id="cb72-8"><a href="#cb72-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>/usr/local/lib/python3.11/dist-packages/pytorch_tabnet/abstract_model.py:82: UserWarning: Device used : cuda
-  warnings.warn(f"Device used : {self.device}")</code></pre>
+<div id="cell-85" class="cell" data-outputid="25577a82-2892-4fd0-9dfb-e228f0e1ee77" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-execution_count="50">
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># crear conjuntos de pretrain, train y test</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a>X_pretrain, X_remaining, y_pretrain, y_remaining <span class="op">=</span> train_test_split(</span>
+<span id="cb73-3"><a href="#cb73-3" aria-hidden="true" tabindex="-1"></a>    X, y, test_size<span class="op">=</span><span class="fl">0.9</span>, random_state<span class="op">=</span><span class="dv">42</span>, stratify<span class="op">=</span>y</span>
+<span id="cb73-4"><a href="#cb73-4" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb73-5"><a href="#cb73-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-6"><a href="#cb73-6" aria-hidden="true" tabindex="-1"></a>X_train, X_test, y_train, y_test <span class="op">=</span> train_test_split(</span>
+<span id="cb73-7"><a href="#cb73-7" aria-hidden="true" tabindex="-1"></a>    X_remaining, y_remaining, test_size<span class="op">=</span><span class="fl">0.3</span>, random_state<span class="op">=</span><span class="dv">42</span>,</span>
+<span id="cb73-8"><a href="#cb73-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb73-9"><a href="#cb73-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb73-10"><a href="#cb73-10" aria-hidden="true" tabindex="-1"></a>X_pretrain.shape, X_train.shape, X_test.shape</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="50">
+<pre><code>((1105, 30), (6965, 30), (2985, 30))</code></pre>
 </div>
 </div>
-<div id="cell-85" class="cell" data-outputid="bf951e70-bab6-44ef-e139-4ccf0f14eb24" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}">
-<div class="sourceCode cell-code" id="cb74"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a>clf.fit(</span>
-<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a>    X_train<span class="op">=</span>X_train.values, y_train<span class="op">=</span>y_train.values,</span>
-<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a>    eval_set<span class="op">=</span>[(X_valid.values, y_valid.values)],</span>
-<span id="cb74-4"><a href="#cb74-4" aria-hidden="true" tabindex="-1"></a>    eval_name<span class="op">=</span>[<span class="st">'valid'</span>],</span>
-<span id="cb74-5"><a href="#cb74-5" aria-hidden="true" tabindex="-1"></a>    eval_metric<span class="op">=</span>[<span class="st">'accuracy'</span>],</span>
-<span id="cb74-6"><a href="#cb74-6" aria-hidden="true" tabindex="-1"></a>    max_epochs<span class="op">=</span><span class="dv">50</span>,</span>
-<span id="cb74-7"><a href="#cb74-7" aria-hidden="true" tabindex="-1"></a>    num_workers<span class="op">=</span><span class="dv">2</span></span>
-<span id="cb74-8"><a href="#cb74-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<section id="cómo-hace-fine-tuning-tabpfn" class="level4">
+<h4 class="anchored" data-anchor-id="cómo-hace-fine-tuning-tabpfn">¿Cómo hace fine-tuning TabPFN?</h4>
+<p>TabPFN <strong>no necesita fine-tuning tradicional</strong>. Ya está <strong>preentrenado</strong> con millones de tareas sintéticas, por lo que funciona como un modelo fundacional para datos tabulares.</p>
+<p>En lugar de entrenarse, TabPFN realiza <strong>“in-context learning”</strong>: usa un pequeño conjunto de ejemplos como contexto y generaliza a nuevos datos sin modificar sus pesos.</p>
+</section>
+<section id="diferencias-clave" class="level3">
+<h3 class="anchored" data-anchor-id="diferencias-clave">📌 Diferencias clave</h3>
+<ul>
+<li>❌ No entrena pesos → ✅ Usa ejemplos como contexto</li>
+<li>❌ No necesita optimizador → ✅ Solo llamas <code>.fit()</code> una vez</li>
+<li>✅ Listo para usar en tareas nuevas con pocos datos</li>
+</ul>
+<blockquote class="blockquote">
+<p>Es una forma moderna de <strong>transfer learning sin reentrenamiento</strong>, parecida a cómo funcionan los modelos como GPT.</p>
+</blockquote>
+<div id="cell-87" class="cell" data-outputid="1fa786a8-2860-4cd7-c5cf-b4de2bfbbd8f" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-execution_count="52">
+<div class="sourceCode cell-code" id="cb75"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a>tabpfn <span class="op">=</span> TabPFNClassifier(device<span class="op">=</span><span class="st">"cuda"</span> <span class="cf">if</span> torch.cuda.is_available() <span class="cf">else</span> <span class="st">"cpu"</span>)</span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="co"># No necesita entrenamiento, solo predicción directa</span></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a>tabpfn.fit(X_pretrain, y_pretrain)  <span class="co"># Simula el preentrenamiento en otro dominio</span></span>
+<span id="cb75-5"><a href="#cb75-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-6"><a href="#cb75-6" aria-hidden="true" tabindex="-1"></a>preds_pfn <span class="op">=</span> tabpfn.predict(X_test)</span>
+<span id="cb75-7"><a href="#cb75-7" aria-hidden="true" tabindex="-1"></a>probs_pfn <span class="op">=</span> tabpfn.predict_proba(X_test)</span>
+<span id="cb75-8"><a href="#cb75-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb75-9"><a href="#cb75-9" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"TabPFN Accuracy:"</span>, accuracy_score(y_test, preds_pfn))</span>
+<span id="cb75-10"><a href="#cb75-10" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"TabPFN ROC AUC:"</span>, roc_auc_score(y_test, probs_pfn[:,<span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>epoch 0  | loss: 0.72523 | valid_accuracy: 0.7489  |  0:00:20s
-epoch 1  | loss: 0.55862 | valid_accuracy: 0.78073 |  0:00:40s
-epoch 2  | loss: 0.51353 | valid_accuracy: 0.79955 |  0:01:01s
-epoch 3  | loss: 0.48882 | valid_accuracy: 0.81313 |  0:01:21s
-epoch 4  | loss: 0.46969 | valid_accuracy: 0.82237 |  0:01:41s
-epoch 5  | loss: 0.45493 | valid_accuracy: 0.82435 |  0:02:01s
-epoch 6  | loss: 0.44548 | valid_accuracy: 0.82876 |  0:02:22s
-epoch 7  | loss: 0.43394 | valid_accuracy: 0.83884 |  0:02:42s
-epoch 8  | loss: 0.42682 | valid_accuracy: 0.84025 |  0:03:02s
-epoch 9  | loss: 0.42305 | valid_accuracy: 0.84224 |  0:03:23s
-epoch 10 | loss: 0.41117 | valid_accuracy: 0.84793 |  0:03:43s
-epoch 11 | loss: 0.40697 | valid_accuracy: 0.8532  |  0:04:04s
-epoch 12 | loss: 0.40315 | valid_accuracy: 0.85364 |  0:04:24s
-epoch 13 | loss: 0.40081 | valid_accuracy: 0.8563  |  0:04:44s
-epoch 14 | loss: 0.39851 | valid_accuracy: 0.84837 |  0:05:04s
-epoch 15 | loss: 0.39728 | valid_accuracy: 0.85664 |  0:05:25s
-epoch 16 | loss: 0.39151 | valid_accuracy: 0.85597 |  0:05:45s
-epoch 17 | loss: 0.38807 | valid_accuracy: 0.86308 |  0:06:06s
-epoch 18 | loss: 0.38705 | valid_accuracy: 0.85793 |  0:06:26s
-epoch 19 | loss: 0.38338 | valid_accuracy: 0.85365 |  0:06:47s
-epoch 20 | loss: 0.38018 | valid_accuracy: 0.86545 |  0:07:07s
-epoch 21 | loss: 0.37847 | valid_accuracy: 0.86482 |  0:07:28s
-epoch 22 | loss: 0.37902 | valid_accuracy: 0.86319 |  0:07:48s
-epoch 23 | loss: 0.3751  | valid_accuracy: 0.87118 |  0:08:08s
-epoch 24 | loss: 0.37328 | valid_accuracy: 0.86573 |  0:08:29s
-epoch 25 | loss: 0.3702  | valid_accuracy: 0.86972 |  0:08:49s
-epoch 26 | loss: 0.37631 | valid_accuracy: 0.86124 |  0:09:10s
-epoch 27 | loss: 0.37374 | valid_accuracy: 0.87088 |  0:09:31s
-epoch 28 | loss: 0.37042 | valid_accuracy: 0.86521 |  0:09:51s
-epoch 29 | loss: 0.37133 | valid_accuracy: 0.86584 |  0:10:12s
-epoch 30 | loss: 0.36739 | valid_accuracy: 0.87149 |  0:10:33s
-epoch 31 | loss: 0.36381 | valid_accuracy: 0.86824 |  0:10:54s
-epoch 32 | loss: 0.37192 | valid_accuracy: 0.871   |  0:11:14s
-epoch 33 | loss: 0.36089 | valid_accuracy: 0.87442 |  0:11:35s
-epoch 34 | loss: 0.36402 | valid_accuracy: 0.87417 |  0:11:56s
-epoch 35 | loss: 0.36055 | valid_accuracy: 0.87339 |  0:12:16s</code></pre>
+<pre><code>TabPFN Accuracy: 0.9363484087102177
+TabPFN ROC AUC: 0.9870633157443613</code></pre>
 </div>
 </div>
+<section id="cómo-se-hace-preentrenamiento-en-tabnet" class="level4">
+<h4 class="anchored" data-anchor-id="cómo-se-hace-preentrenamiento-en-tabnet">¿Cómo se hace preentrenamiento en TabNet?</h4>
+<p>TabNet permite aplicar <strong>transfer learning tradicional</strong> con datos tabulares, utilizando un enfoque en dos fases:</p>
+</section>
+<section id="preentrenamiento-no-supervisado" class="level4">
+<h4 class="anchored" data-anchor-id="preentrenamiento-no-supervisado">🔄 1. Preentrenamiento no supervisado</h4>
+<p>Se entrena el modelo como un <strong>autoencoder</strong>: - Aprende a reconstruir los datos de entrada - Captura patrones estructurales y relaciones entre atributos - No necesita etiquetas (<code>unsupervised pretraining</code>)</p>
+<p>Esto le permite aprender una buena representación de los datos, útil para tareas futuras.</p>
+</section>
+<section id="fine-tuning-supervisado" class="level4">
+<h4 class="anchored" data-anchor-id="fine-tuning-supervisado">🏷️ 2. Fine-tuning supervisado</h4>
+<p>Luego se reutilizan los pesos aprendidos para entrenar el modelo en una tarea específica: - Se conecta una capa de clasificación - Se ajustan los pesos con ejemplos etiquetados - Mejora la generalización, especialmente si hay pocos datos etiquetados</p>
+<blockquote class="blockquote">
+<p>TabNet sigue una estrategia clásica de <strong>transfer learning por ajuste fino</strong>, similar a la usada en visión por CNNs: preentrenar primero, y luego adaptar.</p>
+</blockquote>
+</section>
 <section id="parámetros-de-tabnet-instanciar" class="level4">
 <h4 class="anchored" data-anchor-id="parámetros-de-tabnet-instanciar">Parámetros de TabNet (Instanciar)</h4>
 <table class="caption-top table">
@@ -2455,6 +2509,337 @@ epoch 35 | loss: 0.36055 | valid_accuracy: 0.87339 |  0:12:16s</code></pre>
 </tr>
 </tbody>
 </table>
+<div id="cell-93" class="cell" data-outputid="55f430d5-13e7-4914-a8c6-66a0c635b257" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-execution_count="53">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Primero revisar el rendimiento normal</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>clf <span class="op">=</span> TabNetClassifier(</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>    optimizer_fn<span class="op">=</span>torch.optim.Adam,</span>
+<span id="cb77-4"><a href="#cb77-4" aria-hidden="true" tabindex="-1"></a>    optimizer_params<span class="op">=</span><span class="bu">dict</span>(lr<span class="op">=</span><span class="fl">2e-2</span>),</span>
+<span id="cb77-5"><a href="#cb77-5" aria-hidden="true" tabindex="-1"></a>    scheduler_fn<span class="op">=</span>torch.optim.lr_scheduler.StepLR,</span>
+<span id="cb77-6"><a href="#cb77-6" aria-hidden="true" tabindex="-1"></a>    scheduler_params<span class="op">=</span>{<span class="st">"step_size"</span>:<span class="dv">10</span>, <span class="st">"gamma"</span>:<span class="fl">0.9</span>},</span>
+<span id="cb77-7"><a href="#cb77-7" aria-hidden="true" tabindex="-1"></a>    mask_type<span class="op">=</span><span class="st">'entmax'</span>, <span class="co">#sparsemax</span></span>
+<span id="cb77-8"><a href="#cb77-8" aria-hidden="true" tabindex="-1"></a>    device_name<span class="op">=</span><span class="st">'cuda'</span></span>
+<span id="cb77-9"><a href="#cb77-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb77-10"><a href="#cb77-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb77-11"><a href="#cb77-11" aria-hidden="true" tabindex="-1"></a><span class="co"># entrenar en los datos de train</span></span>
+<span id="cb77-12"><a href="#cb77-12" aria-hidden="true" tabindex="-1"></a>clf.fit(</span>
+<span id="cb77-13"><a href="#cb77-13" aria-hidden="true" tabindex="-1"></a>    X_train<span class="op">=</span>X_train.values, y_train<span class="op">=</span>y_train.values,</span>
+<span id="cb77-14"><a href="#cb77-14" aria-hidden="true" tabindex="-1"></a>    eval_set<span class="op">=</span>[(X_test.values, y_test.values)],</span>
+<span id="cb77-15"><a href="#cb77-15" aria-hidden="true" tabindex="-1"></a>    eval_name<span class="op">=</span>[<span class="st">'test'</span>],</span>
+<span id="cb77-16"><a href="#cb77-16" aria-hidden="true" tabindex="-1"></a>    eval_metric<span class="op">=</span>[<span class="st">'accuracy'</span>],</span>
+<span id="cb77-17"><a href="#cb77-17" aria-hidden="true" tabindex="-1"></a>    max_epochs<span class="op">=</span><span class="dv">50</span>,</span>
+<span id="cb77-18"><a href="#cb77-18" aria-hidden="true" tabindex="-1"></a>    num_workers<span class="op">=</span><span class="dv">2</span></span>
+<span id="cb77-19"><a href="#cb77-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/usr/local/lib/python3.11/dist-packages/pytorch_tabnet/abstract_model.py:82: UserWarning: Device used : cuda
+  warnings.warn(f"Device used : {self.device}")</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>epoch 0  | loss: 0.68499 | test_accuracy: 0.67806 |  0:00:00s
+epoch 1  | loss: 0.5307  | test_accuracy: 0.77688 |  0:00:01s
+epoch 2  | loss: 0.40529 | test_accuracy: 0.83082 |  0:00:01s
+epoch 3  | loss: 0.31463 | test_accuracy: 0.87035 |  0:00:02s
+epoch 4  | loss: 0.25766 | test_accuracy: 0.88409 |  0:00:03s
+epoch 5  | loss: 0.21586 | test_accuracy: 0.88677 |  0:00:03s
+epoch 6  | loss: 0.2069  | test_accuracy: 0.89916 |  0:00:04s
+epoch 7  | loss: 0.20151 | test_accuracy: 0.90184 |  0:00:04s
+epoch 8  | loss: 0.18626 | test_accuracy: 0.90218 |  0:00:05s
+epoch 9  | loss: 0.17794 | test_accuracy: 0.90921 |  0:00:06s
+epoch 10 | loss: 0.17627 | test_accuracy: 0.9139  |  0:00:06s
+epoch 11 | loss: 0.16566 | test_accuracy: 0.91725 |  0:00:07s
+epoch 12 | loss: 0.15886 | test_accuracy: 0.91826 |  0:00:07s
+epoch 13 | loss: 0.15659 | test_accuracy: 0.92261 |  0:00:08s
+epoch 14 | loss: 0.15288 | test_accuracy: 0.92261 |  0:00:09s
+epoch 15 | loss: 0.14653 | test_accuracy: 0.9263  |  0:00:09s
+epoch 16 | loss: 0.14666 | test_accuracy: 0.92161 |  0:00:10s
+epoch 17 | loss: 0.15037 | test_accuracy: 0.92496 |  0:00:10s
+epoch 18 | loss: 0.14191 | test_accuracy: 0.92496 |  0:00:11s
+epoch 19 | loss: 0.1432  | test_accuracy: 0.92965 |  0:00:12s
+epoch 20 | loss: 0.1385  | test_accuracy: 0.92496 |  0:00:12s
+epoch 21 | loss: 0.13063 | test_accuracy: 0.92998 |  0:00:13s
+epoch 22 | loss: 0.12967 | test_accuracy: 0.92831 |  0:00:14s
+epoch 23 | loss: 0.12782 | test_accuracy: 0.9263  |  0:00:14s
+epoch 24 | loss: 0.12129 | test_accuracy: 0.93065 |  0:00:15s
+epoch 25 | loss: 0.12187 | test_accuracy: 0.93065 |  0:00:15s
+epoch 26 | loss: 0.1165  | test_accuracy: 0.93233 |  0:00:16s
+epoch 27 | loss: 0.11057 | test_accuracy: 0.93333 |  0:00:17s
+epoch 28 | loss: 0.11143 | test_accuracy: 0.93668 |  0:00:17s
+epoch 29 | loss: 0.10816 | test_accuracy: 0.93199 |  0:00:18s
+epoch 30 | loss: 0.11009 | test_accuracy: 0.93266 |  0:00:18s
+epoch 31 | loss: 0.1086  | test_accuracy: 0.93668 |  0:00:19s
+epoch 32 | loss: 0.1033  | test_accuracy: 0.93635 |  0:00:20s
+epoch 33 | loss: 0.10311 | test_accuracy: 0.93534 |  0:00:20s
+epoch 34 | loss: 0.10601 | test_accuracy: 0.93434 |  0:00:21s
+epoch 35 | loss: 0.10477 | test_accuracy: 0.93501 |  0:00:21s
+epoch 36 | loss: 0.09699 | test_accuracy: 0.94003 |  0:00:22s
+epoch 37 | loss: 0.10064 | test_accuracy: 0.93601 |  0:00:23s
+epoch 38 | loss: 0.08939 | test_accuracy: 0.94305 |  0:00:23s
+epoch 39 | loss: 0.09408 | test_accuracy: 0.94171 |  0:00:24s
+epoch 40 | loss: 0.09371 | test_accuracy: 0.94104 |  0:00:24s
+epoch 41 | loss: 0.08916 | test_accuracy: 0.94472 |  0:00:25s
+epoch 42 | loss: 0.08374 | test_accuracy: 0.94439 |  0:00:26s
+epoch 43 | loss: 0.0909  | test_accuracy: 0.94338 |  0:00:26s
+epoch 44 | loss: 0.08709 | test_accuracy: 0.94171 |  0:00:27s
+epoch 45 | loss: 0.08824 | test_accuracy: 0.9464  |  0:00:27s
+epoch 46 | loss: 0.08512 | test_accuracy: 0.94104 |  0:00:28s
+epoch 47 | loss: 0.08103 | test_accuracy: 0.94472 |  0:00:29s
+epoch 48 | loss: 0.08126 | test_accuracy: 0.94405 |  0:00:29s
+epoch 49 | loss: 0.08165 | test_accuracy: 0.94841 |  0:00:30s
+Stop training because you reached max_epochs = 50 with best_epoch = 49 and best_test_accuracy = 0.94841</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/usr/local/lib/python3.11/dist-packages/pytorch_tabnet/callbacks.py:172: UserWarning: Best weights from best epoch are automatically used!
+  warnings.warn(wrn_msg)</code></pre>
+</div>
+</div>
+<div id="cell-94" class="cell" data-outputid="b96025dd-523f-4451-8b46-b5fe658d0ea1" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-execution_count="54">
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular rendimiento en test set</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>preds_tabnet <span class="op">=</span> clf.predict(X_test.values)</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>probs_tabnet <span class="op">=</span> clf.predict_proba(X_test.values)</span>
+<span id="cb81-4"><a href="#cb81-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb81-5"><a href="#cb81-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"TabNet Accuracy:"</span>, accuracy_score(preds_tabnet, y_test.values))</span>
+<span id="cb81-6"><a href="#cb81-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"TabNet ROC AUC:"</span>, roc_auc_score(y_test.values, probs_tabnet[:,<span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TabNet Accuracy: 0.9484087102177554
+TabNet ROC AUC: 0.98806641544769</code></pre>
+</div>
+</div>
+<p>Ahora aplicamos el entrenamiento sin supervisación para usarlo en una nueva fase de entrenamiento.</p>
+<div id="cell-96" class="cell" data-outputid="933bafdd-3576-4b3c-d45b-a07299f431ec" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-execution_count="56">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Hacer el pre-entrenamiento</span></span>
+<span id="cb83-2"><a href="#cb83-2" aria-hidden="true" tabindex="-1"></a>unsupervised_model <span class="op">=</span> TabNetPretrainer(</span>
+<span id="cb83-3"><a href="#cb83-3" aria-hidden="true" tabindex="-1"></a>    optimizer_fn<span class="op">=</span>torch.optim.Adam,</span>
+<span id="cb83-4"><a href="#cb83-4" aria-hidden="true" tabindex="-1"></a>    optimizer_params<span class="op">=</span><span class="bu">dict</span>(lr<span class="op">=</span><span class="fl">2e-2</span>),</span>
+<span id="cb83-5"><a href="#cb83-5" aria-hidden="true" tabindex="-1"></a>    mask_type<span class="op">=</span><span class="st">'entmax'</span> <span class="co"># "sparsemax"</span></span>
+<span id="cb83-6"><a href="#cb83-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb83-7"><a href="#cb83-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb83-8"><a href="#cb83-8" aria-hidden="true" tabindex="-1"></a>unsupervised_model.fit(</span>
+<span id="cb83-9"><a href="#cb83-9" aria-hidden="true" tabindex="-1"></a>    X_train<span class="op">=</span>X_pretrain.values,</span>
+<span id="cb83-10"><a href="#cb83-10" aria-hidden="true" tabindex="-1"></a>    eval_set<span class="op">=</span>[X_test.values],</span>
+<span id="cb83-11"><a href="#cb83-11" aria-hidden="true" tabindex="-1"></a>    pretraining_ratio<span class="op">=</span><span class="fl">0.7</span>,</span>
+<span id="cb83-12"><a href="#cb83-12" aria-hidden="true" tabindex="-1"></a>    max_epochs<span class="op">=</span><span class="dv">50</span> , patience<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb83-13"><a href="#cb83-13" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/usr/local/lib/python3.11/dist-packages/pytorch_tabnet/abstract_model.py:82: UserWarning: Device used : cuda
+  warnings.warn(f"Device used : {self.device}")</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>epoch 0  | loss: 7.70281 | val_0_unsup_loss_numpy: 3.1214799880981445|  0:00:00s
+epoch 1  | loss: 5.7328  | val_0_unsup_loss_numpy: 2.701740026473999|  0:00:00s
+epoch 2  | loss: 4.4344  | val_0_unsup_loss_numpy: 2.511159896850586|  0:00:00s
+epoch 3  | loss: 3.81245 | val_0_unsup_loss_numpy: 2.3322200775146484|  0:00:00s
+epoch 4  | loss: 3.29634 | val_0_unsup_loss_numpy: 2.1348400115966797|  0:00:00s
+epoch 5  | loss: 2.85611 | val_0_unsup_loss_numpy: 2.057849884033203|  0:00:01s
+epoch 6  | loss: 2.71231 | val_0_unsup_loss_numpy: 1.9059200286865234|  0:00:01s
+epoch 7  | loss: 2.38177 | val_0_unsup_loss_numpy: 1.8024100065231323|  0:00:01s
+epoch 8  | loss: 2.18751 | val_0_unsup_loss_numpy: 1.6448800563812256|  0:00:01s
+epoch 9  | loss: 2.02259 | val_0_unsup_loss_numpy: 1.567080020904541|  0:00:01s
+epoch 10 | loss: 1.86974 | val_0_unsup_loss_numpy: 1.5137499570846558|  0:00:01s
+epoch 11 | loss: 1.77057 | val_0_unsup_loss_numpy: 1.4762799739837646|  0:00:02s
+epoch 12 | loss: 1.6627  | val_0_unsup_loss_numpy: 1.4227399826049805|  0:00:02s
+epoch 13 | loss: 1.57331 | val_0_unsup_loss_numpy: 1.361430048942566|  0:00:02s
+epoch 14 | loss: 1.50638 | val_0_unsup_loss_numpy: 1.3336399793624878|  0:00:02s
+epoch 15 | loss: 1.42558 | val_0_unsup_loss_numpy: 1.286910057067871|  0:00:02s
+epoch 16 | loss: 1.36771 | val_0_unsup_loss_numpy: 1.2362799644470215|  0:00:02s
+epoch 17 | loss: 1.29737 | val_0_unsup_loss_numpy: 1.2033100128173828|  0:00:03s
+epoch 18 | loss: 1.21341 | val_0_unsup_loss_numpy: 1.1618499755859375|  0:00:03s
+epoch 19 | loss: 1.20486 | val_0_unsup_loss_numpy: 1.137850046157837|  0:00:03s
+epoch 20 | loss: 1.15694 | val_0_unsup_loss_numpy: 1.1104300022125244|  0:00:03s
+epoch 21 | loss: 1.10679 | val_0_unsup_loss_numpy: 1.088979959487915|  0:00:03s
+epoch 22 | loss: 1.09228 | val_0_unsup_loss_numpy: 1.0698100328445435|  0:00:03s
+epoch 23 | loss: 1.07235 | val_0_unsup_loss_numpy: 1.0531400442123413|  0:00:04s
+epoch 24 | loss: 1.07221 | val_0_unsup_loss_numpy: 1.0403900146484375|  0:00:04s
+epoch 25 | loss: 1.05895 | val_0_unsup_loss_numpy: 1.0280400514602661|  0:00:04s
+epoch 26 | loss: 1.03975 | val_0_unsup_loss_numpy: 1.0222699642181396|  0:00:04s
+epoch 27 | loss: 1.04191 | val_0_unsup_loss_numpy: 1.020169973373413|  0:00:04s
+epoch 28 | loss: 1.04047 | val_0_unsup_loss_numpy: 1.0218199491500854|  0:00:04s
+epoch 29 | loss: 1.0373  | val_0_unsup_loss_numpy: 1.0218600034713745|  0:00:05s
+epoch 30 | loss: 1.03293 | val_0_unsup_loss_numpy: 1.0219899415969849|  0:00:05s
+epoch 31 | loss: 1.03683 | val_0_unsup_loss_numpy: 1.0205299854278564|  0:00:05s
+epoch 32 | loss: 1.02054 | val_0_unsup_loss_numpy: 1.0173499584197998|  0:00:05s
+epoch 33 | loss: 1.02721 | val_0_unsup_loss_numpy: 1.0172300338745117|  0:00:05s
+epoch 34 | loss: 1.02148 | val_0_unsup_loss_numpy: 1.013409972190857|  0:00:05s
+epoch 35 | loss: 1.02107 | val_0_unsup_loss_numpy: 1.0063400268554688|  0:00:05s
+epoch 36 | loss: 1.00091 | val_0_unsup_loss_numpy: 1.0046900510787964|  0:00:06s
+epoch 37 | loss: 1.00244 | val_0_unsup_loss_numpy: 1.0010000467300415|  0:00:06s
+epoch 38 | loss: 0.99064 | val_0_unsup_loss_numpy: 0.9956700205802917|  0:00:06s
+epoch 39 | loss: 0.99694 | val_0_unsup_loss_numpy: 0.9942499995231628|  0:00:06s
+epoch 40 | loss: 1.01299 | val_0_unsup_loss_numpy: 0.9939600229263306|  0:00:06s
+epoch 41 | loss: 0.99897 | val_0_unsup_loss_numpy: 0.991599977016449|  0:00:06s
+epoch 42 | loss: 0.99579 | val_0_unsup_loss_numpy: 0.99031001329422|  0:00:07s
+epoch 43 | loss: 0.98604 | val_0_unsup_loss_numpy: 0.9882000088691711|  0:00:07s
+epoch 44 | loss: 0.99242 | val_0_unsup_loss_numpy: 0.9864500164985657|  0:00:07s
+epoch 45 | loss: 0.99055 | val_0_unsup_loss_numpy: 0.9855599999427795|  0:00:07s
+epoch 46 | loss: 0.9927  | val_0_unsup_loss_numpy: 0.9813399910926819|  0:00:07s
+epoch 47 | loss: 0.98499 | val_0_unsup_loss_numpy: 0.9807800054550171|  0:00:07s
+epoch 48 | loss: 0.9828  | val_0_unsup_loss_numpy: 0.9767799973487854|  0:00:08s
+epoch 49 | loss: 0.9716  | val_0_unsup_loss_numpy: 0.9749400019645691|  0:00:08s
+Stop training because you reached max_epochs = 50 with best_epoch = 49 and best_val_0_unsup_loss_numpy = 0.9749400019645691</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/usr/local/lib/python3.11/dist-packages/pytorch_tabnet/callbacks.py:172: UserWarning: Best weights from best epoch are automatically used!
+  warnings.warn(wrn_msg)</code></pre>
+</div>
+</div>
+<p>Realizamos nuevamente el entrenamiento pero esta vez con la información del pre-entrenamiento y un poco más de iteraciones con una lr más pequeña.</p>
+<div id="cell-98" class="cell" data-outputid="0c6b7243-fbc7-4ffc-d72e-4dfbeb8c8718" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-execution_count="58">
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a>clf_pre <span class="op">=</span> TabNetClassifier(</span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>    optimizer_fn<span class="op">=</span>torch.optim.Adam,</span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a>    optimizer_params<span class="op">=</span><span class="bu">dict</span>(lr<span class="op">=</span><span class="fl">5e-2</span>),</span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a>    scheduler_params<span class="op">=</span>{<span class="st">"step_size"</span>:<span class="dv">10</span>,</span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>                      <span class="st">"gamma"</span>:<span class="fl">0.9</span>},</span>
+<span id="cb87-6"><a href="#cb87-6" aria-hidden="true" tabindex="-1"></a>    scheduler_fn<span class="op">=</span>torch.optim.lr_scheduler.StepLR,</span>
+<span id="cb87-7"><a href="#cb87-7" aria-hidden="true" tabindex="-1"></a>    device_name<span class="op">=</span><span class="st">'cuda'</span>,</span>
+<span id="cb87-8"><a href="#cb87-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb87-9"><a href="#cb87-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-10"><a href="#cb87-10" aria-hidden="true" tabindex="-1"></a>clf_pre.fit(</span>
+<span id="cb87-11"><a href="#cb87-11" aria-hidden="true" tabindex="-1"></a>    X_train<span class="op">=</span>X_train.values, y_train<span class="op">=</span>y_train.values,</span>
+<span id="cb87-12"><a href="#cb87-12" aria-hidden="true" tabindex="-1"></a>    eval_set<span class="op">=</span>[(X_test.values, y_test.values)],</span>
+<span id="cb87-13"><a href="#cb87-13" aria-hidden="true" tabindex="-1"></a>    eval_name<span class="op">=</span>[<span class="st">'valid'</span>],</span>
+<span id="cb87-14"><a href="#cb87-14" aria-hidden="true" tabindex="-1"></a>    eval_metric<span class="op">=</span>[<span class="st">'accuracy'</span>],</span>
+<span id="cb87-15"><a href="#cb87-15" aria-hidden="true" tabindex="-1"></a>    max_epochs<span class="op">=</span><span class="dv">100</span>,</span>
+<span id="cb87-16"><a href="#cb87-16" aria-hidden="true" tabindex="-1"></a>    patience<span class="op">=</span><span class="dv">10</span>,</span>
+<span id="cb87-17"><a href="#cb87-17" aria-hidden="true" tabindex="-1"></a>    num_workers<span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb87-18"><a href="#cb87-18" aria-hidden="true" tabindex="-1"></a>    from_unsupervised<span class="op">=</span>unsupervised_model</span>
+<span id="cb87-19"><a href="#cb87-19" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/usr/local/lib/python3.11/dist-packages/pytorch_tabnet/abstract_model.py:82: UserWarning: Device used : cuda
+  warnings.warn(f"Device used : {self.device}")
+/usr/local/lib/python3.11/dist-packages/pytorch_tabnet/abstract_model.py:118: UserWarning: Pretraining: mask_type changed from sparsemax to entmax
+  warnings.warn(wrn_msg)
+/usr/local/lib/python3.11/dist-packages/pytorch_tabnet/abstract_model.py:248: UserWarning: Loading weights from unsupervised pretraining
+  warnings.warn("Loading weights from unsupervised pretraining")</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>epoch 0  | loss: 0.58518 | valid_accuracy: 0.73501 |  0:00:00s
+epoch 1  | loss: 0.3542  | valid_accuracy: 0.8134  |  0:00:01s
+epoch 2  | loss: 0.25695 | valid_accuracy: 0.82948 |  0:00:01s
+epoch 3  | loss: 0.21335 | valid_accuracy: 0.84556 |  0:00:02s
+epoch 4  | loss: 0.19294 | valid_accuracy: 0.88744 |  0:00:03s
+epoch 5  | loss: 0.17544 | valid_accuracy: 0.90854 |  0:00:03s
+epoch 6  | loss: 0.16518 | valid_accuracy: 0.90955 |  0:00:04s
+epoch 7  | loss: 0.16018 | valid_accuracy: 0.92663 |  0:00:04s
+epoch 8  | loss: 0.16061 | valid_accuracy: 0.92898 |  0:00:05s
+epoch 9  | loss: 0.14704 | valid_accuracy: 0.9273  |  0:00:06s
+epoch 10 | loss: 0.15013 | valid_accuracy: 0.93065 |  0:00:06s
+epoch 11 | loss: 0.14978 | valid_accuracy: 0.934   |  0:00:07s
+epoch 12 | loss: 0.13681 | valid_accuracy: 0.93601 |  0:00:07s
+epoch 13 | loss: 0.13114 | valid_accuracy: 0.93869 |  0:00:08s
+epoch 14 | loss: 0.12579 | valid_accuracy: 0.93534 |  0:00:09s
+epoch 15 | loss: 0.11833 | valid_accuracy: 0.93936 |  0:00:09s
+epoch 16 | loss: 0.12693 | valid_accuracy: 0.9397  |  0:00:10s
+epoch 17 | loss: 0.12355 | valid_accuracy: 0.94271 |  0:00:11s
+epoch 18 | loss: 0.1152  | valid_accuracy: 0.94238 |  0:00:11s
+epoch 19 | loss: 0.11553 | valid_accuracy: 0.94606 |  0:00:12s
+epoch 20 | loss: 0.10863 | valid_accuracy: 0.94137 |  0:00:12s
+epoch 21 | loss: 0.11198 | valid_accuracy: 0.94472 |  0:00:13s
+epoch 22 | loss: 0.11015 | valid_accuracy: 0.94941 |  0:00:14s
+epoch 23 | loss: 0.10458 | valid_accuracy: 0.94271 |  0:00:14s
+epoch 24 | loss: 0.09681 | valid_accuracy: 0.94673 |  0:00:15s
+epoch 25 | loss: 0.1016  | valid_accuracy: 0.94305 |  0:00:15s
+epoch 26 | loss: 0.09221 | valid_accuracy: 0.94037 |  0:00:16s
+epoch 27 | loss: 0.08804 | valid_accuracy: 0.94807 |  0:00:17s
+epoch 28 | loss: 0.10198 | valid_accuracy: 0.95176 |  0:00:17s
+epoch 29 | loss: 0.0891  | valid_accuracy: 0.94841 |  0:00:18s
+epoch 30 | loss: 0.08842 | valid_accuracy: 0.95477 |  0:00:18s
+epoch 31 | loss: 0.08354 | valid_accuracy: 0.95645 |  0:00:19s
+epoch 32 | loss: 0.09043 | valid_accuracy: 0.95578 |  0:00:20s
+epoch 33 | loss: 0.08255 | valid_accuracy: 0.9598  |  0:00:20s
+epoch 34 | loss: 0.08031 | valid_accuracy: 0.95042 |  0:00:21s
+epoch 35 | loss: 0.08598 | valid_accuracy: 0.95611 |  0:00:22s
+epoch 36 | loss: 0.08256 | valid_accuracy: 0.95209 |  0:00:22s
+epoch 37 | loss: 0.08039 | valid_accuracy: 0.95812 |  0:00:23s
+epoch 38 | loss: 0.06817 | valid_accuracy: 0.96181 |  0:00:23s
+epoch 39 | loss: 0.07398 | valid_accuracy: 0.95611 |  0:00:24s
+epoch 40 | loss: 0.07628 | valid_accuracy: 0.95946 |  0:00:25s
+epoch 41 | loss: 0.06901 | valid_accuracy: 0.95879 |  0:00:25s
+epoch 42 | loss: 0.06339 | valid_accuracy: 0.96147 |  0:00:26s
+epoch 43 | loss: 0.07386 | valid_accuracy: 0.96449 |  0:00:27s
+epoch 44 | loss: 0.07286 | valid_accuracy: 0.95913 |  0:00:27s
+epoch 45 | loss: 0.07027 | valid_accuracy: 0.96181 |  0:00:28s
+epoch 46 | loss: 0.07661 | valid_accuracy: 0.95678 |  0:00:28s
+epoch 47 | loss: 0.07416 | valid_accuracy: 0.95846 |  0:00:29s
+epoch 48 | loss: 0.07044 | valid_accuracy: 0.95243 |  0:00:30s
+epoch 49 | loss: 0.069   | valid_accuracy: 0.95276 |  0:00:30s
+epoch 50 | loss: 0.06992 | valid_accuracy: 0.95712 |  0:00:31s
+epoch 51 | loss: 0.06777 | valid_accuracy: 0.96214 |  0:00:31s
+epoch 52 | loss: 0.06655 | valid_accuracy: 0.96181 |  0:00:32s
+epoch 53 | loss: 0.06677 | valid_accuracy: 0.96214 |  0:00:33s
+
+Early stopping occurred at epoch 53 with best_epoch = 43 and best_valid_accuracy = 0.96449</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/usr/local/lib/python3.11/dist-packages/pytorch_tabnet/callbacks.py:172: UserWarning: Best weights from best epoch are automatically used!
+  warnings.warn(wrn_msg)</code></pre>
+</div>
+</div>
+<div id="cell-99" class="cell" data-outputid="7aadc4d0-2124-4f6f-83de-c818d2c8a3ba" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-execution_count="59">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calcular rendimiento en test set</span></span>
+<span id="cb91-2"><a href="#cb91-2" aria-hidden="true" tabindex="-1"></a>preds_tabnet <span class="op">=</span> clf_pre.predict(X_test.values)</span>
+<span id="cb91-3"><a href="#cb91-3" aria-hidden="true" tabindex="-1"></a>probs_tabnet <span class="op">=</span> clf_pre.predict_proba(X_test.values)</span>
+<span id="cb91-4"><a href="#cb91-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb91-5"><a href="#cb91-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"TabNet Accuracy:"</span>, accuracy_score(preds_tabnet, y_test.values))</span>
+<span id="cb91-6"><a href="#cb91-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"TabNet ROC AUC:"</span>, roc_auc_score(y_test.values, probs_tabnet[:,<span class="dv">1</span>]))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>TabNet Accuracy: 0.9644891122278056
+TabNet ROC AUC: 0.9922004159049486</code></pre>
+</div>
+</div>
+</section>
+<section id="comparación-de-resultados-tabpfn-vs-tabnet" class="level4">
+<h4 class="anchored" data-anchor-id="comparación-de-resultados-tabpfn-vs-tabnet">Comparación de resultados: TabPFN vs TabNet</h4>
+<p>Todos los modelos fueron evaluados sobre el mismo conjunto de prueba (<code>X_test</code>). A continuación se resumen sus resultados:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 37%">
+<col style="width: 35%">
+<col style="width: 13%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Modelo</th>
+<th>Entrenamiento</th>
+<th>Accuracy</th>
+<th>ROC AUC</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>TabPFN</strong></td>
+<td>Solo conjunto pretrain</td>
+<td><strong>0.9363</strong></td>
+<td><strong>0.9871</strong></td>
+</tr>
+<tr class="even">
+<td><strong>TabNet (sin preentrenamiento)</strong></td>
+<td>Entrenamiento completo</td>
+<td>0.9484</td>
+<td>0.9881</td>
+</tr>
+<tr class="odd">
+<td><strong>TabNet (con preentrenamiento)</strong></td>
+<td>Pretrain + fine-tuning</td>
+<td><strong>0.9645</strong></td>
+<td><strong>0.9922</strong></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+<section id="observaciones-clave" class="level3">
+<h3 class="anchored" data-anchor-id="observaciones-clave">🧠 Observaciones clave:</h3>
+<ul>
+<li>🔹 <strong>TabPFN</strong>, aún usando un conjunto más pequeño de entrenamiento, alcanza una <strong>precisión y AUC muy competitiva</strong>, gracias a su preentrenamiento fundacional.<br>
+</li>
+<li>🔹 <strong>TabNet mejora</strong> al usar preentrenamiento no supervisado, mostrando un claro beneficio del transfer learning clásico.<br>
+</li>
+<li>✅ Estos resultados ilustran <strong>dos formas diferentes de aprovechar el conocimiento previo</strong>:
+<ul>
+<li>TabPFN: transferencia por meta-aprendizaje (in-context learning)<br>
+</li>
+<li>TabNet: transferencia por preentrenamiento + fine-tuning</li>
+</ul></li>
+</ul>
 </section>
 </section>
 <section id="conclusiones" class="level2">
@@ -2463,6 +2848,9 @@ epoch 35 | loss: 0.36055 | valid_accuracy: 0.87339 |  0:12:16s</code></pre>
 <li>Note que al agregarle al modelo mas capas superiores, logramos mitigar el problema que presentamos en nuestro modelo 2, logrando un <em>accuracy</em> del 99.30% en nuestro datos de prueba.</li>
 <li>Como conlusión, cuando hagamos uso de modelo pre-entrenados. Tenemos que hacer uso de todas las herramientas que disponemos, como lo son el <em>transfer learning</em> y el <em>fine tunning</em>, una caracteristica muy importante que siempre hay que aplicar.</li>
 <li>En el modelo de clasificación de texto usando el método manual, logró una mejora significativa usando los embeddings de FastText y ajustandolo a los datos. Sin embargo, tiende a sobre entrenar (algo con lo que se debe luchar aplicando técnicas de regularización). Por otro lado, vemos que con el método a nivel de arquitectura (que es como funcionan los modelos hoy en día) ya es mucho más directo pero el nivel de computación requerido es mayor y funcionan mejor con una mayor cantidad de datos.</li>
+<li>Tanto TabPFN como TabNet demuestran el valor del transfer learning en datos tabulares.<br>
+TabPFN destaca por su capacidad de generalizar con muy pocos datos gracias a su preentrenamiento fundacional,<br>
+mientras que TabNet muestra mejoras claras cuando se utiliza preentrenamiento no supervisado antes del fine-tuning</li>
 </ul>
 
 
