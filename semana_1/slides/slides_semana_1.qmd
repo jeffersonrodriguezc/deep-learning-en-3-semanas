@@ -1,114 +1,761 @@
 ---
 title: "Semana 1: Fundamentos de Redes Neuronales"
-subtitle: "Curso Práctico de Deep Learning en 3 Semanas"
-author: "Jefferson Rodriguez" 
+subtitle: "La receta completa para construir y entrenar modelos"
+author: "Jefferson Rodriguez"
 format:
   revealjs:
-    sanetize: false
+    sanitize: false
     self-contained: false
     incremental: true
-    theme: default 
-    slide-number: true 
-    show-slide-number: all 
-    mouse-wheel: true 
-    transition: fade  
-    footer: "Deep Learning en 3 Semanas - Jefferson Rodríguez" 
+    theme: default
+    slide-number: true
+    show-slide-number: all
+    mouse-wheel: true
+    transition: fade
+    footer: "Deep Learning en 3 Semanas - Jefferson Rodríguez"
     dependencies:
       - src: https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js
         defer: true
-editor: visual 
+editor: visual
 resources:
-  - nn-animation.html  
+  - nn-animation.html
   - perceptron_estructura_basica.html
   - perceptron_clasificador_basico.html
-
 ---
 
-### ¿Qué veremos esta semana?
+# Fundamentos y Componentes de una Red Neuronal {background-color="#1a3a5c"}
 
-* Entender la neurona artificial básica: El Perceptrón.
-* Comprender cómo las redes multicapa (MLP) resuelven problemas complejos.
-* Captar la idea principal detrás del entrenamiento: Minimizar el error.
-* Conocer técnicas clave para construir y entrenar tu primera red neuronal.
-* ¡Prepararte para tu primer proyecto práctico con un MLP!
-
----
-
-### Explorando DL: Un Vistazo Interactivo
+## Un vistazo inicia interactivo
 
 ```{=html}
 <iframe src="https://playground.tensorflow.org/#activation=tanh&batchSize=10&dataset=circle&regDataset=reg-plane&learningRate=0.03&regularizationRate=0&noise=0&networkShape=4,2&seed=0.74961&showTestData=false&discretize=false&percTrainData=50&x=true&y=true&xTimesY=false&ySquared=false&cosX=false&sinX=false&cosY=false&sinY=false&collectStats=false&problem=classification&initZero=false&hideText=false" width="100%" height="100%" frameborder="0" allowfullscreen="true"></iframe>
 ```
 ---
 
-### Estructura de la Red Neuronal
+### La idea de esta semana
 
-```{=html}
-<iframe
-  src="nn-animation.html"
-  width="800"
-  height="500"
-  style="
-    display: block;
-    margin: 0 auto;     
-    border: none;
-    overflow: hidden;
-  "
-  scrolling="no"
-  allowfullscreen>
-</iframe>
-```
+Una red neuronal no es magia.
+
+Es una receta repetible:
+
+$$
+\text{datos} \rightarrow \text{red} \rightarrow \text{predicción} \rightarrow \text{error} \rightarrow \text{gradientes} \rightarrow \text{actualización}
+$$
+
 ---
 
-### Perceptrón: El componente fundamental
+### La receta completa
+
+::: {.nonincremental}
+1. Preparar los datos
+2. Definir la red
+3. Hacer **forward pass**
+4. Calcular la **pérdida**
+5. Hacer **backward pass**
+6. Actualizar los pesos
+7. Repetir por épocas
+8. Evaluar y mejorar
+:::
+
+---
+
+# Parte 1: Ingredientes de la red {background-color="#1a3a5c"}
+
+---
+
+### Ingrediente 1: datos
+
+Toda red aprende a partir de ejemplos.
+
+::: {.nonincremental}
+| Entrada $X$ | Salida esperada $y$ |
+|---|---|
+| Imagen | Clase |
+| Texto | Categoría |
+| Tabla | Valor o clase |
+| Serie temporal | Valor futuro |
+:::
+
+---
+
+### Datos, etiquetas y batches
+
+- $X$: datos de entrada.
+- $y$: respuesta esperada.
+- **Batch**: subconjunto de ejemplos.
+- **Epoch**: una vuelta completa por el dataset.
+
+---
+
+### Ingrediente 2: neurona artificial
+
+Una neurona combina entradas, pesos y bias.
+
+$$
+z = w_1x_1 + w_2x_2 + \dots + w_nx_n + b
+$$
+
+::: {.fragment}
+$$
+z = \mathbf{x} \cdot \mathbf{w} + b
+$$
+:::
+
+---
+
+### Perceptrón: componente fundamental
 
 ::: {.fragment}
 <div style="text-align:center; margin:1em 0;">
-  <iframe
-    src="perceptron_estructura_basica.html"
-    width="450"
-    height="200"
+  <iframe src="perceptron_estructura_basica.html"
+    width="450" height="200"
     style="border:none; margin:auto; display:block;"
-    scrolling="no"
-  ></iframe>
+    scrolling="no"></iframe>
 </div>
 :::
 
 ::: {.fragment}
 $$
-f(\mathbf{x})
-=\sum_{i=1}^3 w_i\,x_i + b
-\quad\Longrightarrow\quad
-output =
-\begin{cases}
-1, & \sum_{i=1}^3 w_i\,x_i + b \ge 0,\\
-0, & \text{en otro caso.}
-\end{cases}
+f(\mathbf{x}) = \sum_{i=1}^{n} w_i x_i + b
 $$
 :::
 
-::: {.fragment}
-$$
-y=\underbrace{g(z)}_{\text{función de activación}}
-=
-\begin{cases}
-1, & z \ge 0,\\
-0, & z < 0,
-\end{cases}
-\quad z = f(\mathbf{x})
-$$
-:::
 ---
 
-## Perceptrón como Clasificador básico
+### ¿Qué aprende realmente la red?
+
+La red no aprende reglas escritas a mano.
+
+Aprende valores numéricos:
+
+$$
+\theta = \{W, b\}
+$$
+
+::: {.fragment}
+Entrenar = ajustar $W$ y $b$ para reducir el error.
+:::
+
+---
+
+### Ingrediente 3: función de activación
+
+La activación transforma la salida lineal de la neurona.
+
+$$
+a = f(z)
+$$
+
+::: {.fragment}
+Sin activaciones, muchas capas densas seguirían siendo una transformación lineal.
+:::
+
+---
+
+### Activaciones comunes
+
+::: {.nonincremental}
+| Activación | Uso típico | Idea |
+|---|---|---|
+| ReLU | Capas ocultas | Deja pasar valores positivos |
+| Sigmoid | Clasificación binaria | Probabilidad entre 0 y 1 |
+| Softmax | Multiclase | Probabilidades por clase |
+| Tanh | Secuencias / estados | Salida entre -1 y 1 |
+:::
+
+---
+
+### ReLU en una frase
+
+$$
+\text{ReLU}(z) = \max(0, z)
+$$
+
+- Si $z < 0$, devuelve 0.
+- Si $z > 0$, deja pasar el valor.
+
+---
+
+### Ingrediente 4: capas
+
+Una capa agrupa muchas neuronas.
+
+$$
+\mathbf{h} = f(\mathbf{X}W + \mathbf{b})
+$$
+
+::: {.fragment}
+Cada capa transforma los datos en una representación más útil.
+:::
+
+---
+
+### De capas a red neuronal
 
 ```{=html}
 <iframe
-  src="perceptron_clasificador_basico.html"
-  width="1000"
-  height="500"
-  style="border:none; overflow:hidden;"
-  scrolling="no"
-></iframe>
+  src="nn-animation.html"
+  width="800" height="500"
+  style="display:block; margin:0 auto; border:none; overflow:hidden;"
+  scrolling="no" allowfullscreen>
+</iframe>
 ```
+
 ---
+
+### Multi-Layer Perceptron
+
+Una MLP apila capas densas:
+
+$$
+\text{Input} \rightarrow \text{Hidden} \rightarrow \text{Hidden} \rightarrow \text{Output}
+$$
+
+::: {.fragment}
+La profundidad permite aprender representaciones cada vez más abstractas.
+:::
+
+---
+
+# Parte 2: Forward pass {background-color="#1a3a5c"}
+
+---
+
+### Forward pass
+
+El **forward pass** es el recorrido de la información desde la entrada hasta la predicción.
+
+$$
+X \rightarrow \text{Red neuronal} \rightarrow \hat{y}
+$$
+
+---
+
+### Forward en una neurona
+
+::: {.nonincremental}
+1. Recibe entradas $x$.
+2. Calcula $z = \mathbf{x} \cdot \mathbf{w} + b$.
+3. Aplica activación $a = f(z)$.
+4. Entrega una salida.
+:::
+
+---
+
+### Forward en una red completa
+
+$$
+h_1 = f(XW_1 + b_1)
+$$
+
+$$
+h_2 = f(h_1W_2 + b_2)
+$$
+
+$$
+\hat{y} = g(h_2W_3 + b_3)
+$$
+
+---
+
+### Salida según el problema
+
+::: {.nonincremental}
+| Problema | Activación de salida | Ejemplo |
+|---|---|---|
+| Regresión | Lineal | Precio |
+| Binario | Sigmoid | Fraude / no fraude |
+| Multiclase | Softmax | Tipo de imagen |
+:::
+
+---
+
+### Forward en código {tags="aplicado"}
+
+```{python}
+#| echo: true
+#| code-line-numbers: "|2|3|4"
+
+import numpy as np
+
+def forward(X, W, b, activation):
+    z = X @ W + b
+    a = activation(z)
+    return a
+```
+
+---
+
+# Parte 3: Medir el error {background-color="#1a3a5c"}
+
+---
+
+### ¿Cómo sabe la red que se equivocó?
+
+Compara dos cosas:
+
+$$
+y \quad \text{vs} \quad \hat{y}
+$$
+
+La función de pérdida convierte esa diferencia en un número.
+
+---
+
+### Función de pérdida
+
+$$
+\mathcal{L}(y, \hat{y})
+$$
+
+- Pérdida alta: la predicción está lejos del objetivo.
+- Pérdida baja: la predicción está cerca del objetivo.
+
+---
+
+### Loss para regresión
+
+Error cuadrático medio:
+
+$$
+\text{MSE} = \frac{1}{N}\sum_{i=1}^{N}(y_i - \hat{y}_i)^2
+$$
+
+::: {.fragment}
+Penaliza más los errores grandes.
+:::
+
+---
+
+### Loss para clasificación binaria
+
+Binary Cross Entropy:
+
+$$
+\mathcal{L} = -\frac{1}{N}\sum_{i=1}^{N}\left[y_i\log(\hat{y}_i) + (1-y_i)\log(1-\hat{y}_i)\right]
+$$
+
+---
+
+### Intuición de Binary Cross Entropy
+
+::: {.nonincremental}
+| Caso | $y$ | $\hat{y}$ | Pérdida |
+|---|---:|---:|---|
+| Acierto seguro | 1 | 0.99 | Baja |
+| Error grave | 1 | 0.01 | Alta |
+| Indecisión | 1 | 0.50 | Media |
+:::
+
+---
+
+### ¿Por qué se penaliza tanto un error seguro? {tags="academico"}
+
+Porque el logaritmo castiga predicciones cercanas a cero cuando la clase real es 1.
+
+$$
+-\log(0.99) \approx 0.01
+$$
+
+$$
+-\log(0.01) \approx 4.6
+$$
+
+---
+
+# Parte 4: Backward pass {background-color="#1a3a5c"}
+
+---
+
+### Backward pass
+
+El **backward pass** envía el error hacia atrás.
+
+$$
+\mathcal{L} \rightarrow \text{capa final} \rightarrow \text{capas ocultas} \rightarrow W,b
+$$
+
+::: {.fragment}
+Su objetivo es calcular gradientes.
+:::
+
+---
+
+### ¿Qué es un gradiente?
+
+Un gradiente responde:
+
+> Si cambio un poco este peso, ¿la pérdida sube o baja?
+
+$$
+\frac{\partial \mathcal{L}}{\partial w}
+$$
+
+---
+
+### Interpretación del gradiente {tags="academico"}
+
+- Gradiente positivo: aumentar el peso puede aumentar la pérdida.
+- Gradiente negativo: aumentar el peso puede reducir la pérdida.
+- Gradiente cercano a cero: el peso casi no afecta la pérdida.
+
+---
+
+### Backpropagation
+
+Backpropagation calcula gradientes capa por capa.
+
+::: {.nonincremental}
+1. Calcula la pérdida.
+2. Mide cómo cambia la pérdida respecto a cada parámetro.
+3. Propaga ese cálculo hacia atrás.
+4. Entrega gradientes al optimizador.
+:::
+
+---
+
+### La regla de la cadena {tags="academico"}
+
+La pérdida depende de muchas operaciones encadenadas.
+
+$$
+\mathcal{L} \rightarrow \hat{y} \rightarrow h_2 \rightarrow h_1 \rightarrow W
+$$
+
+::: {.fragment}
+Backpropagation aplica la regla de la cadena para calcular cada derivada.
+:::
+
+---
+
+### Backward en PyTorch {tags="aplicado"}
+
+```{python}
+#| eval: false
+#| echo: true
+#| code-line-numbers: "|3|4|5|6"
+
+# predicción
+pred = model(X_batch)
+loss = loss_fn(pred, y_batch)
+
+optimizer.zero_grad()
+loss.backward()
+optimizer.step()
+```
+
+---
+
+# Parte 5: Optimización {background-color="#1a3a5c"}
+
+---
+
+### Gradient descent
+
+Actualizar pesos significa moverse en dirección contraria al gradiente.
+
+$$
+w_{nuevo} = w_{actual} - \alpha \frac{\partial \mathcal{L}}{\partial w}
+$$
+
+::: {.fragment}
+$\alpha$ es el **learning rate**.
+:::
+
+---
+
+### Learning rate
+
+::: {.nonincremental}
+| Learning rate | Comportamiento |
+|---|---|
+| Muy pequeño | Aprende lento |
+| Adecuado | Reduce la pérdida establemente |
+| Muy grande | Puede divergir |
+:::
+
+---
+
+### Mini-batches y epochs
+
+Ejemplo:
+
+::: {.nonincremental}
+| Concepto | Valor |
+|---|---:|
+| Datos | 1000 |
+| Batch size | 100 |
+| Updates por epoch | 10 |
+:::
+
+---
+
+### Iteration, batch y epoch
+
+- **Batch**: datos usados en una actualización.
+- **Iteration**: una actualización de pesos.
+- **Epoch**: una pasada completa por el dataset.
+
+---
+
+### Optimizadores {tags="academico"}
+
+::: {.nonincremental}
+| Optimizador | Idea |
+|---|---|
+| SGD | Usa gradientes por mini-batch |
+| Momentum | Acumula dirección previa |
+| RMSprop | Ajusta pasos según historial |
+| Adam | Combina momentum y adaptación |
+:::
+
+---
+
+### La receta del training loop
+
+```text
+Para cada epoch:
+    Para cada batch:
+        1. Forward pass
+        2. Calcular loss
+        3. Backward pass
+        4. Actualizar pesos
+        5. Guardar métricas
+```
+
+---
+
+### Training loop como receta
+
+::: {.nonincremental}
+**Ingredientes:** datos, red, loss, optimizador, learning rate.
+
+**Preparación:** predecir, medir error, calcular gradientes, actualizar, repetir.
+:::
+
+---
+
+### Training loop en PyTorch {tags="aplicado"}
+
+```{python}
+#| eval: false
+#| echo: true
+#| code-line-numbers: "|1|2|3|5|6|7|8|9"
+
+for epoch in range(num_epochs):
+    for X_batch, y_batch in train_loader:
+        pred = model(X_batch)
+        loss = loss_fn(pred, y_batch)
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+```
+
+---
+
+### Equivalencia concepto-código {tags="aplicado"}
+
+::: {.nonincremental}
+| Concepto | Código típico |
+|---|---|
+| Red | `model` |
+| Forward | `model(X)` |
+| Loss | `loss_fn(pred, y)` |
+| Backward | `loss.backward()` |
+| Update | `optimizer.step()` |
+:::
+
+---
+
+# Parte 6: Evaluar y mejorar {background-color="#1a3a5c"}
+
+---
+
+### No basta con entrenar
+
+Un modelo puede aprender el entrenamiento y fallar en datos nuevos.
+
+::: {.fragment}
+Por eso separamos datos de entrenamiento, validación y prueba.
+:::
+
+---
+
+### Train, validation y test
+
+::: {.nonincremental}
+| Conjunto | Uso |
+|---|---|
+| Train | Ajustar pesos |
+| Validation | Tomar decisiones durante desarrollo |
+| Test | Estimar desempeño final |
+:::
+
+---
+
+### Métricas según el problema
+
+::: {.nonincremental}
+| Problema | Métricas comunes |
+|---|---|
+| Clasificación | Accuracy, Precision, Recall, F1 |
+| Regresión | MAE, MSE, RMSE |
+| Desbalance | F1, AUC, matriz de confusión |
+:::
+
+---
+
+### Underfitting y overfitting
+
+- **Underfitting**: el modelo no aprende suficiente.
+- **Overfitting**: el modelo memoriza el entrenamiento.
+- **Buen ajuste**: aprende patrones que generalizan.
+
+---
+
+### Leer curvas de entrenamiento {tags="academico"}
+
+::: {.nonincremental}
+| Señal | Posible problema |
+|---|---|
+| Train loss alta | Underfitting |
+| Train baja, val alta | Overfitting |
+| Ambas bajan | Aprendizaje saludable |
+| Loss inestable | Learning rate alto |
+:::
+
+---
+
+### Dropout
+
+Dropout apaga aleatoriamente neuronas durante el entrenamiento.
+
+::: {.fragment}
+Esto reduce la dependencia de conexiones específicas y ayuda a generalizar.
+:::
+
+---
+
+### Normalización
+
+Normalizar entradas ayuda a que el entrenamiento sea más estable.
+
+$$
+x' = \frac{x - \mu}{\sigma}
+$$
+
+::: {.fragment}
+En deep learning, la escala de los datos importa.
+:::
+
+---
+
+### Checklist antes de entrenar
+
+::: {.nonincremental}
+- ¿Tengo $X$ e $y$?
+- ¿Separé train/validation/test?
+- ¿Elegí arquitectura, loss y optimizador?
+- ¿Definí el learning rate?
+- ¿Estoy monitoreando métricas?
+:::
+
+---
+
+# Parte 7: Primera implementación {background-color="#1a3a5c"}
+
+---
+
+### Code time: primera MLP
+
+Construiremos una red con:
+
+```text
+Input → Dense → ReLU → Dense → Output
+```
+
+::: {.fragment}
+Objetivo: conectar la receta teórica con código real.
+:::
+
+---
+
+### MLP mínima en Keras {tags="aplicado"}
+
+```{python}
+#| eval: false
+#| echo: true
+#| code-line-numbers: "|3|4|5|7|8"
+
+from tensorflow import keras
+
+model = keras.Sequential([
+    keras.layers.Dense(32, activation="relu"),
+    keras.layers.Dense(1, activation="sigmoid")
+])
+
+model.compile(
+    optimizer="adam",
+    loss="binary_crossentropy",
+    metrics=["accuracy"]
+)
+```
+
+---
+
+### Entrenar en Keras {tags="aplicado"}
+
+```{python}
+#| eval: false
+#| echo: true
+#| code-line-numbers: "|1|2|3|4|5"
+
+history = model.fit(
+    X_train, y_train,
+    validation_data=(X_val, y_val),
+    epochs=20,
+    batch_size=32
+)
+```
+
+---
+
+### Pregunta guía para el notebook
+
+Cuando ejecutes el modelo, observa:
+
+- ¿La loss baja?
+- ¿La métrica de validación mejora?
+- ¿Hay señales de overfitting?
+- ¿Qué cambia si modificas el learning rate?
+
+---
+
+### Resumen de la semana
+
+La receta completa:
+
+::: {.nonincremental}
+1. Datos entran a la red.
+2. Capas transforman la información.
+3. Forward produce una predicción.
+4. Loss mide el error.
+5. Backprop calcula gradientes.
+6. El optimizador actualiza pesos.
+7. La evaluación mide generalización.
+:::
+
+---
+
+### Idea clave final
+
+Entrenar una red neuronal es repetir muchas veces:
+
+$$
+\text{predecir} \rightarrow \text{medir error} \rightarrow \text{calcular gradientes} \rightarrow \text{actualizar pesos}
+$$
+
+::: {.fragment}
+Todo lo demás es mejorar esta receta.
+:::

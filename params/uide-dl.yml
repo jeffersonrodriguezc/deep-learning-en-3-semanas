@@ -1,0 +1,9 @@
+# UIDE — Maestría en Deep Learning
+# Curso: Deep Learning Aplicado (más práctico, solo aplicado)
+institucion: "Universidad Internacional del Ecuador"
+programa: "Maestría en Deep Learning"
+curso: "Deep Learning Aplicado"
+logo: "../../assets/logos/uide.png"
+color_primario: "#003087"
+footer: "Deep Learning Aplicado · UIDE · Jefferson Rodríguez"
+audiencia: ["aplicado"]

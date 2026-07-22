@@ -1,0 +1,1733 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.7.29">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Implementando una GAN – Deep Learning Practico en 3 Semanas</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-08799928d293638fe9563d5c5a2794e5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="nav-fixed quarto-light"><script id="quarto-html-before-body" type="application/javascript">
+    const toggleBodyColorMode = (bsSheetEl) => {
+      const mode = bsSheetEl.getAttribute("data-mode");
+      const bodyEl = window.document.querySelector("body");
+      if (mode === "dark") {
+        bodyEl.classList.add("quarto-dark");
+        bodyEl.classList.remove("quarto-light");
+      } else {
+        bodyEl.classList.add("quarto-light");
+        bodyEl.classList.remove("quarto-dark");
+      }
+    }
+    const toggleBodyColorPrimary = () => {
+      const bsSheetEl = window.document.querySelector("link#quarto-bootstrap:not([rel=disabled-stylesheet])");
+      if (bsSheetEl) {
+        toggleBodyColorMode(bsSheetEl);
+      }
+    }
+    const setColorSchemeToggle = (alternate) => {
+      const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+      for (let i=0; i < toggles.length; i++) {
+        const toggle = toggles[i];
+        if (toggle) {
+          if (alternate) {
+            toggle.classList.add("alternate");
+          } else {
+            toggle.classList.remove("alternate");
+          }
+        }
+      }
+    };
+    const toggleColorMode = (alternate) => {
+      // Switch the stylesheets
+      const primaryStylesheets = window.document.querySelectorAll('link.quarto-color-scheme:not(.quarto-color-alternate)');
+      const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+      manageTransitions('#quarto-margin-sidebar .nav-link', false);
+      if (alternate) {
+        // note: dark is layered on light, we don't disable primary!
+        enableStylesheet(alternateStylesheets);
+        for (const sheetNode of alternateStylesheets) {
+          if (sheetNode.id === "quarto-bootstrap") {
+            toggleBodyColorMode(sheetNode);
+          }
+        }
+      } else {
+        disableStylesheet(alternateStylesheets);
+        enableStylesheet(primaryStylesheets)
+        toggleBodyColorPrimary();
+      }
+      manageTransitions('#quarto-margin-sidebar .nav-link', true);
+      // Switch the toggles
+      setColorSchemeToggle(alternate)
+      // Hack to workaround the fact that safari doesn't
+      // properly recolor the scrollbar when toggling (#1455)
+      if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+        manageTransitions("body", false);
+        window.scrollTo(0, 1);
+        setTimeout(() => {
+          window.scrollTo(0, 0);
+          manageTransitions("body", true);
+        }, 40);
+      }
+    }
+    const disableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        stylesheet.rel = 'disabled-stylesheet';
+      }
+    }
+    const enableStylesheet = (stylesheets) => {
+      for (let i=0; i < stylesheets.length; i++) {
+        const stylesheet = stylesheets[i];
+        if(stylesheet.rel !== 'stylesheet') { // for Chrome, which will still FOUC without this check
+          stylesheet.rel = 'stylesheet';
+        }
+      }
+    }
+    const manageTransitions = (selector, allowTransitions) => {
+      const els = window.document.querySelectorAll(selector);
+      for (let i=0; i < els.length; i++) {
+        const el = els[i];
+        if (allowTransitions) {
+          el.classList.remove('notransition');
+        } else {
+          el.classList.add('notransition');
+        }
+      }
+    }
+    const isFileUrl = () => {
+      return window.location.protocol === 'file:';
+    }
+    const hasAlternateSentinel = () => {
+      let styleSentinel = getColorSchemeSentinel();
+      if (styleSentinel !== null) {
+        return styleSentinel === "alternate";
+      } else {
+        return false;
+      }
+    }
+    const setStyleSentinel = (alternate) => {
+      const value = alternate ? "alternate" : "default";
+      if (!isFileUrl()) {
+        window.localStorage.setItem("quarto-color-scheme", value);
+      } else {
+        localAlternateSentinel = value;
+      }
+    }
+    const getColorSchemeSentinel = () => {
+      if (!isFileUrl()) {
+        const storageValue = window.localStorage.getItem("quarto-color-scheme");
+        return storageValue != null ? storageValue : localAlternateSentinel;
+      } else {
+        return localAlternateSentinel;
+      }
+    }
+    const toggleGiscusIfUsed = (isAlternate, darkModeDefault) => {
+      const baseTheme = document.querySelector('#giscus-base-theme')?.value ?? 'light';
+      const alternateTheme = document.querySelector('#giscus-alt-theme')?.value ?? 'dark';
+      let newTheme = '';
+      if(authorPrefersDark) {
+        newTheme = isAlternate ? baseTheme : alternateTheme;
+      } else {
+        newTheme = isAlternate ? alternateTheme : baseTheme;
+      }
+      const changeGiscusTheme = () => {
+        // From: https://github.com/giscus/giscus/issues/336
+        const sendMessage = (message) => {
+          const iframe = document.querySelector('iframe.giscus-frame');
+          if (!iframe) return;
+          iframe.contentWindow.postMessage({ giscus: message }, 'https://giscus.app');
+        }
+        sendMessage({
+          setConfig: {
+            theme: newTheme
+          }
+        });
+      }
+      const isGiscussLoaded = window.document.querySelector('iframe.giscus-frame') !== null;
+      if (isGiscussLoaded) {
+        changeGiscusTheme();
+      }
+    };
+    const authorPrefersDark = false;
+    const darkModeDefault = authorPrefersDark;
+      document.querySelector('link#quarto-text-highlighting-styles.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+      document.querySelector('link#quarto-bootstrap.quarto-color-scheme-extra').rel = 'disabled-stylesheet';
+    let localAlternateSentinel = darkModeDefault ? 'alternate' : 'default';
+    // Dark / light mode switch
+    window.quartoToggleColorScheme = () => {
+      // Read the current dark / light value
+      let toAlternate = !hasAlternateSentinel();
+      toggleColorMode(toAlternate);
+      setStyleSentinel(toAlternate);
+      toggleGiscusIfUsed(toAlternate, darkModeDefault);
+    };
+    // Switch to dark mode if need be
+    if (hasAlternateSentinel()) {
+      toggleColorMode(true);
+    } else {
+      toggleColorMode(false);
+    }
+  </script>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Deep Learning Practico en 3 Semanas</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" role="menu" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll me-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../index.html"> 
+<span class="menu-text">Inicio</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../semana_1/index.html"> 
+<span class="menu-text">Semana 1</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../semana_2/index.html"> 
+<span class="menu-text">Semana 2</span></a>
+  </li>  
+  <li class="nav-item">
+    <a class="nav-link" href="../../semana_3/index.html"> 
+<span class="menu-text">Semana 3</span></a>
+  </li>  
+</ul>
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas/"> <i class="bi bi-github" role="img" aria-label="GitHub">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#arquitectura-de-los-modelos" id="toc-arquitectura-de-los-modelos" class="nav-link active" data-scroll-target="#arquitectura-de-los-modelos">Arquitectura de los Modelos</a></li>
+  <li><a href="#modelo-del-generador" id="toc-modelo-del-generador" class="nav-link" data-scroll-target="#modelo-del-generador">Modelo del Generador</a></li>
+  <li><a href="#modelo-del-discriminador" id="toc-modelo-del-discriminador" class="nav-link" data-scroll-target="#modelo-del-discriminador">Modelo del Discriminador</a></li>
+  <li><a href="#fórmulas-de-pérdida-y-su-implementación" id="toc-fórmulas-de-pérdida-y-su-implementación" class="nav-link" data-scroll-target="#fórmulas-de-pérdida-y-su-implementación">Fórmulas de Pérdida y su Implementación</a>
+  <ul class="collapse">
+  <li><a href="#pérdida-del-discriminador" id="toc-pérdida-del-discriminador" class="nav-link" data-scroll-target="#pérdida-del-discriminador">Pérdida del Discriminador</a></li>
+  <li><a href="#pérdida-del-generador" id="toc-pérdida-del-generador" class="nav-link" data-scroll-target="#pérdida-del-generador">Pérdida del Generador</a></li>
+  <li><a href="#optimizadores" id="toc-optimizadores" class="nav-link" data-scroll-target="#optimizadores">Optimizadores</a></li>
+  <li><a href="#bucle-de-entrenamiento-y-ejecución" id="toc-bucle-de-entrenamiento-y-ejecución" class="nav-link" data-scroll-target="#bucle-de-entrenamiento-y-ejecución">Bucle de Entrenamiento y Ejecución</a></li>
+  <li><a href="#análisis-de-resultados" id="toc-análisis-de-resultados" class="nav-link" data-scroll-target="#análisis-de-resultados">Análisis de Resultados</a></li>
+  <li><a href="#análisis-del-gráfico" id="toc-análisis-del-gráfico" class="nav-link" data-scroll-target="#análisis-del-gráfico">Análisis del Gráfico:</a></li>
+  <li><a href="#generación-final-de-imágenes" id="toc-generación-final-de-imágenes" class="nav-link" data-scroll-target="#generación-final-de-imágenes">Generación Final de Imágenes</a></li>
+  </ul></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content">
+
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Implementando una GAN</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://colab.research.google.com/github/jeffersonrodriguezc/deep-learning-en-3-semanas/blob/main/semana_2/notebooks/Nb_2d_GANs_keras.ipynb"><img src="https://colab.research.google.com/assets/colab-badge.svg" class="img-fluid figure-img"></a></p>
+<figcaption>Open In Colab</figcaption>
+</figure>
+</div>
+<div id="cell-3" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Importar librerías</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> tensorflow <span class="im">as</span> tf</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tensorflow.keras <span class="im">import</span> layers</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> tqdm <span class="im">import</span> tqdm</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="cell-4" class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#@title Funciones complementarias</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_losses(gen_losses, disc_losses):</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">6</span>))</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    plt.plot(gen_losses, label<span class="op">=</span><span class="st">'Pérdida del Generador'</span>, color<span class="op">=</span><span class="st">'blue'</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    plt.plot(disc_losses, label<span class="op">=</span><span class="st">'Pérdida del Discriminador'</span>, color<span class="op">=</span><span class="st">'red'</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">'Pérdidas del Generador y Discriminador a lo largo del tiempo'</span>)</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'Épocas'</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">'Pérdida'</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    plt.legend()</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    plt.grid(<span class="va">True</span>)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Cargamos el dataset MNIST. Un paso crucial es normalizar las imágenes a un rango de [-1, 1], lo que mejora la estabilidad del entrenamiento.</p>
+<div id="cell-6" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;elapsed&quot;:4385,&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1755001188093,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fabian Andres Leon Perez&quot;,&quot;userId&quot;:&quot;18226501656985583353&quot;},&quot;user_tz&quot;:-120}}" data-outputid="290c510f-b40c-4e44-bd15-fc38b8c9f471">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Hiperparámetros</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>BUFFER_SIZE <span class="op">=</span> <span class="dv">60000</span>   <span class="co"># para optimizar el entrenamiento</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>BATCH_SIZE <span class="op">=</span> <span class="dv">256</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>LATENT_DIM <span class="op">=</span> <span class="dv">100</span> <span class="co"># Dimensión del vector de ruido</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>epochs <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Cargar y preprocesar el dataset MNIST</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>(train_images, train_labels), (_, _) <span class="op">=</span> tf.keras.datasets.mnist.load_data()</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>train_images <span class="op">=</span> train_images.reshape(train_images.shape[<span class="dv">0</span>], <span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>).astype(<span class="st">'float32'</span>)</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>train_images <span class="op">=</span> (train_images <span class="op">-</span> <span class="fl">127.5</span>) <span class="op">/</span> <span class="fl">127.5</span> <span class="co"># Normalizar a [-1, 1]</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(train_images.shape)</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Crear un tf.data.Dataset para un entrenamiento eficiente</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>train_dataset <span class="op">=</span> tf.data.Dataset.from_tensor_slices(train_images).shuffle(BUFFER_SIZE).batch(BATCH_SIZE)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<div class="ansi-escaped-output">
+<pre>Downloading data from https://storage.googleapis.com/tensorflow/tf-keras-datasets/mnist.npz
+
+<span class="ansi-bold">11490434/11490434</span> <span class="ansi-green-fg">━━━━━━━━━━━━━━━━━━━━</span> <span class="ansi-bold">2s</span> 0us/step
+
+(60000, 28, 28, 1)
+</pre>
+</div>
+</div>
+</div>
+<section id="arquitectura-de-los-modelos" class="level2">
+<h2 class="anchored" data-anchor-id="arquitectura-de-los-modelos">Arquitectura de los Modelos</h2>
+<p>Definimos las redes del Generador y del Discriminador. Usamos capas convolucionales y de-convolucionales para procesar y generar las imágenes.</p>
+</section>
+<section id="modelo-del-generador" class="level2">
+<h2 class="anchored" data-anchor-id="modelo-del-generador">Modelo del Generador</h2>
+<p>El generador toma un vector de ruido y lo convierte en una imagen, usando capas de Conv2DTranspose para aumentar la resolución.</p>
+<div id="cell-8" class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_generator(latent_dim):</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> tf.keras.Sequential(name<span class="op">=</span><span class="st">'Generator'</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Dense(<span class="dv">7</span><span class="op">*</span><span class="dv">7</span><span class="op">*</span><span class="dv">256</span>, use_bias<span class="op">=</span><span class="va">False</span>, input_shape<span class="op">=</span>(latent_dim,)))</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    model.add(layers.BatchNormalization())</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    model.add(layers.LeakyReLU())</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Reshape((<span class="dv">7</span>, <span class="dv">7</span>, <span class="dv">256</span>)))</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Capa de de-convolución para aumentar la resolución a 14x14</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Conv2DTranspose(<span class="dv">128</span>, (<span class="dv">5</span>, <span class="dv">5</span>), strides<span class="op">=</span>(<span class="dv">1</span>, <span class="dv">1</span>), padding<span class="op">=</span><span class="st">'same'</span>, use_bias<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    model.add(layers.BatchNormalization())</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    model.add(layers.LeakyReLU())</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Sube la resolución a 28x28</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Conv2DTranspose(<span class="dv">64</span>, (<span class="dv">5</span>, <span class="dv">5</span>), strides<span class="op">=</span>(<span class="dv">2</span>, <span class="dv">2</span>), padding<span class="op">=</span><span class="st">'same'</span>, use_bias<span class="op">=</span><span class="va">False</span>))</span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    model.add(layers.BatchNormalization())</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    model.add(layers.LeakyReLU())</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Salida final: imagen de 28x28x1</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Conv2DTranspose(<span class="dv">1</span>, (<span class="dv">5</span>, <span class="dv">5</span>), strides<span class="op">=</span>(<span class="dv">2</span>, <span class="dv">2</span>), padding<span class="op">=</span><span class="st">'same'</span>, use_bias<span class="op">=</span><span class="va">False</span>, activation<span class="op">=</span><span class="st">'tanh'</span>))</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="modelo-del-discriminador" class="level1">
+<h1>Modelo del Discriminador</h1>
+<p>El discriminador es un clasificador que toma una imagen y predice si es real (cerca de 1) o falsa (cerca de 0).</p>
+<div id="cell-10" class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> build_discriminator(image_shape):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    model <span class="op">=</span> tf.keras.Sequential(name<span class="op">=</span><span class="st">'Discriminator'</span>)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Conv2D(<span class="dv">64</span>, (<span class="dv">5</span>, <span class="dv">5</span>), strides<span class="op">=</span>(<span class="dv">2</span>, <span class="dv">2</span>), padding<span class="op">=</span><span class="st">'same'</span>, input_shape<span class="op">=</span>image_shape))</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    model.add(layers.LeakyReLU())</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Dropout(<span class="fl">0.3</span>))</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Conv2D(<span class="dv">128</span>, (<span class="dv">5</span>, <span class="dv">5</span>), strides<span class="op">=</span>(<span class="dv">2</span>, <span class="dv">2</span>), padding<span class="op">=</span><span class="st">'same'</span>))</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    model.add(layers.LeakyReLU())</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Dropout(<span class="fl">0.3</span>))</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Flatten())</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    model.add(layers.Dense(<span class="dv">1</span>)) <span class="co"># Salida como un único logit</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> model</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fórmulas-de-pérdida-y-su-implementación" class="level1">
+<h1>Fórmulas de Pérdida y su Implementación</h1>
+<p>El corazón de la GAN es su función de pérdida adversarial, que a menudo se representa como un juego minmax.</p>
+<p><span class="math inline">\(\min_G \max_D V(D, G) = \mathbb{E}_{x \sim p_{\text{data}}(x)}[\log D(x)] + \mathbb{E}_{z \sim p_z(z)}[\log (1 - D(G(z)))]\)</span></p>
+<section id="pérdida-del-discriminador" class="level2">
+<h2 class="anchored" data-anchor-id="pérdida-del-discriminador">Pérdida del Discriminador</h2>
+<p>El discriminador busca maximizar la función V, lo que equivale a minimizar su propia pérdida, <span class="math inline">\(L_D\)</span>. Esta pérdida se compone de dos términos: uno para los datos reales (etiqueta 1) y otro para los datos falsos (etiqueta 0).</p>
+<p><span class="math inline">\(L_D = -\mathbb{E}_{x \sim p_{\text{data}}(x)}[\log D(x)] - \mathbb{E}_{z \sim p_z(z)}[\log (1 - D(G(z)))]\)</span></p>
+<div id="cell-12" class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Usamos BinaryCrossentropy con from_logits=True</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cross_entropy <span class="op">=</span> tf.keras.losses.BinaryCrossentropy(from_logits<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> discriminator_loss(real_output, fake_output):</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="co"># L_real = -E[log D(x)]: pérdida para los datos reales (etiqueta 1)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    real_loss <span class="op">=</span> cross_entropy(tf.ones_like(real_output), real_output)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="co"># L_fake = -E[log(1 - D(G(z)))]: pérdida para los datos falsos (etiqueta 0)</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    fake_loss <span class="op">=</span> cross_entropy(tf.zeros_like(fake_output), fake_output)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="co"># L_total = L_real + L_fake</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    total_loss <span class="op">=</span> real_loss <span class="op">+</span> fake_loss</span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total_loss</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="pérdida-del-generador" class="level2">
+<h2 class="anchored" data-anchor-id="pérdida-del-generador">Pérdida del Generador</h2>
+<p>El generador busca minimizar la función V. Su objetivo es engañar al discriminador, por lo que su pérdida, <span class="math inline">\(L_G\)</span>, se calcula comparando la predicción de las imágenes falsas con la etiqueta 1 (“real”).</p>
+<p><span class="math inline">\(L_G = - \mathbb{E}_{z \sim p_z(z)}[\log D(G(z))]\)</span></p>
+<div id="cell-14" class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> generator_loss(fake_output):</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    <span class="co"># El generador quiere que el discriminador clasifique las imágenes falsas como 1s</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> cross_entropy(tf.ones_like(fake_output), fake_output)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="optimizadores" class="level2">
+<h2 class="anchored" data-anchor-id="optimizadores">Optimizadores</h2>
+<p>Usamos optimizadores Adam separados para que cada red pueda actualizar sus pesos independientemente.</p>
+<div id="cell-16" class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>generator_optimizer <span class="op">=</span> tf.keras.optimizers.Adam(<span class="fl">1e-4</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>discriminator_optimizer <span class="op">=</span> tf.keras.optimizers.Adam(<span class="fl">1e-4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="bucle-de-entrenamiento-y-ejecución" class="level2">
+<h2 class="anchored" data-anchor-id="bucle-de-entrenamiento-y-ejecución">Bucle de Entrenamiento y Ejecución</h2>
+<p>El entrenamiento de una GAN se realiza en un ciclo de dos pasos: entrenar al discriminador, luego al generador. Usamos tf.function para optimizar el rendimiento.</p>
+<div id="cell-18" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;elapsed&quot;:1274225,&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1755002470115,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fabian Andres Leon Perez&quot;,&quot;userId&quot;:&quot;18226501656985583353&quot;},&quot;user_tz&quot;:-120}}" data-outputid="b813dab4-d941-49a6-9652-97c35b5405e3">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="at">@tf.function</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train_step(images, latent_dim):</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    noise <span class="op">=</span> tf.random.normal([images.shape[<span class="dv">0</span>], latent_dim])</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> tf.GradientTape() <span class="im">as</span> gen_tape, tf.GradientTape() <span class="im">as</span> disc_tape:</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        generated_images <span class="op">=</span> generator(noise, training<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        real_output <span class="op">=</span> discriminator(images, training<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        fake_output <span class="op">=</span> discriminator(generated_images, training<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        gen_loss <span class="op">=</span> generator_loss(fake_output)</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        disc_loss <span class="op">=</span> discriminator_loss(real_output, fake_output)</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    gradients_of_generator <span class="op">=</span> gen_tape.gradient(gen_loss, generator.trainable_variables)</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    gradients_of_discriminator <span class="op">=</span> disc_tape.gradient(disc_loss, discriminator.trainable_variables)</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>    generator_optimizer.apply_gradients(<span class="bu">zip</span>(gradients_of_generator, generator.trainable_variables))</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>    discriminator_optimizer.apply_gradients(<span class="bu">zip</span>(gradients_of_discriminator, discriminator.trainable_variables))</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> gen_loss, disc_loss</span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> train(dataset, epochs):</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Listas para almacenar las pérdidas por época</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    gen_losses <span class="op">=</span> []</span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    disc_losses <span class="op">=</span> []</span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> epoch <span class="kw">in</span> tqdm(<span class="bu">range</span>(epochs)):</span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        epoch_gen_loss_avg <span class="op">=</span> tf.metrics.Mean()</span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        epoch_disc_loss_avg <span class="op">=</span> tf.metrics.Mean()</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> image_batch <span class="kw">in</span> dataset:</span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>            g_loss, d_loss <span class="op">=</span> train_step(image_batch, LATENT_DIM)</span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>            epoch_gen_loss_avg.update_state(g_loss)</span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>            epoch_disc_loss_avg.update_state(d_loss)</span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Almacenar la pérdida promedio de la época</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>        gen_losses.append(epoch_gen_loss_avg.result().numpy())</span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>        disc_losses.append(epoch_disc_loss_avg.result().numpy())</span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f'Época </span><span class="sc">{</span>epoch <span class="op">+</span> <span class="dv">1</span><span class="sc">}</span><span class="ss">, Pérdida Generador: </span><span class="sc">{</span>gen_losses[<span class="op">-</span><span class="dv">1</span>]<span class="sc">:.4f}</span><span class="ss">, Pérdida Discriminador: </span><span class="sc">{</span>disc_losses[<span class="op">-</span><span class="dv">1</span>]<span class="sc">:.4f}</span><span class="ss">'</span>)</span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> (epoch <span class="op">+</span> <span class="dv">1</span>) <span class="op">%</span> <span class="dv">5</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>            display_images(generator, latent_dim<span class="op">=</span>LATENT_DIM)</span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> gen_losses, disc_losses</span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> display_images(generator, latent_dim):</span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>    num_examples_to_generate <span class="op">=</span> <span class="dv">16</span></span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>    noise <span class="op">=</span> tf.random.normal([num_examples_to_generate, latent_dim])</span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>    generated_images <span class="op">=</span> generator(noise, training<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(generated_images.shape[<span class="dv">0</span>]):</span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>        plt.subplot(<span class="dv">4</span>, <span class="dv">4</span>, i<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>        plt.imshow(generated_images[i, :, :, <span class="dv">0</span>] <span class="op">*</span> <span class="fl">127.5</span> <span class="op">+</span> <span class="fl">127.5</span>, cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>        plt.axis(<span class="st">'off'</span>)</span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Instanciar modelos y comenzar el entrenamiento</span></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>generator <span class="op">=</span> build_generator(LATENT_DIM)</span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a>discriminator <span class="op">=</span> build_discriminator((<span class="dv">28</span>, <span class="dv">28</span>, <span class="dv">1</span>))</span>
+<span id="cb9-59"><a href="#cb9-59" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Comenzando el entrenamiento..."</span>)</span>
+<span id="cb9-60"><a href="#cb9-60" aria-hidden="true" tabindex="-1"></a>gen_losses, disc_losses <span class="op">=</span> train(train_dataset, epochs<span class="op">=</span>epochs)</span>
+<span id="cb9-61"><a href="#cb9-61" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Entrenamiento finalizado."</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/usr/local/lib/python3.11/dist-packages/keras/src/layers/core/dense.py:93: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(activity_regularizer=activity_regularizer, **kwargs)
+/usr/local/lib/python3.11/dist-packages/keras/src/layers/convolutional/base_conv.py:113: UserWarning: Do not pass an `input_shape`/`input_dim` argument to a layer. When using Sequential models, prefer using an `Input(shape)` object as the first layer in the model instead.
+  super().__init__(activity_regularizer=activity_regularizer, **kwargs)</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Comenzando el entrenamiento...</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  1%|          | 1/100 [00:20&lt;34:08, 20.69s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 1, Pérdida Generador: 0.7682, Pérdida Discriminador: 1.0427</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  2%|▏         | 2/100 [00:41&lt;33:35, 20.56s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 2, Pérdida Generador: 0.8585, Pérdida Discriminador: 1.1998</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  3%|▎         | 3/100 [00:51&lt;25:57, 16.06s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 3, Pérdida Generador: 1.3174, Pérdida Discriminador: 0.9072</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  4%|▍         | 4/100 [01:12&lt;28:28, 17.80s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 4, Pérdida Generador: 0.8962, Pérdida Discriminador: 1.2319
+Época 5, Pérdida Generador: 0.9154, Pérdida Discriminador: 1.2828</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-11.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  6%|▌         | 6/100 [01:34&lt;21:43, 13.87s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 6, Pérdida Generador: 0.8549, Pérdida Discriminador: 1.2938</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  7%|▋         | 7/100 [01:54&lt;24:50, 16.03s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 7, Pérdida Generador: 0.9241, Pérdida Discriminador: 1.2403</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  8%|▊         | 8/100 [02:05&lt;22:08, 14.44s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 8, Pérdida Generador: 0.9121, Pérdida Discriminador: 1.2696</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>  9%|▉         | 9/100 [02:16&lt;20:17, 13.38s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 9, Pérdida Generador: 0.9511, Pérdida Discriminador: 1.1447
+Época 10, Pérdida Generador: 0.9949, Pérdida Discriminador: 1.2076</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-20.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 11%|█         | 11/100 [02:39&lt;18:09, 12.24s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 11, Pérdida Generador: 0.9860, Pérdida Discriminador: 1.2167</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 12%|█▏        | 12/100 [02:50&lt;17:29, 11.93s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 12, Pérdida Generador: 0.9554, Pérdida Discriminador: 1.1741</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 13%|█▎        | 13/100 [03:01&lt;17:00, 11.73s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 13, Pérdida Generador: 0.9995, Pérdida Discriminador: 1.1283</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 14%|█▍        | 14/100 [03:13&lt;16:40, 11.64s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 14, Pérdida Generador: 1.0476, Pérdida Discriminador: 1.1429
+Época 15, Pérdida Generador: 1.1402, Pérdida Discriminador: 1.0614</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-29.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 16%|█▌        | 16/100 [03:36&lt;16:14, 11.60s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 16, Pérdida Generador: 1.0918, Pérdida Discriminador: 1.1061</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 17%|█▋        | 17/100 [03:47&lt;15:58, 11.55s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 17, Pérdida Generador: 1.1592, Pérdida Discriminador: 1.0873</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 18%|█▊        | 18/100 [03:59&lt;15:43, 11.50s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 18, Pérdida Generador: 1.1705, Pérdida Discriminador: 1.0983</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 19%|█▉        | 19/100 [04:10&lt;15:28, 11.46s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 19, Pérdida Generador: 1.1818, Pérdida Discriminador: 1.0607
+Época 20, Pérdida Generador: 1.2809, Pérdida Discriminador: 0.9924</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-38.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 21%|██        | 21/100 [04:42&lt;17:38, 13.40s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 21, Pérdida Generador: 1.2353, Pérdida Discriminador: 1.0174</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 22%|██▏       | 22/100 [04:54&lt;16:40, 12.83s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 22, Pérdida Generador: 1.1974, Pérdida Discriminador: 1.0726</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 23%|██▎       | 23/100 [05:05&lt;15:59, 12.46s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 23, Pérdida Generador: 1.2296, Pérdida Discriminador: 1.0790</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 24%|██▍       | 24/100 [05:17&lt;15:25, 12.17s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 24, Pérdida Generador: 1.2837, Pérdida Discriminador: 1.0146
+Época 25, Pérdida Generador: 1.2208, Pérdida Discriminador: 1.0640</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-47.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 26%|██▌       | 26/100 [05:40&lt;14:39, 11.89s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 26, Pérdida Generador: 1.1413, Pérdida Discriminador: 1.0985</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 27%|██▋       | 27/100 [05:52&lt;14:16, 11.73s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 27, Pérdida Generador: 1.1096, Pérdida Discriminador: 1.1574</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 28%|██▊       | 28/100 [06:12&lt;17:13, 14.35s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 28, Pérdida Generador: 1.1044, Pérdida Discriminador: 1.1458</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 29%|██▉       | 29/100 [06:23&lt;15:56, 13.48s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 29, Pérdida Generador: 1.0831, Pérdida Discriminador: 1.1524
+Época 30, Pérdida Generador: 1.0313, Pérdida Discriminador: 1.1856</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-56.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 31%|███       | 31/100 [06:47&lt;14:26, 12.56s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 31, Pérdida Generador: 1.0002, Pérdida Discriminador: 1.2063</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 32%|███▏      | 32/100 [07:07&lt;16:55, 14.93s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 32, Pérdida Generador: 0.9955, Pérdida Discriminador: 1.2053</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 33%|███▎      | 33/100 [07:28&lt;18:31, 16.59s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 33, Pérdida Generador: 0.9735, Pérdida Discriminador: 1.2122</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 34%|███▍      | 34/100 [07:39&lt;16:33, 15.05s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 34, Pérdida Generador: 0.9659, Pérdida Discriminador: 1.2332
+Época 35, Pérdida Generador: 1.0457, Pérdida Discriminador: 1.2136</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-65.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 36%|███▌      | 36/100 [08:03&lt;14:13, 13.34s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 36, Pérdida Generador: 1.1171, Pérdida Discriminador: 1.1412</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 37%|███▋      | 37/100 [08:14&lt;13:25, 12.79s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 37, Pérdida Generador: 0.9750, Pérdida Discriminador: 1.2220</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 38%|███▊      | 38/100 [08:35&lt;15:35, 15.10s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 38, Pérdida Generador: 0.9855, Pérdida Discriminador: 1.2063</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 39%|███▉      | 39/100 [08:46&lt;14:11, 13.96s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 39, Pérdida Generador: 1.0319, Pérdida Discriminador: 1.1863
+Época 40, Pérdida Generador: 0.9484, Pérdida Discriminador: 1.2296</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-74.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 41%|████      | 41/100 [09:09&lt;12:32, 12.75s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 41, Pérdida Generador: 0.9614, Pérdida Discriminador: 1.2081</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 42%|████▏     | 42/100 [09:21&lt;11:58, 12.39s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 42, Pérdida Generador: 0.9513, Pérdida Discriminador: 1.2309</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 43%|████▎     | 43/100 [09:32&lt;11:30, 12.11s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 43, Pérdida Generador: 0.9581, Pérdida Discriminador: 1.2194</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 44%|████▍     | 44/100 [09:44&lt;11:06, 11.90s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 44, Pérdida Generador: 0.9819, Pérdida Discriminador: 1.2105
+Época 45, Pérdida Generador: 1.0339, Pérdida Discriminador: 1.1981</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-83.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 46%|████▌     | 46/100 [10:06&lt;10:30, 11.67s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 46, Pérdida Generador: 1.0075, Pérdida Discriminador: 1.2052</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 47%|████▋     | 47/100 [10:18&lt;10:13, 11.57s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 47, Pérdida Generador: 1.0018, Pérdida Discriminador: 1.2102</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 48%|████▊     | 48/100 [10:38&lt;12:20, 14.24s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 48, Pérdida Generador: 1.0056, Pérdida Discriminador: 1.2138</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 49%|████▉     | 49/100 [10:50&lt;11:23, 13.39s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 49, Pérdida Generador: 0.9730, Pérdida Discriminador: 1.2131
+Época 50, Pérdida Generador: 0.9364, Pérdida Discriminador: 1.2295</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-92.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 51%|█████     | 51/100 [11:13&lt;10:12, 12.51s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 51, Pérdida Generador: 0.9337, Pérdida Discriminador: 1.2315</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 52%|█████▏    | 52/100 [11:25&lt;09:45, 12.20s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 52, Pérdida Generador: 0.9834, Pérdida Discriminador: 1.2009</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 53%|█████▎    | 53/100 [11:36&lt;09:22, 11.96s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 53, Pérdida Generador: 0.9953, Pérdida Discriminador: 1.2180</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 54%|█████▍    | 54/100 [11:47&lt;09:02, 11.78s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 54, Pérdida Generador: 0.9605, Pérdida Discriminador: 1.2223
+Época 55, Pérdida Generador: 0.9466, Pérdida Discriminador: 1.2293</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-101.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 56%|█████▌    | 56/100 [12:10&lt;08:30, 11.60s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 56, Pérdida Generador: 0.9443, Pérdida Discriminador: 1.2218</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 57%|█████▋    | 57/100 [12:22&lt;08:16, 11.54s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 57, Pérdida Generador: 0.9257, Pérdida Discriminador: 1.2333</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 58%|█████▊    | 58/100 [12:33&lt;08:03, 11.50s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 58, Pérdida Generador: 0.9555, Pérdida Discriminador: 1.2351</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 59%|█████▉    | 59/100 [12:44&lt;07:50, 11.48s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 59, Pérdida Generador: 0.9726, Pérdida Discriminador: 1.2217
+Época 60, Pérdida Generador: 0.9974, Pérdida Discriminador: 1.2031</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-110.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 61%|██████    | 61/100 [13:08&lt;07:31, 11.57s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 61, Pérdida Generador: 0.9703, Pérdida Discriminador: 1.2354</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 62%|██████▏   | 62/100 [13:19&lt;07:17, 11.52s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 62, Pérdida Generador: 0.9694, Pérdida Discriminador: 1.2184</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 63%|██████▎   | 63/100 [13:31&lt;07:04, 11.48s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 63, Pérdida Generador: 0.9605, Pérdida Discriminador: 1.2280</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 64%|██████▍   | 64/100 [13:51&lt;08:30, 14.18s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 64, Pérdida Generador: 0.9584, Pérdida Discriminador: 1.2260
+Época 65, Pérdida Generador: 0.9559, Pérdida Discriminador: 1.2218</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-119.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 66%|██████▌   | 66/100 [14:14&lt;07:16, 12.83s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 66, Pérdida Generador: 0.9472, Pérdida Discriminador: 1.2209</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 67%|██████▋   | 67/100 [14:35&lt;08:19, 15.12s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 67, Pérdida Generador: 0.9447, Pérdida Discriminador: 1.2338</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 68%|██████▊   | 68/100 [14:46&lt;07:28, 14.03s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 68, Pérdida Generador: 0.9546, Pérdida Discriminador: 1.2339</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 69%|██████▉   | 69/100 [14:58&lt;06:50, 13.26s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 69, Pérdida Generador: 0.9767, Pérdida Discriminador: 1.2187
+Época 70, Pérdida Generador: 0.9702, Pérdida Discriminador: 1.2146</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-128.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 71%|███████   | 71/100 [15:21&lt;05:59, 12.38s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 71, Pérdida Generador: 0.9667, Pérdida Discriminador: 1.2150</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 72%|███████▏  | 72/100 [15:32&lt;05:38, 12.09s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 72, Pérdida Generador: 0.9560, Pérdida Discriminador: 1.2209</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 73%|███████▎  | 73/100 [15:44&lt;05:20, 11.89s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 73, Pérdida Generador: 0.9615, Pérdida Discriminador: 1.2150</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 74%|███████▍  | 74/100 [15:55&lt;05:05, 11.73s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 74, Pérdida Generador: 0.9820, Pérdida Discriminador: 1.2059
+Época 75, Pérdida Generador: 0.9470, Pérdida Discriminador: 1.2319</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-137.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 76%|███████▌  | 76/100 [16:18&lt;04:38, 11.61s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 76, Pérdida Generador: 0.9365, Pérdida Discriminador: 1.2333</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 77%|███████▋  | 77/100 [16:29&lt;04:25, 11.54s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 77, Pérdida Generador: 0.9290, Pérdida Discriminador: 1.2355</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 78%|███████▊  | 78/100 [16:41&lt;04:12, 11.50s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 78, Pérdida Generador: 0.9248, Pérdida Discriminador: 1.2340</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 79%|███████▉  | 79/100 [16:52&lt;04:00, 11.47s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 79, Pérdida Generador: 0.9725, Pérdida Discriminador: 1.2132
+Época 80, Pérdida Generador: 1.0410, Pérdida Discriminador: 1.2125</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-146.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 81%|████████  | 81/100 [17:24&lt;04:29, 14.20s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 81, Pérdida Generador: 1.0251, Pérdida Discriminador: 1.1996</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 82%|████████▏ | 82/100 [17:36&lt;04:00, 13.35s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 82, Pérdida Generador: 0.9604, Pérdida Discriminador: 1.2264</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 83%|████████▎ | 83/100 [17:47&lt;03:37, 12.79s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 83, Pérdida Generador: 0.9474, Pérdida Discriminador: 1.2311</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 84%|████████▍ | 84/100 [17:59&lt;03:18, 12.42s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 84, Pérdida Generador: 0.9290, Pérdida Discriminador: 1.2374
+Época 85, Pérdida Generador: 0.9173, Pérdida Discriminador: 1.2399</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-155.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 86%|████████▌ | 86/100 [18:22&lt;02:47, 11.97s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 86, Pérdida Generador: 0.9229, Pérdida Discriminador: 1.2354</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 87%|████████▋ | 87/100 [18:33&lt;02:33, 11.79s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 87, Pérdida Generador: 0.9451, Pérdida Discriminador: 1.2337</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 88%|████████▊ | 88/100 [18:44&lt;02:19, 11.66s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 88, Pérdida Generador: 0.9924, Pérdida Discriminador: 1.2280</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 89%|████████▉ | 89/100 [18:56&lt;02:07, 11.57s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 89, Pérdida Generador: 1.0030, Pérdida Discriminador: 1.2119
+Época 90, Pérdida Generador: 0.9670, Pérdida Discriminador: 1.2227</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-164.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 91%|█████████ | 91/100 [19:19&lt;01:44, 11.60s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 91, Pérdida Generador: 0.9539, Pérdida Discriminador: 1.2228</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 92%|█████████▏| 92/100 [19:31&lt;01:32, 11.55s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 92, Pérdida Generador: 0.9420, Pérdida Discriminador: 1.2367</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 93%|█████████▎| 93/100 [19:42&lt;01:20, 11.51s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 93, Pérdida Generador: 0.9386, Pérdida Discriminador: 1.2362</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 94%|█████████▍| 94/100 [19:53&lt;01:08, 11.49s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 94, Pérdida Generador: 0.9662, Pérdida Discriminador: 1.2249
+Época 95, Pérdida Generador: 0.9685, Pérdida Discriminador: 1.2224</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-173.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 96%|█████████▌| 96/100 [20:16&lt;00:45, 11.49s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 96, Pérdida Generador: 0.9621, Pérdida Discriminador: 1.2319</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 97%|█████████▋| 97/100 [20:28&lt;00:34, 11.46s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 97, Pérdida Generador: 0.9664, Pérdida Discriminador: 1.2291</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 98%|█████████▊| 98/100 [20:39&lt;00:22, 11.44s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 98, Pérdida Generador: 0.9520, Pérdida Discriminador: 1.2372</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code> 99%|█████████▉| 99/100 [20:51&lt;00:11, 11.42s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Época 99, Pérdida Generador: 0.9452, Pérdida Discriminador: 1.2367
+Época 100, Pérdida Generador: 0.9366, Pérdida Discriminador: 1.2360</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-10-output-182.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>100%|██████████| 100/100 [21:11&lt;00:00, 12.72s/it]</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Entrenamiento finalizado.</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code></code></pre>
+</div>
+</div>
+</section>
+<section id="análisis-de-resultados" class="level2">
+<h2 class="anchored" data-anchor-id="análisis-de-resultados">Análisis de Resultados</h2>
+<p>Visualización de las Pérdidas La visualización de las pérdidas es fundamental para diagnosticar el entrenamiento de una GAN. En el siguiente gráfico, podemos ver cómo la pérdida del generador y del discriminador interactúan a lo largo del tiempo.</p>
+<div id="cell-20" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;elapsed&quot;:255,&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1755002474772,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fabian Andres Leon Perez&quot;,&quot;userId&quot;:&quot;18226501656985583353&quot;},&quot;user_tz&quot;:-120}}" data-outputid="8f54d442-bcbb-438e-d33e-d4bc6c05e766">
+<div class="sourceCode cell-code" id="cb175"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb175-1"><a href="#cb175-1" aria-hidden="true" tabindex="-1"></a>plot_losses(gen_losses, disc_losses)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-11-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="análisis-del-gráfico" class="level2">
+<h2 class="anchored" data-anchor-id="análisis-del-gráfico">Análisis del Gráfico:</h2>
+<p><strong>Comportamiento Fluctuante:</strong> Es normal que las pérdidas de una GAN no disminuyan suavemente. Las fluctuaciones muestran la lucha constante entre el generador y el discriminador. Si una pérdida baja, la otra tiende a subir.</p>
+<p><strong>Equilibrio:</strong> Un entrenamiento exitoso se manifiesta con las pérdidas oscilando alrededor de un valor estable. Esto indica que el sistema ha alcanzado un equilibrio, donde el generador es lo suficientemente bueno para engañar al discriminador en un 50% de las veces, y el discriminador es lo suficientemente bueno para detectar los datos falsos el 50% de las veces.</p>
+<p><strong>Problemas de Entrenamiento:</strong> Si una pérdida se va a cero mientras la otra se dispara, puede ser una señal de colapso del modo (“mode collapse”) o que una red ha superado a la otra.</p>
+</section>
+<section id="generación-final-de-imágenes" class="level2">
+<h2 class="anchored" data-anchor-id="generación-final-de-imágenes">Generación Final de Imágenes</h2>
+<p>Finalmente, generamos una cuadrícula de imágenes para ver la calidad de los resultados después de 50/100 épocas de entrenamiento. La visualización de las pérdidas confirma que el sistema se ha mantenido en un equilibrio competitivo, lo que se traduce en la generación de dígitos. Durante entreneamiento pudimos observar como la red mejora durante el tiempo sin embargo, para optener mejores resultados es necesario redes mas complejas y mas tiempo de ejecucion</p>
+<div id="cell-23" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;executionInfo&quot;,&quot;value&quot;:{&quot;elapsed&quot;:301,&quot;status&quot;:&quot;ok&quot;,&quot;timestamp&quot;:1755002487898,&quot;user&quot;:{&quot;displayName&quot;:&quot;Fabian Andres Leon Perez&quot;,&quot;userId&quot;:&quot;18226501656985583353&quot;},&quot;user_tz&quot;:-120}}" data-outputid="ad8f8b28-4894-4598-9978-85e6bea931b6">
+<div class="sourceCode cell-code" id="cb176"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb176-1"><a href="#cb176-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Imágenes generadas al final del entrenamiento:"</span>)</span>
+<span id="cb176-2"><a href="#cb176-2" aria-hidden="true" tabindex="-1"></a>display_images(generator, latent_dim<span class="op">=</span>LATENT_DIM)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Imágenes generadas al final del entrenamiento:</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="Nb_2d_GANs_keras_files/figure-html/cell-12-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    // Ensure there is a toggle, if there isn't float one in the top right
+    if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+      const a = window.document.createElement('a');
+      a.classList.add('top-right');
+      a.classList.add('quarto-color-scheme-toggle');
+      a.href = "";
+      a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+      const i = window.document.createElement("i");
+      i.classList.add('bi');
+      a.appendChild(i);
+      window.document.body.appendChild(a);
+    }
+    setColorSchemeToggle(hasAlternateSentinel())
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Copied!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Copied!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+        const codeEl = trigger.previousElementSibling.cloneNode(true);
+        for (const childEl of codeEl.children) {
+          if (isCodeAnnotation(childEl)) {
+            childEl.remove();
+          }
+        }
+        return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+     var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+        }
+      }
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          let top = null;
+          let height = null;
+          let parent = null;
+          if (lineIds.length > 0) {
+              //compute the position of the single el (top and bottom and make a div)
+              const el = window.document.getElementById(lineIds[0]);
+              top = el.offsetTop;
+              height = el.offsetHeight;
+              parent = el.parentElement.parentElement;
+            if (lineIds.length > 1) {
+              const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+              const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+              height = bottom - top;
+            }
+            if (top !== null && height !== null && parent !== null) {
+              // cook up a div (if necessary) and position it 
+              let div = window.document.getElementById("code-annotation-line-highlight");
+              if (div === null) {
+                div = window.document.createElement("div");
+                div.setAttribute("id", "code-annotation-line-highlight");
+                div.style.position = 'absolute';
+                parent.appendChild(div);
+              }
+              div.style.top = top - 2 + "px";
+              div.style.height = height + 4 + "px";
+              div.style.left = 0;
+              let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+              if (gutterDiv === null) {
+                gutterDiv = window.document.createElement("div");
+                gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+                gutterDiv.style.position = 'absolute';
+                const codeCell = window.document.getElementById(targetCell);
+                const gutter = codeCell.querySelector('.code-annotation-gutter');
+                gutter.appendChild(gutterDiv);
+              }
+              gutterDiv.style.top = top - 2 + "px";
+              gutterDiv.style.height = height + 4 + "px";
+            }
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

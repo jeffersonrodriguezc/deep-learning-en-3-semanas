@@ -28,6 +28,72 @@
       margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
       vertical-align: middle;
     }
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      { color: #003b4f; background-color: #f1f3f5; }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span { color: #003b4f; } /* Normal */
+    code span.al { color: #ad0000; } /* Alert */
+    code span.an { color: #5e5e5e; } /* Annotation */
+    code span.at { color: #657422; } /* Attribute */
+    code span.bn { color: #ad0000; } /* BaseN */
+    code span.bu { } /* BuiltIn */
+    code span.cf { color: #003b4f; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #20794d; } /* Char */
+    code span.cn { color: #8f5902; } /* Constant */
+    code span.co { color: #5e5e5e; } /* Comment */
+    code span.cv { color: #5e5e5e; font-style: italic; } /* CommentVar */
+    code span.do { color: #5e5e5e; font-style: italic; } /* Documentation */
+    code span.dt { color: #ad0000; } /* DataType */
+    code span.dv { color: #ad0000; } /* DecVal */
+    code span.er { color: #ad0000; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #ad0000; } /* Float */
+    code span.fu { color: #4758ab; } /* Function */
+    code span.im { color: #00769e; } /* Import */
+    code span.in { color: #5e5e5e; } /* Information */
+    code span.kw { color: #003b4f; font-weight: bold; } /* Keyword */
+    code span.op { color: #5e5e5e; } /* Operator */
+    code span.ot { color: #003b4f; } /* Other */
+    code span.pp { color: #ad0000; } /* Preprocessor */
+    code span.sc { color: #5e5e5e; } /* SpecialChar */
+    code span.ss { color: #20794d; } /* SpecialString */
+    code span.st { color: #20794d; } /* String */
+    code span.va { color: #111111; } /* Variable */
+    code span.vs { color: #20794d; } /* VerbatimString */
+    code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
   <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-f563837468303362081e247dddd440d0.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
@@ -128,7 +194,7 @@
 
 <section id="title-slide" class="quarto-title-block center">
   <h1 class="title">Semana 1: Fundamentos de Redes Neuronales</h1>
-  <p class="subtitle">Curso Práctico de Deep Learning en 3 Semanas</p>
+  <p class="subtitle">La receta completa para construir y entrenar modelos</p>
 
 <div class="quarto-title-authors">
 <div class="quarto-title-author">
@@ -139,36 +205,103 @@ Jefferson Rodriguez
 </div>
 
 </section>
-<section class="slide level2">
+<section>
+<section id="fundamentos-y-componentes-de-una-red-neuronal" class="title-slide slide level1 center" data-background-color="#1a3a5c">
+<h1>Fundamentos y Componentes de una Red Neuronal</h1>
 
-<h3 id="qué-veremos-esta-semana">¿Qué veremos esta semana?</h3>
-<ul>
-<li class="fragment">Entender la neurona artificial básica: El Perceptrón.</li>
-<li class="fragment">Comprender cómo las redes multicapa (MLP) resuelven problemas complejos.</li>
-<li class="fragment">Captar la idea principal detrás del entrenamiento: Minimizar el error.</li>
-<li class="fragment">Conocer técnicas clave para construir y entrenar tu primera red neuronal.</li>
-<li class="fragment">¡Prepararte para tu primer proyecto práctico con un MLP!</li>
-</ul>
 </section>
-<section class="slide level2">
-
-<h3 id="explorando-dl-un-vistazo-interactivo">Explorando DL: Un Vistazo Interactivo</h3>
+<section id="un-vistazo-inicia-interactivo" class="slide level2">
+<h2>Un vistazo inicia interactivo</h2>
 <iframe src="https://playground.tensorflow.org/#activation=tanh&amp;batchSize=10&amp;dataset=circle&amp;regDataset=reg-plane&amp;learningRate=0.03&amp;regularizationRate=0&amp;noise=0&amp;networkShape=4,2&amp;seed=0.74961&amp;showTestData=false&amp;discretize=false&amp;percTrainData=50&amp;x=true&amp;y=true&amp;xTimesY=false&amp;ySquared=false&amp;cosX=false&amp;sinX=false&amp;cosY=false&amp;sinY=false&amp;collectStats=false&amp;problem=classification&amp;initZero=false&amp;hideText=false" width="100%" height="100%" frameborder="0" allowfullscreen="true"></iframe>
 </section>
 <section class="slide level2">
 
-<h3 id="estructura-de-la-red-neuronal">Estructura de la Red Neuronal</h3>
-<iframe src="nn-animation.html" width="800" height="500" style="
-    display: block;
-    margin: 0 auto;     
-    border: none;
-    overflow: hidden;
-  " scrolling="no" allowfullscreen="">
-</iframe>
+<h3 id="la-idea-de-esta-semana">La idea de esta semana</h3>
+<p>Una red neuronal no es magia.</p>
+<p>Es una receta repetible:</p>
+<p><span class="math display">\[
+\text{datos} \rightarrow \text{red} \rightarrow \text{predicción} \rightarrow \text{error} \rightarrow \text{gradientes} \rightarrow \text{actualización}
+\]</span></p>
 </section>
 <section class="slide level2">
 
-<h3 id="perceptrón-el-componente-fundamental">Perceptrón: El componente fundamental</h3>
+<h3 id="la-receta-completa">La receta completa</h3>
+<ol type="1">
+<li>Preparar los datos</li>
+<li>Definir la red</li>
+<li>Hacer <strong>forward pass</strong></li>
+<li>Calcular la <strong>pérdida</strong></li>
+<li>Hacer <strong>backward pass</strong></li>
+<li>Actualizar los pesos</li>
+<li>Repetir por épocas</li>
+<li>Evaluar y mejorar</li>
+</ol>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="parte-1-ingredientes-de-la-red" class="title-slide slide level1 center" data-background-color="#1a3a5c">
+<h1>Parte 1: Ingredientes de la red</h1>
+
+</section>
+<section class="slide level2">
+
+<h3 id="ingrediente-1-datos">Ingrediente 1: datos</h3>
+<p>Toda red aprende a partir de ejemplos.</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Entrada <span class="math inline">\(X\)</span></th>
+<th>Salida esperada <span class="math inline">\(y\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Imagen</td>
+<td>Clase</td>
+</tr>
+<tr class="even">
+<td>Texto</td>
+<td>Categoría</td>
+</tr>
+<tr class="odd">
+<td>Tabla</td>
+<td>Valor o clase</td>
+</tr>
+<tr class="even">
+<td>Serie temporal</td>
+<td>Valor futuro</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<h3 id="datos-etiquetas-y-batches">Datos, etiquetas y batches</h3>
+<ul>
+<li class="fragment"><span class="math inline">\(X\)</span>: datos de entrada.</li>
+<li class="fragment"><span class="math inline">\(y\)</span>: respuesta esperada.</li>
+<li class="fragment"><strong>Batch</strong>: subconjunto de ejemplos.</li>
+<li class="fragment"><strong>Epoch</strong>: una vuelta completa por el dataset.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ingrediente-2-neurona-artificial">Ingrediente 2: neurona artificial</h3>
+<p>Una neurona combina entradas, pesos y bias.</p>
+<p><span class="math display">\[
+z = w_1x_1 + w_2x_2 + \dots + w_nx_n + b
+\]</span></p>
+<div class="fragment">
+<p><span class="math display">\[
+z = \mathbf{x} \cdot \mathbf{w} + b
+\]</span></p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="perceptrón-componente-fundamental">Perceptrón: componente fundamental</h3>
 <div class="fragment">
 <div style="text-align:center; margin:1em 0;">
 <p><iframe src="perceptron_estructura_basica.html" width="450" height="200" style="border:none; margin:auto; display:block;" scrolling="no"></iframe></p>
@@ -176,37 +309,752 @@ Jefferson Rodriguez
 </div>
 <div class="fragment">
 <p><span class="math display">\[
-f(\mathbf{x})
-=\sum_{i=1}^3 w_i\,x_i + b
-\quad\Longrightarrow\quad
-output =
-\begin{cases}
-1, &amp; \sum_{i=1}^3 w_i\,x_i + b \ge 0,\\
-0, &amp; \text{en otro caso.}
-\end{cases}
+f(\mathbf{x}) = \sum_{i=1}^{n} w_i x_i + b
 \]</span></p>
 </div>
-<div class="fragment">
-<p><span class="math display">\[
-y=\underbrace{g(z)}_{\text{función de activación}}
-=
-\begin{cases}
-1, &amp; z \ge 0,\\
-0, &amp; z &lt; 0,
-\end{cases}
-\quad z = f(\mathbf{x})
-\]</span></p>
-</div>
-</section>
-<section id="perceptrón-como-clasificador-básico" class="slide level2">
-<h2>Perceptrón como Clasificador básico</h2>
-<iframe src="perceptron_clasificador_basico.html" width="1000" height="500" style="border:none; overflow:hidden;" scrolling="no"></iframe>
 </section>
 <section class="slide level2">
 
+<h3 id="qué-aprende-realmente-la-red">¿Qué aprende realmente la red?</h3>
+<p>La red no aprende reglas escritas a mano.</p>
+<p>Aprende valores numéricos:</p>
+<p><span class="math display">\[
+\theta = \{W, b\}
+\]</span></p>
+<div class="fragment">
+<p>Entrenar = ajustar <span class="math inline">\(W\)</span> y <span class="math inline">\(b\)</span> para reducir el error.</p>
+</div>
+</section>
+<section class="slide level2">
 
+<h3 id="ingrediente-3-función-de-activación">Ingrediente 3: función de activación</h3>
+<p>La activación transforma la salida lineal de la neurona.</p>
+<p><span class="math display">\[
+a = f(z)
+\]</span></p>
+<div class="fragment">
+<p>Sin activaciones, muchas capas densas seguirían siendo una transformación lineal.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="activaciones-comunes">Activaciones comunes</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Activación</th>
+<th>Uso típico</th>
+<th>Idea</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>ReLU</td>
+<td>Capas ocultas</td>
+<td>Deja pasar valores positivos</td>
+</tr>
+<tr class="even">
+<td>Sigmoid</td>
+<td>Clasificación binaria</td>
+<td>Probabilidad entre 0 y 1</td>
+</tr>
+<tr class="odd">
+<td>Softmax</td>
+<td>Multiclase</td>
+<td>Probabilidades por clase</td>
+</tr>
+<tr class="even">
+<td>Tanh</td>
+<td>Secuencias / estados</td>
+<td>Salida entre -1 y 1</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<h3 id="relu-en-una-frase">ReLU en una frase</h3>
+<p><span class="math display">\[
+\text{ReLU}(z) = \max(0, z)
+\]</span></p>
+<ul>
+<li class="fragment">Si <span class="math inline">\(z &lt; 0\)</span>, devuelve 0.</li>
+<li class="fragment">Si <span class="math inline">\(z &gt; 0\)</span>, deja pasar el valor.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="ingrediente-4-capas">Ingrediente 4: capas</h3>
+<p>Una capa agrupa muchas neuronas.</p>
+<p><span class="math display">\[
+\mathbf{h} = f(\mathbf{X}W + \mathbf{b})
+\]</span></p>
+<div class="fragment">
+<p>Cada capa transforma los datos en una representación más útil.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="de-capas-a-red-neuronal">De capas a red neuronal</h3>
+<iframe src="nn-animation.html" width="800" height="500" style="display:block; margin:0 auto; border:none; overflow:hidden;" scrolling="no" allowfullscreen="">
+</iframe>
+</section>
+<section class="slide level2">
+
+<h3 id="multi-layer-perceptron">Multi-Layer Perceptron</h3>
+<p>Una MLP apila capas densas:</p>
+<p><span class="math display">\[
+\text{Input} \rightarrow \text{Hidden} \rightarrow \text{Hidden} \rightarrow \text{Output}
+\]</span></p>
+<div class="fragment">
+<p>La profundidad permite aprender representaciones cada vez más abstractas.</p>
+</div>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="parte-2-forward-pass" class="title-slide slide level1 center" data-background-color="#1a3a5c">
+<h1>Parte 2: Forward pass</h1>
 
 </section>
+<section class="slide level2">
+
+<h3 id="forward-pass">Forward pass</h3>
+<p>El <strong>forward pass</strong> es el recorrido de la información desde la entrada hasta la predicción.</p>
+<p><span class="math display">\[
+X \rightarrow \text{Red neuronal} \rightarrow \hat{y}
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<h3 id="forward-en-una-neurona">Forward en una neurona</h3>
+<ol type="1">
+<li>Recibe entradas <span class="math inline">\(x\)</span>.</li>
+<li>Calcula <span class="math inline">\(z = \mathbf{x} \cdot \mathbf{w} + b\)</span>.</li>
+<li>Aplica activación <span class="math inline">\(a = f(z)\)</span>.</li>
+<li>Entrega una salida.</li>
+</ol>
+</section>
+<section class="slide level2">
+
+<h3 id="forward-en-una-red-completa">Forward en una red completa</h3>
+<p><span class="math display">\[
+h_1 = f(XW_1 + b_1)
+\]</span></p>
+<p><span class="math display">\[
+h_2 = f(h_1W_2 + b_2)
+\]</span></p>
+<p><span class="math display">\[
+\hat{y} = g(h_2W_3 + b_3)
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<h3 id="salida-según-el-problema">Salida según el problema</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Problema</th>
+<th>Activación de salida</th>
+<th>Ejemplo</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Regresión</td>
+<td>Lineal</td>
+<td>Precio</td>
+</tr>
+<tr class="even">
+<td>Binario</td>
+<td>Sigmoid</td>
+<td>Fraude / no fraude</td>
+</tr>
+<tr class="odd">
+<td>Multiclase</td>
+<td>Softmax</td>
+<td>Tipo de imagen</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="aplicado" id="forward-en-código">Forward en código</h3>
+<div id="45a09ac0" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1" data-code-line-numbers="|2|3|4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-2"><a></a></span>
+<span id="cb1-3"><a></a><span class="kw">def</span> forward(X, W, b, activation):</span>
+<span id="cb1-4"><a></a>    z <span class="op">=</span> X <span class="op">@</span> W <span class="op">+</span> b</span>
+<span id="cb1-5"><a></a>    a <span class="op">=</span> activation(z)</span>
+<span id="cb1-6"><a></a>    <span class="cf">return</span> a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="parte-3-medir-el-error" class="title-slide slide level1 center" data-background-color="#1a3a5c">
+<h1>Parte 3: Medir el error</h1>
+
+</section>
+<section class="slide level2">
+
+<h3 id="cómo-sabe-la-red-que-se-equivocó">¿Cómo sabe la red que se equivocó?</h3>
+<p>Compara dos cosas:</p>
+<p><span class="math display">\[
+y \quad \text{vs} \quad \hat{y}
+\]</span></p>
+<p>La función de pérdida convierte esa diferencia en un número.</p>
+</section>
+<section class="slide level2">
+
+<h3 id="función-de-pérdida">Función de pérdida</h3>
+<p><span class="math display">\[
+\mathcal{L}(y, \hat{y})
+\]</span></p>
+<ul>
+<li class="fragment">Pérdida alta: la predicción está lejos del objetivo.</li>
+<li class="fragment">Pérdida baja: la predicción está cerca del objetivo.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="loss-para-regresión">Loss para regresión</h3>
+<p>Error cuadrático medio:</p>
+<p><span class="math display">\[
+\text{MSE} = \frac{1}{N}\sum_{i=1}^{N}(y_i - \hat{y}_i)^2
+\]</span></p>
+<div class="fragment">
+<p>Penaliza más los errores grandes.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="loss-para-clasificación-binaria">Loss para clasificación binaria</h3>
+<p>Binary Cross Entropy:</p>
+<p><span class="math display">\[
+\mathcal{L} = -\frac{1}{N}\sum_{i=1}^{N}\left[y_i\log(\hat{y}_i) + (1-y_i)\log(1-\hat{y}_i)\right]
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<h3 id="intuición-de-binary-cross-entropy">Intuición de Binary Cross Entropy</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Caso</th>
+<th style="text-align: right;"><span class="math inline">\(y\)</span></th>
+<th style="text-align: right;"><span class="math inline">\(\hat{y}\)</span></th>
+<th>Pérdida</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Acierto seguro</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.99</td>
+<td>Baja</td>
+</tr>
+<tr class="even">
+<td>Error grave</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.01</td>
+<td>Alta</td>
+</tr>
+<tr class="odd">
+<td>Indecisión</td>
+<td style="text-align: right;">1</td>
+<td style="text-align: right;">0.50</td>
+<td>Media</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="academico" id="por-qué-se-penaliza-tanto-un-error-seguro">¿Por qué se penaliza tanto un error seguro?</h3>
+<p>Porque el logaritmo castiga predicciones cercanas a cero cuando la clase real es 1.</p>
+<p><span class="math display">\[
+-\log(0.99) \approx 0.01
+\]</span></p>
+<p><span class="math display">\[
+-\log(0.01) \approx 4.6
+\]</span></p>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="parte-4-backward-pass" class="title-slide slide level1 center" data-background-color="#1a3a5c">
+<h1>Parte 4: Backward pass</h1>
+
+</section>
+<section class="slide level2">
+
+<h3 id="backward-pass">Backward pass</h3>
+<p>El <strong>backward pass</strong> envía el error hacia atrás.</p>
+<p><span class="math display">\[
+\mathcal{L} \rightarrow \text{capa final} \rightarrow \text{capas ocultas} \rightarrow W,b
+\]</span></p>
+<div class="fragment">
+<p>Su objetivo es calcular gradientes.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="qué-es-un-gradiente">¿Qué es un gradiente?</h3>
+<p>Un gradiente responde:</p>
+<blockquote>
+<p>Si cambio un poco este peso, ¿la pérdida sube o baja?</p>
+</blockquote>
+<p><span class="math display">\[
+\frac{\partial \mathcal{L}}{\partial w}
+\]</span></p>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="academico" id="interpretación-del-gradiente">Interpretación del gradiente</h3>
+<ul>
+<li class="fragment">Gradiente positivo: aumentar el peso puede aumentar la pérdida.</li>
+<li class="fragment">Gradiente negativo: aumentar el peso puede reducir la pérdida.</li>
+<li class="fragment">Gradiente cercano a cero: el peso casi no afecta la pérdida.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="backpropagation">Backpropagation</h3>
+<p>Backpropagation calcula gradientes capa por capa.</p>
+<ol type="1">
+<li>Calcula la pérdida.</li>
+<li>Mide cómo cambia la pérdida respecto a cada parámetro.</li>
+<li>Propaga ese cálculo hacia atrás.</li>
+<li>Entrega gradientes al optimizador.</li>
+</ol>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="academico" id="la-regla-de-la-cadena">La regla de la cadena</h3>
+<p>La pérdida depende de muchas operaciones encadenadas.</p>
+<p><span class="math display">\[
+\mathcal{L} \rightarrow \hat{y} \rightarrow h_2 \rightarrow h_1 \rightarrow W
+\]</span></p>
+<div class="fragment">
+<p>Backpropagation aplica la regla de la cadena para calcular cada derivada.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="aplicado" id="backward-en-pytorch">Backward en PyTorch</h3>
+<div id="47fd49a2" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2" data-code-line-numbers="|3|4|5|6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a></a><span class="co"># predicción</span></span>
+<span id="cb2-2"><a></a>pred <span class="op">=</span> model(X_batch)</span>
+<span id="cb2-3"><a></a>loss <span class="op">=</span> loss_fn(pred, y_batch)</span>
+<span id="cb2-4"><a></a></span>
+<span id="cb2-5"><a></a>optimizer.zero_grad()</span>
+<span id="cb2-6"><a></a>loss.backward()</span>
+<span id="cb2-7"><a></a>optimizer.step()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="parte-5-optimización" class="title-slide slide level1 center" data-background-color="#1a3a5c">
+<h1>Parte 5: Optimización</h1>
+
+</section>
+<section class="slide level2">
+
+<h3 id="gradient-descent">Gradient descent</h3>
+<p>Actualizar pesos significa moverse en dirección contraria al gradiente.</p>
+<p><span class="math display">\[
+w_{nuevo} = w_{actual} - \alpha \frac{\partial \mathcal{L}}{\partial w}
+\]</span></p>
+<div class="fragment">
+<p><span class="math inline">\(\alpha\)</span> es el <strong>learning rate</strong>.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="learning-rate">Learning rate</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Learning rate</th>
+<th>Comportamiento</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Muy pequeño</td>
+<td>Aprende lento</td>
+</tr>
+<tr class="even">
+<td>Adecuado</td>
+<td>Reduce la pérdida establemente</td>
+</tr>
+<tr class="odd">
+<td>Muy grande</td>
+<td>Puede divergir</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<h3 id="mini-batches-y-epochs">Mini-batches y epochs</h3>
+<p>Ejemplo:</p>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Concepto</th>
+<th style="text-align: right;">Valor</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Datos</td>
+<td style="text-align: right;">1000</td>
+</tr>
+<tr class="even">
+<td>Batch size</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr class="odd">
+<td>Updates por epoch</td>
+<td style="text-align: right;">10</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<h3 id="iteration-batch-y-epoch">Iteration, batch y epoch</h3>
+<ul>
+<li class="fragment"><strong>Batch</strong>: datos usados en una actualización.</li>
+<li class="fragment"><strong>Iteration</strong>: una actualización de pesos.</li>
+<li class="fragment"><strong>Epoch</strong>: una pasada completa por el dataset.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="academico" id="optimizadores">Optimizadores</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Optimizador</th>
+<th>Idea</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>SGD</td>
+<td>Usa gradientes por mini-batch</td>
+</tr>
+<tr class="even">
+<td>Momentum</td>
+<td>Acumula dirección previa</td>
+</tr>
+<tr class="odd">
+<td>RMSprop</td>
+<td>Ajusta pasos según historial</td>
+</tr>
+<tr class="even">
+<td>Adam</td>
+<td>Combina momentum y adaptación</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<h3 id="la-receta-del-training-loop">La receta del training loop</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb3-1"><a></a>Para cada epoch:</span>
+<span id="cb3-2"><a></a>    Para cada batch:</span>
+<span id="cb3-3"><a></a>        1. Forward pass</span>
+<span id="cb3-4"><a></a>        2. Calcular loss</span>
+<span id="cb3-5"><a></a>        3. Backward pass</span>
+<span id="cb3-6"><a></a>        4. Actualizar pesos</span>
+<span id="cb3-7"><a></a>        5. Guardar métricas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section class="slide level2">
+
+<h3 id="training-loop-como-receta">Training loop como receta</h3>
+<p><strong>Ingredientes:</strong> datos, red, loss, optimizador, learning rate.</p>
+<p><strong>Preparación:</strong> predecir, medir error, calcular gradientes, actualizar, repetir.</p>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="aplicado" id="training-loop-en-pytorch">Training loop en PyTorch</h3>
+<div id="778d3a48" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb4" data-code-line-numbers="|1|2|3|5|6|7|8|9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(num_epochs):</span>
+<span id="cb4-2"><a></a>    <span class="cf">for</span> X_batch, y_batch <span class="kw">in</span> train_loader:</span>
+<span id="cb4-3"><a></a>        pred <span class="op">=</span> model(X_batch)</span>
+<span id="cb4-4"><a></a>        loss <span class="op">=</span> loss_fn(pred, y_batch)</span>
+<span id="cb4-5"><a></a></span>
+<span id="cb4-6"><a></a>        optimizer.zero_grad()</span>
+<span id="cb4-7"><a></a>        loss.backward()</span>
+<span id="cb4-8"><a></a>        optimizer.step()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="aplicado" id="equivalencia-concepto-código">Equivalencia concepto-código</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Concepto</th>
+<th>Código típico</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Red</td>
+<td><code>model</code></td>
+</tr>
+<tr class="even">
+<td>Forward</td>
+<td><code>model(X)</code></td>
+</tr>
+<tr class="odd">
+<td>Loss</td>
+<td><code>loss_fn(pred, y)</code></td>
+</tr>
+<tr class="even">
+<td>Backward</td>
+<td><code>loss.backward()</code></td>
+</tr>
+<tr class="odd">
+<td>Update</td>
+<td><code>optimizer.step()</code></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="parte-6-evaluar-y-mejorar" class="title-slide slide level1 center" data-background-color="#1a3a5c">
+<h1>Parte 6: Evaluar y mejorar</h1>
+
+</section>
+<section class="slide level2">
+
+<h3 id="no-basta-con-entrenar">No basta con entrenar</h3>
+<p>Un modelo puede aprender el entrenamiento y fallar en datos nuevos.</p>
+<div class="fragment">
+<p>Por eso separamos datos de entrenamiento, validación y prueba.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="train-validation-y-test">Train, validation y test</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Conjunto</th>
+<th>Uso</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Train</td>
+<td>Ajustar pesos</td>
+</tr>
+<tr class="even">
+<td>Validation</td>
+<td>Tomar decisiones durante desarrollo</td>
+</tr>
+<tr class="odd">
+<td>Test</td>
+<td>Estimar desempeño final</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<h3 id="métricas-según-el-problema">Métricas según el problema</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Problema</th>
+<th>Métricas comunes</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Clasificación</td>
+<td>Accuracy, Precision, Recall, F1</td>
+</tr>
+<tr class="even">
+<td>Regresión</td>
+<td>MAE, MSE, RMSE</td>
+</tr>
+<tr class="odd">
+<td>Desbalance</td>
+<td>F1, AUC, matriz de confusión</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<h3 id="underfitting-y-overfitting">Underfitting y overfitting</h3>
+<ul>
+<li class="fragment"><strong>Underfitting</strong>: el modelo no aprende suficiente.</li>
+<li class="fragment"><strong>Overfitting</strong>: el modelo memoriza el entrenamiento.</li>
+<li class="fragment"><strong>Buen ajuste</strong>: aprende patrones que generalizan.</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="academico" id="leer-curvas-de-entrenamiento">Leer curvas de entrenamiento</h3>
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Señal</th>
+<th>Posible problema</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Train loss alta</td>
+<td>Underfitting</td>
+</tr>
+<tr class="even">
+<td>Train baja, val alta</td>
+<td>Overfitting</td>
+</tr>
+<tr class="odd">
+<td>Ambas bajan</td>
+<td>Aprendizaje saludable</td>
+</tr>
+<tr class="even">
+<td>Loss inestable</td>
+<td>Learning rate alto</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section class="slide level2">
+
+<h3 id="dropout">Dropout</h3>
+<p>Dropout apaga aleatoriamente neuronas durante el entrenamiento.</p>
+<div class="fragment">
+<p>Esto reduce la dependencia de conexiones específicas y ayuda a generalizar.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="normalización">Normalización</h3>
+<p>Normalizar entradas ayuda a que el entrenamiento sea más estable.</p>
+<p><span class="math display">\[
+x' = \frac{x - \mu}{\sigma}
+\]</span></p>
+<div class="fragment">
+<p>En deep learning, la escala de los datos importa.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="checklist-antes-de-entrenar">Checklist antes de entrenar</h3>
+<ul>
+<li>¿Tengo <span class="math inline">\(X\)</span> e <span class="math inline">\(y\)</span>?</li>
+<li>¿Separé train/validation/test?</li>
+<li>¿Elegí arquitectura, loss y optimizador?</li>
+<li>¿Definí el learning rate?</li>
+<li>¿Estoy monitoreando métricas?</li>
+</ul>
+</section>
+<section class="slide level2">
+
+</section></section>
+<section>
+<section id="parte-7-primera-implementación" class="title-slide slide level1 center" data-background-color="#1a3a5c">
+<h1>Parte 7: Primera implementación</h1>
+
+</section>
+<section class="slide level2">
+
+<h3 id="code-time-primera-mlp">Code time: primera MLP</h3>
+<p>Construiremos una red con:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode numberSource text number-lines code-with-copy"><code class="sourceCode"><span id="cb5-1"><a></a>Input → Dense → ReLU → Dense → Output</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="fragment">
+<p>Objetivo: conectar la receta teórica con código real.</p>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="aplicado" id="mlp-mínima-en-keras">MLP mínima en Keras</h3>
+<div id="831713e8" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb6" data-code-line-numbers="|3|4|5|7|8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a></a><span class="im">from</span> tensorflow <span class="im">import</span> keras</span>
+<span id="cb6-2"><a></a></span>
+<span id="cb6-3"><a></a>model <span class="op">=</span> keras.Sequential([</span>
+<span id="cb6-4"><a></a>    keras.layers.Dense(<span class="dv">32</span>, activation<span class="op">=</span><span class="st">"relu"</span>),</span>
+<span id="cb6-5"><a></a>    keras.layers.Dense(<span class="dv">1</span>, activation<span class="op">=</span><span class="st">"sigmoid"</span>)</span>
+<span id="cb6-6"><a></a>])</span>
+<span id="cb6-7"><a></a></span>
+<span id="cb6-8"><a></a>model.<span class="bu">compile</span>(</span>
+<span id="cb6-9"><a></a>    optimizer<span class="op">=</span><span class="st">"adam"</span>,</span>
+<span id="cb6-10"><a></a>    loss<span class="op">=</span><span class="st">"binary_crossentropy"</span>,</span>
+<span id="cb6-11"><a></a>    metrics<span class="op">=</span>[<span class="st">"accuracy"</span>]</span>
+<span id="cb6-12"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 data-tags="aplicado" id="entrenar-en-keras">Entrenar en Keras</h3>
+<div id="24d9f6a4" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb7" data-code-line-numbers="|1|2|3|4|5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a>history <span class="op">=</span> model.fit(</span>
+<span id="cb7-2"><a></a>    X_train, y_train,</span>
+<span id="cb7-3"><a></a>    validation_data<span class="op">=</span>(X_val, y_val),</span>
+<span id="cb7-4"><a></a>    epochs<span class="op">=</span><span class="dv">20</span>,</span>
+<span id="cb7-5"><a></a>    batch_size<span class="op">=</span><span class="dv">32</span></span>
+<span id="cb7-6"><a></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section class="slide level2">
+
+<h3 id="pregunta-guía-para-el-notebook">Pregunta guía para el notebook</h3>
+<p>Cuando ejecutes el modelo, observa:</p>
+<ul>
+<li class="fragment">¿La loss baja?</li>
+<li class="fragment">¿La métrica de validación mejora?</li>
+<li class="fragment">¿Hay señales de overfitting?</li>
+<li class="fragment">¿Qué cambia si modificas el learning rate?</li>
+</ul>
+</section>
+<section class="slide level2">
+
+<h3 id="resumen-de-la-semana">Resumen de la semana</h3>
+<p>La receta completa:</p>
+<ol type="1">
+<li>Datos entran a la red.</li>
+<li>Capas transforman la información.</li>
+<li>Forward produce una predicción.</li>
+<li>Loss mide el error.</li>
+<li>Backprop calcula gradientes.</li>
+<li>El optimizador actualiza pesos.</li>
+<li>La evaluación mide generalización.</li>
+</ol>
+</section>
+<section class="slide level2">
+
+<h3 id="idea-clave-final">Idea clave final</h3>
+<p>Entrenar una red neuronal es repetir muchas veces:</p>
+<p><span class="math display">\[
+\text{predecir} \rightarrow \text{medir error} \rightarrow \text{calcular gradientes} \rightarrow \text{actualizar pesos}
+\]</span></p>
+<div class="fragment">
+<p>Todo lo demás es mejorar esta receta.</p>
+</div>
+
+
+</section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
 <div class="footer footer-default">
