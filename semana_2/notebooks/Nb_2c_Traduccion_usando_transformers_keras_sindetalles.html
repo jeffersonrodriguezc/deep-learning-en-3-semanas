@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark-748b535e376f14d4692bf2b2e5fd6380.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark-08799928d293638fe9563d5c5a2794e5.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="../../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light"><script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-html/tabby.min.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/light-border.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-0815c480559380816a4d1ea211a47e91.css" rel="stylesheet" id="quarto-text-highlighting-styles"><meta charset="utf-8">
+  <meta name="generator" content="quarto-1.7.29">
+
+  <title>Deep Learning · Universidad de Montevideo – nb_2c_traduccion_usando_transformers_keras_sindetalles</title>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reset.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/reveal.css">
+  <style>
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+      vertical-align: middle;
+    }
+  </style>
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-32f7186d2caa3dc8772e3382bfdf7969.css">
+  <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
+  <link href="../../site_libs/revealjs/plugin/quarto-support/footer.css" rel="stylesheet">
+  <style type="text/css">
+    .reveal div.sourceCode {
+      margin: 0;
+      overflow: auto;
+    }
+    .reveal div.hanging-indent {
+      margin-left: 1em;
+      text-indent: -1em;
+    }
+    .reveal .slide:not(.center) {
+      height: 100%;
+    }
+    .reveal .slide.scrollable {
+      overflow-y: auto;
+    }
+    .reveal .footnotes {
+      height: 100%;
+      overflow-y: auto;
+    }
+    .reveal .slide .absolute {
+      position: absolute;
+      display: block;
+    }
+    .reveal .footnotes ol {
+      counter-reset: ol;
+      list-style-type: none; 
+      margin-left: 0;
+    }
+    .reveal .footnotes ol li:before {
+      counter-increment: ol;
+      content: counter(ol) ". "; 
+    }
+    .reveal .footnotes ol li > p:first-child {
+      display: inline-block;
+    }
+    .reveal .slide ul,
+    .reveal .slide ol {
+      margin-bottom: 0.5em;
+    }
+    .reveal .slide ul li,
+    .reveal .slide ol li {
+      margin-top: 0.4em;
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide ul[role="tablist"] li {
+      margin-bottom: 0;
+    }
+    .reveal .slide ul li > *:first-child,
+    .reveal .slide ol li > *:first-child {
+      margin-block-start: 0;
+    }
+    .reveal .slide ul li > *:last-child,
+    .reveal .slide ol li > *:last-child {
+      margin-block-end: 0;
+    }
+    .reveal .slide .columns:nth-child(3) {
+      margin-block-start: 0.8em;
+    }
+    .reveal blockquote {
+      box-shadow: none;
+    }
+    .reveal .tippy-content>* {
+      margin-top: 0.2em;
+      margin-bottom: 0.7em;
+    }
+    .reveal .tippy-content>*:last-child {
+      margin-bottom: 0.2em;
+    }
+    .reveal .slide > img.stretch.quarto-figure-center,
+    .reveal .slide > img.r-stretch.quarto-figure-center {
+      display: block;
+      margin-left: auto;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-left,
+    .reveal .slide > img.r-stretch.quarto-figure-left  {
+      display: block;
+      margin-left: 0;
+      margin-right: auto; 
+    }
+    .reveal .slide > img.stretch.quarto-figure-right,
+    .reveal .slide > img.r-stretch.quarto-figure-right  {
+      display: block;
+      margin-left: auto;
+      margin-right: 0; 
+    }
+  </style>
+</head>
+<body class="quarto-light">
+  <div class="reveal">
+    <div class="slides">
+
+
+<section class="slide level2">
+
+<p><a href="https://colab.research.google.com/github/jeffersonrodriguezc/deep-learning-en-3-semanas/blob/main/semana_2/notebooks/Nb_2c_Traduccion_usando_transformers_keras_sindetalles.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"></a></p>
+</section>
+<section>
+<section id="explicando-la-mejora-de-los-transformers-sobre-las-rnns" class="title-slide slide level1 center">
+<h1>Explicando la Mejora de los Transformers sobre las RNNs</h1>
+<blockquote class="blockquote">
+<p>Última actualización 20/02/2026</p>
+</blockquote>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="https://colab.research.google.com/github/jeffersonrodriguezc/deep-learning-en-3-semanas/blob/main/semana_2/notebooks/Nb_2c_Traduccion_usando_transformers_keras_sindetalles.ipynb"><img data-src="https://colab.research.google.com/assets/colab-badge.svg" class="figure-img"></a></p>
+<figcaption>Open In Colab</figcaption>
+</figure>
+</div>
+<p><strong>Los Transformers: Una Nueva Era en el Procesamiento de Secuencias</strong></p>
+<p>Las Redes Neuronales Recurrentes (RNNs) han sido una herramienta fundamental para el procesamiento de datos secuenciales, como el lenguaje natural. Sin embargo, los Transformers, propuestos en el artículo <a href="https://arxiv.org/abs/1706.03762">“Attention is all you need”</a>, han revolucionado este campo, ofreciendo ventajas significativas sobre las RNNs. <strong>Los Transformers son redes neuronales profundas que reemplazan las CNNs y las RNNs. Estos introducen la auto-atención (self-attention) permite a los Transformers transmitir información fácilmente a través de las secuencias de entrada.</strong></p>
+<p><strong>¿Por qué los Transformers son importantes?</strong></p>
+<ul>
+<li><strong>Paralelización:</strong> A diferencia de las RNNs, los Transformers pueden procesar todos los elementos de una secuencia en paralelo, lo que permite un entrenamiento mucho más rápido en hardware moderno como GPUs y TPUs.</li>
+<li><strong>Captura de dependencias temporales de larga duración:</strong> Los Transformers utilizan mecanismos de atención que permiten a cada posición de la secuencia prestar atención a todas las demás posiciones, facilitando el aprendizaje de relaciones entre elementos distantes. Las RNNs tienen dificultades para esto debido a la necesidad de procesar la secuencia paso a paso.</li>
+<li><strong>Flexibilidad:</strong> Los Transformers no hacen suposiciones sobre las relaciones temporales o espaciales en los datos, lo que los hace aplicables a una variedad de tareas más allá del lenguaje, como el procesamiento de imágenes o el análisis de juegos.</li>
+</ul>
+<p>En este notebook, exploraremos en profundidad los componentes clave de los Transformers y compararemos su funcionamiento con el de las RNNs, destacando las razones de su superioridad.</p>
+</section>
+<h3 id="comparativa-rnns-vs-transformers">Comparativa RNNs vs Transformers</h3>
+<table>
+<tbody><tr>
+<th>
+<a href="https://www.tensorflow.org/text/tutorials/nmt_with_attention">RNN+Modelo de Atención</a>
+</th>
+<th>
+Transformer de 1 capa
+</th>
+</tr>
+<tr>
+<td>
+<img width="411" src="https://www.tensorflow.org/images/tutorials/transformer/RNN+attention-words.png">
+</td>
+<td>
+<img width="400" src="https://www.tensorflow.org/images/tutorials/transformer/Transformer-1layer-words.png">
+</td>
+</tr>
+</tbody></table>
+<section id="esquema-de-trabajo" class="slide level2">
+<h2>Esquema de trabajo</h2>
+<p>Con lo anterior en mente, y una vez visto un poco las diferencias entre RNNs y Transformers, vamos a abordar los siguientes contenidos de manera detallada:</p>
+<ol type="1">
+<li>Prepararás los datos.</li>
+<li>Implementarás los componentes necesarios:
+<ul>
+<li>Embeddings posicionales.</li>
+<li>Capas de atención.</li>
+<li>El codificador y el decodificador.</li>
+</ul></li>
+<li>Construirás y entrenarás el Transformer.</li>
+<li>Generarás traducciones.</li>
+<li>Exportarás el modelo.</li>
+</ol>
+<h3 id="carga-y-preprocesamiento-de-datos">Carga y Preprocesamiento de Datos</h3>
+<p>Cargaremos un conjunto de datos de traducción Portugués-Inglés y utilizaremos un tokenizador para preparar el texto para el modelo. Este conjunto de datos contiene aproximadamente 52.000 ejemplos de entrenamiento, 1.200 de validación y 1.800 de prueba.</p>
+<h4 id="tokenizadores">Tokenizadores</h4>
+<p>En nuestro ejemplo vamos a usar los tokenizadores construidos en el tutorial <a href="https://www.tensorflow.org/text/guide/subwords_tokenizer">subword tokenizer</a>. Ese tutorial optimiza dos objetos <code>text.BertTokenizer</code> (uno para inglés, otro para portugués) para <strong>este conjunto de datos</strong> y los exporta en formato <code>saved_model</code> de TensorFlow.</p>
+<p>El método <code>tokenize</code> convierte un grupo de oraciones en un grupo de identificadores de tokens de una misma longitud (padding). Este método separa los signos de puntuación, las minúsculas y normaliza el texto de entrada antes de la tokenización. Esta normalización no es visible aquí porque los datos de entrada ya están normalizados.</p>
+<p>El método <code>detokenize</code> convierte los ID de token de nuevo en texto legible normal:</p>
+<p>El método <code>lookup</code> convierte de token-IDs a token-texto:</p>
+<p>Ten en cuenta que el texto tokenizado incluye los tokens <code>'[START]'</code> y <code>'[END]'</code>.</p>
+<h4 id="configuración-del-pipeline-de-datos-usando-tf.data">Configuración del pipeline de datos usando <code>tf.data</code></h4>
+<p>La siguiente función toma batches de texto como entrada y los convierte a un formato adecuado para el entrenamiento.</p>
+<ol type="1">
+<li>Los tokeniza en lotes de diferentes dimensiones (ragged).</li>
+<li>Recorta cada uno para que no tenga más de <code>MAX_TOKENS</code>.</li>
+<li>Divide los tokens objetivo (inglés) en entradas y etiquetas. Estos se desplazan un paso de modo que en cada ubicación de entrada, la <code>etiqueta</code> es el ID del siguiente token.</li>
+<li>Convierte los <code>RaggedTensor</code> en <code>Tensor</code> densos con padding.</li>
+<li>Devuelve un par <code>(entradas, etiquetas)</code>.</li>
+</ol>
+<p>La siguiente función convierte un conjunto de datos de ejemplos de texto en datos de lotes para el entrenamiento.</p>
+<ol type="1">
+<li>Tokeniza el texto y filtra las secuencias que son demasiado largas.</li>
+<li>El método <code>cache</code> asegura que ese trabajo solo se ejecute una vez.</li>
+<li>Luego, <code>shuffle</code> y preparar el batch.</li>
+<li>Finalmente, <code>prefetch</code> ejecuta el conjunto de datos en paralelo con el modelo para asegurar que los datos estén disponibles cuando se necesiten. Consulta <a href="https://www.tensorflow.org/guide/data_performance.ipynb">Mejorar rendimiento con <code>tf.data</code></a> para más detalles.</li>
+</ol>
+<h4 id="probar-nuestro-pipeline-de-datos">Probar nuestro pipeline de datos</h4>
+<p>Como se verían las entradas y sálidas en nuestro pipeline de datos?</p>
+<table>
+<tbody><tr>
+<th>
+Inputs en la parte inferior, labels en la parte superior.
+</th>
+</tr>
+<tr>
+<td>
+<img width="400" src="https://www.tensorflow.org/images/tutorials/transformer/Transformer-1layer-words.png">
+</td>
+</tr>
+</tbody></table>
+<p>Esta configuración se llama “<strong>teacher forcing</strong>” porque, independientemente de la salida del modelo en cada paso de tiempo, recibe el valor verdadero como entrada para el siguiente paso de tiempo. Esta es una forma simple y eficiente de entrenar un modelo de generación de texto. Es eficiente porque no necesitas ejecutar el modelo secuencialmente; las salidas en las diferentes ubicaciones de la secuencia se pueden calcular en paralelo.</p>
+<p>Las etiquetas <code>en</code> y <code>en_labels</code> son las mismas, sólo que desplazadas en 1:</p>
+<h3 id="definir-los-componentes-del-transformer">Definir los componentes del Transformer</h3>
+<p>Dentro de un Transformer pasan muchas cosas. Las cosas importantes que hay que recordar son:</p>
+<ul>
+<li>Sigue el mismo patrón general que un modelo estándar secuencia-a-secuencia con un codificador y un decodificador.</li>
+<li>Si trabajas paso a paso, todo tendrá sentido.</li>
+</ul>
+<table>
+<tbody><tr>
+<th colspan="1">
+Diagrama original del Transformer
+</th>
+<th colspan="1">
+Representación de un Transformer de 4 capas
+</th>
+</tr>
+<tr>
+<td>
+<img width="400" src="https://www.tensorflow.org/images/tutorials/transformer/transformer.png">
+</td>
+<td>
+<img width="307" src="https://www.tensorflow.org/images/tutorials/transformer/Transformer-4layer-compact.png">
+</td>
+</tr>
+</tbody></table>
+<h4 id="la-capa-para-la-codificación-de-la-posición">La capa para la codificación de la posición</h4>
+<p>Las entradas tanto del codificador como del descodificador utilizan la misma lógica de incrustación y codificación posicional</p>
+<table>
+<tbody><tr>
+<th colspan="1">
+The embedding and positional encoding layer
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/PositionalEmbedding.png">
+</td>
+</tr>
+</tbody></table>
+<p>Dada una secuencia de tokens, tanto los tokens de entrada (portugués) como los tokens objetivo (inglés) deben convertirse en vectores utilizando una capa <code>tf.keras.layers.Embedding</code>.</p>
+<p>Las capas de atención utilizadas en todo el modelo ven su entrada como un conjunto de vectores, sin ningún orden. Dado que el modelo no contiene ninguna capa recurrente o convolucional, necesita alguna forma de identificar el orden de las palabras; de lo contrario, vería la secuencia de entrada como una instancia de <a href="https://developers.google.com/machine-learning/glossary#bag-of-words">bolsa de palabras</a>, <code>cómo estás</code>, <code>cómo tú estás</code>, <code>tú cómo estás</code>, y así sucesivamente, son indistinguibles.</p>
+<p>Por lo tanto, el Transformer agrega una “Codificación Posicional” a los vectores de embedding. Utiliza un conjunto de senos y cosenos en diferentes frecuencias (a lo largo de la secuencia). Por definición, los elementos cercanos tendrán codificaciones posicionales similares.</p>
+<p>El paper original usa la siguiente formúla para la codificación posicional:</p>
+<p><span class="math display">\[\Large{PE_{(pos, 2i)} = \sin(pos / 10000^{2i / d_{model}})} \]</span> <span class="math display">\[\Large{PE_{(pos, 2i+1)} = \cos(pos / 10000^{2i / d_{model}})} \]</span></p>
+<p>Nota: El código a continuación lo implementa, pero en lugar de intercalar los senos y cosenos, los vectores de senos y cosenos simplemente se concatenan. Permutar los canales de esta manera es funcionalmente equivalente, y un poco más fácil de implementar y mostrar en las gráficas siguientes.</p>
+<p>La función de codificación de posición es una pila de senos y cosenos que vibran a distintas frecuencias según su ubicación a lo largo de la profundidad del vector de incrustación. Vibran a través del eje de posición.</p>
+<p>Ahora creemos la capa: <code>PositionEmbedding</code></p>
+<h4 id="capas-de-adición-y-normalización">Capas de Adición y normalización</h4>
+<table>
+<tbody><tr>
+<th colspan="2">
+Add y normalize
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/Add+Norm.png">
+</td>
+</tr>
+</tbody></table>
+<p>Estos bloques de “Add &amp; Norm” se encuentran distribuidos a lo largo de todo el modelo Transformer. Cada uno combina una conexión residual y pasa el resultado a través de una capa de <code>LayerNormalization</code>.</p>
+<p>La manera más sencilla de organizar el código es estructurándolo alrededor de estos bloques residuales. En las siguientes secciones, definiremos clases de capas personalizadas para cada uno de ellos.</p>
+<p>Los bloques residuales “Add &amp; Norm” se incluyen para que el entrenamiento sea eficiente. La conexión residual proporciona una ruta directa para el gradiente (y asegura que los vectores sean <strong>actualizados</strong> por las capas de atención en lugar de ser <strong>reemplazados</strong>), mientras que la normalización mantiene una escala razonable para las salidas.</p>
+<p><strong>Nota</strong>: Las implementaciones que se muestran a continuación utilizan la capa <code>Add</code> para asegurar que las máscaras de Keras se propaguen correctamente (el operador <code>+</code> no lo hace).</p>
+<h4 id="bases-de-la-capa-de-atención">Bases de la capa de atención</h4>
+<p>Las capas de atención se utilizan a lo largo de todo el modelo Transformer. Todas ellas son idénticas, excepto por cómo se configura la atención. Cada una contiene una capa <code>layers.MultiHeadAttention</code>, una capa <code>layers.LayerNormalization</code> y una capa <code>layers.Add</code>.</p>
+<table>
+<tbody><tr>
+<th colspan="2">
+Capa de atención básica
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/BaseAttention.png">
+</td>
+</tr>
+</tbody></table>
+<p>Para implementar estas capas de atención, comenzaremos con una clase base simple que sólo contenga definidos los componentes. Cada caso de uso se implementará como una subclase (framework).</p>
+<h5 id="capa-de-atención-cruzada"><strong>Capa de atención cruzada</strong></h5>
+<p>En el centro literal del Transformer está la capa de atención cruzada. Esta capa conecta el codificador y el decodificador. Esta capa es el uso más directo de la atención en el modelo, realiza la misma tarea que el bloque de atención en el <a href="https://www.tensorflow.org/text/tutorials/nmt_with_attention">Tutorial NMT con atención</a>.</p>
+<table>
+<tbody><tr>
+<th colspan="1">
+Atención cruzada
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/CrossAttention.png">
+</td>
+</tr>
+</tbody></table>
+<p>Para implementar esto, pasas la secuencia objetivo <code>x</code> como la <code>query</code> (consulta) y la secuencia de <code>context</code> (contexto) como la <code>key/value</code> (clave/valor) al llamar a la capa <code>mha</code>:</p>
+<p>Ejemplo:</p>
+<h5 id="capa-global-de-auto-atención"><strong>Capa global de auto-atención</strong></h5>
+<p>Esta capa se encarga de procesar la secuencia contextual y de propagar la información a lo largo de la misma:</p>
+<table>
+<tbody><tr>
+<th colspan="1">
+La capa global de auto-atención
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/SelfAttention.png">
+</td>
+</tr>
+</tbody></table>
+<h5 id="capa-de-auto-atención-causal"><strong>Capa de auto-atención causal</strong></h5>
+<p>Esta capa realiza un trabajo similar al de la capa de autoatención global, para la secuencia de salida:</p>
+<table>
+<tbody><tr>
+<th colspan="1">
+Capa causal de auto-atención
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/CausalSelfAttention.png">
+</td>
+</tr>
+</tbody></table>
+<p>Esto debe tratarse de forma diferente a la capa de autoatención global del codificador.</p>
+<p>Los transformers son un modelo «autorregresivo»: Generan el texto un token a la vez y devuelven esa salida a la entrada. Para que esto sea <em>eficiente</em>, estos modelos garantizan que la salida de cada elemento de la secuencia solo dependa de los elementos anteriores de la secuencia; los modelos son «causales».</p>
+<p>Para construir una capa de auto-atención causal, necesitas usar una máscara apropiada al calcular las puntuaciones de atención y sumar los <code>value</code>s de atención.</p>
+<p>Esto se gestiona automáticamente si pasas <code>use_causal_mask = True</code> a la capa <code>MultiHeadAttention</code> cuando la llamas:</p>
+<p>Ejemplo:</p>
+<p>La salida de los primeros elementos de la secuencia no depende de los elementos posteriores, por lo que no debería importar si recorta los elementos antes o después de aplicar la capa:</p>
+<h4 id="la-red-feed-forward-mlp">La red feed forward (MLP)</h4>
+<p>El Transformer también incluye esta red neuronal feed-forward <em>point-wise</em> tanto en el codificador como en el decodificador:</p>
+<table>
+<tbody><tr>
+<th colspan="1">
+La red feed forward (MLP)
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/FeedForward.png">
+</td>
+</tr>
+</tbody></table>
+<p>La red consiste en dos capas lineales (<code>tf.keras.layers.Dense</code>) con una función de activación ReLU entre ellas, y una capa de dropout. Al igual que con las capas de atención, el código aquí también incluye la conexión residual y la normalización:</p>
+<p>Prueba:</p>
+<h4 id="la-capa-encoder">La capa encoder</h4>
+<p>El codificador contiene una pila de <code>N</code> capas de codificador. Donde cada <code>EncoderLayer</code> contiene una capa <code>GlobalSelfAttention</code> y una capa <code>FeedForward</code>:</p>
+<table>
+<tbody><tr>
+<th colspan="1">
+La capa encoder
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/EncoderLayer.png">
+</td>
+</tr>
+</tbody></table>
+<p>Aquí la estructura de la capa <code>EncoderLayer</code>:</p>
+<p>Prueba:</p>
+<h4 id="el-módulo-encoder">El módulo Encoder</h4>
+<p>Construyamos el encoder, agregandole la parte de embedings y la codificación posicional.</p>
+<table>
+<tbody><tr>
+<th colspan="1">
+El encoder
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/Encoder.png">
+</td>
+</tr>
+</tbody></table>
+<p>El codificador consiste en:</p>
+<ul>
+<li>Una capa <code>PositionalEmbedding</code> en la entrada.</li>
+<li>Una pila de capas <code>EncoderLayer</code>.</li>
+</ul>
+<p>Probar:</p>
+<h4 id="la-capa-decoder">La capa decoder</h4>
+<p>El decodificador es ligeramente más compleja, con cada <code>DecoderLayer</code> conteniendo una capa <code>CausalSelfAttention</code>, una capa <code>CrossAttention</code> y una capa <code>FeedForward</code>:</p>
+<table>
+<tbody><tr>
+<th colspan="1">
+La capa decoder
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/DecoderLayer.png">
+</td>
+</tr>
+</tbody></table>
+<p>Probar la capa del decoder:</p>
+<h4 id="el-módulo-decoder">El módulo decoder</h4>
+<p>De forma similar al Codificador, el Decodificador consiste en un <code>PositionalEmbedding</code> y una pila de <code>DecoderLayer</code>’s:</p>
+<table>
+<tbody><tr>
+<th colspan="1">
+Capa Decoder + Embedding + PE
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/Decoder.png">
+</td>
+</tr>
+</tbody></table>
+<p>Definimos el Decoder extendiendo <code>tf.keras.layers.Layer</code>:</p>
+<p>Probar:</p>
+<p>Una vez creados el codificador y el decodificador Transformer, es hora de construir el modelo Transformer y entrenarlo.</p>
+</section>
+<section id="el-transformer" class="slide level2">
+<h2>El Transformer</h2>
+<p>You now have <code>Encoder</code> and <code>Decoder</code>. To complete the <code>Transformer</code> model, you need to put them together and add a final linear (<code>Dense</code>) layer which converts the resulting vector at each location into output token probabilities.</p>
+<p>The output of the decoder is the input to this final linear layer.</p>
+<table>
+<tbody><tr>
+<th colspan="1">
+El transformer
+</th>
+</tr><tr>
+</tr><tr>
+<td>
+<img src="https://www.tensorflow.org/images/tutorials/transformer/transformer.png">
+</td>
+</tr>
+</tbody></table>
+<p>Crea el <code>Transformer</code> extendiendo <code>tf.keras.Model</code>:</p>
+<blockquote class="blockquote">
+<p>Nota: El <a href="https://arxiv.org/pdf/1706.03762.pdf">artículo original</a>, sección 3.4, comparte la matriz de pesos entre la capa de embedding y la capa lineal final. Para mantener las cosas simples, este tutorial utiliza dos matrices de pesos separadas.</p>
+</blockquote>
+<h3 id="hiperparámetros">Hiperparámetros</h3>
+<p>Para mantener este ejemplo pequeño y relativamente rápido, el número de capas (<code>num_layers</code>), la dimensionalidad de los embeddings (<code>d_model</code>) y la dimensionalidad interna de la capa <code>FeedForward</code> (<code>dff</code>) se han reducido.</p>
+<p>El modelo base descrito en el artículo original del Transformer utilizaba <code>num_layers=6</code>, <code>d_model=512</code> y <code>dff=2048</code>.</p>
+<p>El número de cabezas de auto-atención será (<code>num_heads=4</code>).</p>
+<h3 id="probemos-el-transformer">Probemos el transformer</h3>
+<p>Instanciar el modelo <code>Transformer</code>:</p>
+<p>Probar</p>
+</section>
+<section id="training" class="slide level2">
+<h2>Training</h2>
+<p>Tiempo de entrenar!!</p>
+<h3 id="configurar-el-optimizador">Configurar el optimizador</h3>
+<p>Utilizar el optimizador Adam con un planificador personalizado para la tasa de aprendizaje según la fórmula del Transformer original. <a href="https://arxiv.org/abs/1706.03762">paper</a>.</p>
+<p><span class="math display">\[\Large{lrate = d_{model}^{-0.5} * \min(step{\_}num^{-0.5}, step{\_}num \cdot warmup{\_}steps^{-1.5})}\]</span></p>
+<p>Instanciar el optimizador (<code>tf.keras.optimizers.Adam</code>):</p>
+<p>Probar el scheduler para el learning rate:</p>
+<h3 id="ajustar-función-de-pérdida-y-métricas">Ajustar función de pérdida y métricas</h3>
+<p>Dado que las secuencias objetivo están rellenadas (padded), es importante aplicar una máscara de padding al calcular la pérdida. Utiliza la función de pérdida de entropía cruzada (<code>tf.keras.losses.SparseCategoricalCrossentropy</code>):</p>
+<h3 id="entrenar-el-modelo">Entrenar el modelo</h3>
+<p>Con todo listo, vamos a compilar usando <code>model.compile</code>, y luego entrenar con <code>model.fit</code>:</p>
+</section>
+<section id="ejecutar-inferencia" class="slide level2">
+<h2>Ejecutar inferencia</h2>
+<p>Ahora puedes probar el modelo realizando una traducción. Los siguientes pasos se utilizan para la inferencia:</p>
+<ul>
+<li>Codifica la frase de entrada utilizando el tokenizador portugués (<code>tokenizers.pt</code>). Esta es la entrada del codificador.</li>
+<li>La entrada del decodificador se inicializa con el token <code>[START]</code>.</li>
+<li>Calcula las máscaras de padding y las máscaras causales (para la auto-atención causal).</li>
+<li>El <code>decodificador</code> luego genera las predicciones observando la <code>salida del codificador</code> y su propia salida (auto-atención).</li>
+<li>Concatena el token predicho a la entrada del decodificador y lo pasa de nuevo al decodificador.</li>
+<li>En este enfoque, el decodificador predice el siguiente token basándose en los tokens que predijo previamente.</li>
+</ul>
+<p>Nota: El modelo está optimizado para un <em>entrenamiento eficiente</em> y realiza una predicción del siguiente token para cada token en la salida simultáneamente. Esto es redundante durante la inferencia, y solo se utiliza la última predicción. Este modelo puede hacerse más eficiente para la inferencia si solo se calcula la última predicción cuando se ejecuta en modo de inferencia (<code>training=False</code>).</p>
+<p>Define la clase <code>Translator</code> extendiendo <code>tf.Module</code>:</p>
+<p>Nota: Esta función utiliza un bucle unrolled, no un bucle dinámico. Genera <code>MAX_TOKENS</code> en cada llamada. Consulta el tutorial de <a href="https://www.tensorflow.org/text/tutorials/nmt_with_attention">NMT con atención</a> para ver un ejemplo de implementación con un bucle dinámico, que puede ser mucho más eficiente.</p>
+<p>Probemos la traducción:</p>
+<p>Ejemplo 1:</p>
+<p>Ejemplo 2:</p>
+<p>Ejemplo 3:</p>
+</section>
+<section id="crear-los-plots-de-atención" class="slide level2">
+<h2>Crear los plots de atención</h2>
+<p>Usando la clase traductor <code>Translator</code> que almacena los scores de atención, podemos usarlos para ver su relevancia:</p>
+<p>Por ejemplo:</p>
+<p>Crear una función que grafique la atención cuando se genera un token:</p>
+<p>Son las inputs tokens en portugués:</p>
+<p>Estas son las sálidas (tokens en inglés, traducción)</p>
+</section>
+<section id="exportar-el-modelo" class="slide level2">
+<h2>Exportar el modelo</h2>
+<p>Hemos probado el modelo y la inferencia funciona. A continuación, puedes exportarlo como un <code>tf.saved_model</code>. Para aprender cómo guardar y cargar un modelo en formato SavedModel, consulta <a href="https://www.tensorflow.org/guide/saved_model">esta guía</a>.</p>
+<p>Crea una clase llamada <code>ExportTranslator</code> extendiendo la subclase <code>tf.Module</code> con un <code>@tf.function</code> en el método <code>__call__</code>:</p>
+<p>Dado que el modelo está decodificando las predicciones utilizando <code>tf.argmax</code>, las predicciones son deterministas. El modelo original y uno recargado desde su <code>SavedModel</code> deberían dar predicciones idénticas:</p>
+</section>
+<section id="conclusión" class="slide level2">
+<h2>Conclusión</h2>
+<p>En este tutorial aprendiste sobre:</p>
+<ul>
+<li>Los Transformers y su importancia en el aprendizaje automático</li>
+<li>Atención, auto-atención y atención multi-cabeza</li>
+<li>Codificación posicional con embeddings</li>
+<li>La arquitectura codificador-decodificador del Transformer original</li>
+<li>Enmascaramiento en la auto-atención</li>
+<li>Cómo juntar todo para traducir texto</li>
+</ul>
+<p>Las desventajas de esta arquitectura son:</p>
+<ul>
+<li>Para una serie temporal, la salida para un paso de tiempo se calcula a partir de la <em>historia completa</em> en lugar de solo las entradas y el estado oculto actual. Esto <em>podría</em> ser menos eficiente.</li>
+<li>Si la entrada tiene una relación temporal/espacial, como texto o imágenes, debe añadirse alguna codificación posicional o el modelo efectivamente verá una bolsa de palabras.</li>
+</ul>
+<p><em>Este notebook se basó en el notebook de <a href="https://colab.research.google.com/github/tensorflow/text/blob/master/docs/tutorials/transformer.ipynb">Neural Machine Translation with a Transformer and Keras</a> para el curso de Deep Learning práctico en 3 semanas.</em></p>
+
+
+</section></section>
+    </div>
+  <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="../../assets/logos/montevideo.png" class="slide-logo"></p>
+<div class="footer footer-default">
+<p>Deep Learning · Universidad de Montevideo · Jefferson Rodríguez</p>
+</div>
+</div></div>
+
+  <script>window.backupDefine = window.define; window.define = undefined;</script>
+  <script src="../../site_libs/revealjs/dist/reveal.js"></script>
+  <!-- reveal.js plugins -->
+  <script src="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.js"></script>
+  <script src="../../site_libs/revealjs/plugin/pdf-export/pdfexport.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.js"></script>
+  <script src="../../site_libs/revealjs/plugin/quarto-support/support.js"></script>
+  
+
+  <script src="../../site_libs/revealjs/plugin/notes/notes.js"></script>
+  <script src="../../site_libs/revealjs/plugin/search/search.js"></script>
+  <script src="../../site_libs/revealjs/plugin/zoom/zoom.js"></script>
+  <script src="../../site_libs/revealjs/plugin/math/math.js"></script>
+  <script>window.define = window.backupDefine; window.backupDefine = undefined;</script>
+
+  <script>
+
+      // Full list of configuration options available at:
+      // https://revealjs.com/config/
+      Reveal.initialize({
+'controlsAuto': true,
+'previewLinksAuto': false,
+'pdfSeparateFragments': false,
+'autoAnimateEasing': "ease",
+'autoAnimateDuration': 1,
+'autoAnimateUnmatched': true,
+'jumpToSlide': true,
+'menu': {"side":"left","useTextContentForMissingTitles":true,"markers":false,"loadIcons":false,"custom":[{"title":"Tools","icon":"<i class=\"fas fa-gear\"></i>","content":"<ul class=\"slide-menu-items\">\n<li class=\"slide-tool-item active\" data-item=\"0\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.fullscreen(event)\"><kbd>f</kbd> Fullscreen</a></li>\n<li class=\"slide-tool-item\" data-item=\"1\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.speakerMode(event)\"><kbd>s</kbd> Speaker View</a></li>\n<li class=\"slide-tool-item\" data-item=\"2\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.overview(event)\"><kbd>o</kbd> Slide Overview</a></li>\n<li class=\"slide-tool-item\" data-item=\"3\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.togglePdfExport(event)\"><kbd>e</kbd> PDF Export Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"4\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.toggleScrollView(event)\"><kbd>r</kbd> Scroll View Mode</a></li>\n<li class=\"slide-tool-item\" data-item=\"5\"><a href=\"#\" onclick=\"RevealMenuToolHandlers.keyboardHelp(event)\"><kbd>?</kbd> Keyboard Help</a></li>\n</ul>"}],"openButton":true},
+'smaller': false,
+ 
+        // Display controls in the bottom right corner
+        controls: false,
+
+        // Help the user learn the controls by providing hints, for example by
+        // bouncing the down arrow when they first encounter a vertical slide
+        controlsTutorial: false,
+
+        // Determines where controls appear, "edges" or "bottom-right"
+        controlsLayout: 'edges',
+
+        // Visibility rule for backwards navigation arrows; "faded", "hidden"
+        // or "visible"
+        controlsBackArrows: 'faded',
+
+        // Display a presentation progress bar
+        progress: true,
+
+        // Display the page number of the current slide
+        slideNumber: false,
+
+        // 'all', 'print', or 'speaker'
+        showSlideNumber: 'all',
+
+        // Add the current slide number to the URL hash so that reloading the
+        // page/copying the URL will return you to the same slide
+        hash: true,
+
+        // Start with 1 for the hash rather than 0
+        hashOneBasedIndex: false,
+
+        // Flags if we should monitor the hash and change slides accordingly
+        respondToHashChanges: true,
+
+        // Push each slide change to the browser history
+        history: true,
+
+        // Enable keyboard shortcuts for navigation
+        keyboard: true,
+
+        // Enable the slide overview mode
+        overview: true,
+
+        // Disables the default reveal.js slide layout (scaling and centering)
+        // so that you can use custom CSS layout
+        disableLayout: false,
+
+        // Vertical centering of slides
+        center: false,
+
+        // Enables touch navigation on devices with touch input
+        touch: true,
+
+        // Loop the presentation
+        loop: false,
+
+        // Change the presentation direction to be RTL
+        rtl: false,
+
+        // see https://revealjs.com/vertical-slides/#navigation-mode
+        navigationMode: 'linear',
+
+        // Randomizes the order of slides each time the presentation loads
+        shuffle: false,
+
+        // Turns fragments on and off globally
+        fragments: true,
+
+        // Flags whether to include the current fragment in the URL,
+        // so that reloading brings you to the same fragment position
+        fragmentInURL: false,
+
+        // Flags if the presentation is running in an embedded mode,
+        // i.e. contained within a limited portion of the screen
+        embedded: false,
+
+        // Flags if we should show a help overlay when the questionmark
+        // key is pressed
+        help: true,
+
+        // Flags if it should be possible to pause the presentation (blackout)
+        pause: true,
+
+        // Flags if speaker notes should be visible to all viewers
+        showNotes: false,
+
+        // Global override for autoplaying embedded media (null/true/false)
+        autoPlayMedia: null,
+
+        // Global override for preloading lazy-loaded iframes (null/true/false)
+        preloadIframes: null,
+
+        // Number of milliseconds between automatically proceeding to the
+        // next slide, disabled when set to 0, this value can be overwritten
+        // by using a data-autoslide attribute on your slides
+        autoSlide: 0,
+
+        // Stop auto-sliding after user input
+        autoSlideStoppable: true,
+
+        // Use this method for navigation when auto-sliding
+        autoSlideMethod: null,
+
+        // Specify the average time in seconds that you think you will spend
+        // presenting each slide. This is used to show a pacing timer in the
+        // speaker view
+        defaultTiming: null,
+
+        // Enable slide navigation via mouse wheel
+        mouseWheel: false,
+
+        // The display mode that will be used to show slides
+        display: 'block',
+
+        // Hide cursor if inactive
+        hideInactiveCursor: true,
+
+        // Time before the cursor is hidden (in ms)
+        hideCursorTime: 5000,
+
+        // Opens links in an iframe preview overlay
+        previewLinks: false,
+
+        // Transition style (none/fade/slide/convex/concave/zoom)
+        transition: 'none',
+
+        // Transition speed (default/fast/slow)
+        transitionSpeed: 'default',
+
+        // Transition style for full page slide backgrounds
+        // (none/fade/slide/convex/concave/zoom)
+        backgroundTransition: 'none',
+
+        // Number of slides away from the current that are visible
+        viewDistance: 3,
+
+        // Number of slides away from the current that are visible on mobile
+        // devices. It is advisable to set this to a lower number than
+        // viewDistance in order to save resources.
+        mobileViewDistance: 2,
+
+        // The "normal" size of the presentation, aspect ratio will be preserved
+        // when the presentation is scaled to fit different resolutions. Can be
+        // specified using percentage units.
+        width: 1050,
+
+        height: 700,
+
+        // Factor of the display size that should remain empty around the content
+        margin: 0.1,
+
+        math: {
+          mathjax: 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js',
+          config: 'TeX-AMS_HTML-full',
+          tex2jax: {
+            inlineMath: [['\\(','\\)']],
+            displayMath: [['\\[','\\]']],
+            balanceBraces: true,
+            processEscapes: false,
+            processRefs: true,
+            processEnvironments: true,
+            preview: 'TeX',
+            skipTags: ['script','noscript','style','textarea','pre','code'],
+            ignoreClass: 'tex2jax_ignore',
+            processClass: 'tex2jax_process'
+          },
+        },
+
+        // reveal.js plugins
+        plugins: [QuartoLineHighlight, PdfExport, RevealMenu, QuartoSupport,
+
+          RevealMath,
+          RevealNotes,
+          RevealSearch,
+          RevealZoom
+        ]
+      });
+    </script>
+    <script id="quarto-html-after-body" type="application/javascript">
+      window.document.addEventListener("DOMContentLoaded", function (event) {
+        const tabsets =  window.document.querySelectorAll(".panel-tabset-tabby")
+        tabsets.forEach(function(tabset) {
+          const tabby = new Tabby('#' + tabset.id);
+        });
+        const isCodeAnnotation = (el) => {
+          for (const clz of el.classList) {
+            if (clz.startsWith('code-annotation-')) {                     
+              return true;
+            }
+          }
+          return false;
+        }
+        const onCopySuccess = function(e) {
+          // button target
+          const button = e.trigger;
+          // don't keep focus
+          button.blur();
+          // flash "checked"
+          button.classList.add('code-copy-button-checked');
+          var currentTitle = button.getAttribute("title");
+          button.setAttribute("title", "Copied!");
+          let tooltip;
+          if (window.bootstrap) {
+            button.setAttribute("data-bs-toggle", "tooltip");
+            button.setAttribute("data-bs-placement", "left");
+            button.setAttribute("data-bs-title", "Copied!");
+            tooltip = new bootstrap.Tooltip(button, 
+              { trigger: "manual", 
+                customClass: "code-copy-button-tooltip",
+                offset: [0, -8]});
+            tooltip.show();    
+          }
+          setTimeout(function() {
+            if (tooltip) {
+              tooltip.hide();
+              button.removeAttribute("data-bs-title");
+              button.removeAttribute("data-bs-toggle");
+              button.removeAttribute("data-bs-placement");
+            }
+            button.setAttribute("title", currentTitle);
+            button.classList.remove('code-copy-button-checked');
+          }, 1000);
+          // clear code selection
+          e.clearSelection();
+        }
+        const getTextToCopy = function(trigger) {
+            const codeEl = trigger.previousElementSibling.cloneNode(true);
+            for (const childEl of codeEl.children) {
+              if (isCodeAnnotation(childEl)) {
+                childEl.remove();
+              }
+            }
+            return codeEl.innerText;
+        }
+        const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+          text: getTextToCopy
+        });
+        clipboard.on('success', onCopySuccess);
+        if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+          const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+            text: getTextToCopy,
+            container: window.document.getElementById('quarto-embedded-source-code-modal')
+          });
+          clipboardModal.on('success', onCopySuccess);
+        }
+          var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+          var mailtoRegex = new RegExp(/^mailto:/);
+            var filterRegex = new RegExp('/' + window.location.host + '/');
+          var isInternal = (href) => {
+              return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+          }
+          // Inspect non-navigation links and adorn them if external
+         var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+          for (var i=0; i<links.length; i++) {
+            const link = links[i];
+            if (!isInternal(link.href)) {
+              // undo the damage that might have been done by quarto-nav.js in the case of
+              // links that we want to consider external
+              if (link.dataset.originalHref !== undefined) {
+                link.href = link.dataset.originalHref;
+              }
+            }
+          }
+        function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+          const config = {
+            allowHTML: true,
+            maxWidth: 500,
+            delay: 100,
+            arrow: false,
+            appendTo: function(el) {
+                return el.closest('section.slide') || el.parentElement;
+            },
+            interactive: true,
+            interactiveBorder: 10,
+            theme: 'light-border',
+            placement: 'bottom-start',
+          };
+          if (contentFn) {
+            config.content = contentFn;
+          }
+          if (onTriggerFn) {
+            config.onTrigger = onTriggerFn;
+          }
+          if (onUntriggerFn) {
+            config.onUntrigger = onUntriggerFn;
+          }
+            config['offset'] = [0,0];
+            config['maxWidth'] = 700;
+          window.tippy(el, config); 
+        }
+        const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+        for (var i=0; i<noterefs.length; i++) {
+          const ref = noterefs[i];
+          tippyHover(ref, function() {
+            // use id or data attribute instead here
+            let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+            try { href = new URL(href).hash; } catch {}
+            const id = href.replace(/^#\/?/, "");
+            const note = window.document.getElementById(id);
+            if (note) {
+              return note.innerHTML;
+            } else {
+              return "";
+            }
+          });
+        }
+        const findCites = (el) => {
+          const parentEl = el.parentElement;
+          if (parentEl) {
+            const cites = parentEl.dataset.cites;
+            if (cites) {
+              return {
+                el,
+                cites: cites.split(' ')
+              };
+            } else {
+              return findCites(el.parentElement)
+            }
+          } else {
+            return undefined;
+          }
+        };
+        var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+        for (var i=0; i<bibliorefs.length; i++) {
+          const ref = bibliorefs[i];
+          const citeInfo = findCites(ref);
+          if (citeInfo) {
+            tippyHover(citeInfo.el, function() {
+              var popup = window.document.createElement('div');
+              citeInfo.cites.forEach(function(cite) {
+                var citeDiv = window.document.createElement('div');
+                citeDiv.classList.add('hanging-indent');
+                citeDiv.classList.add('csl-entry');
+                var biblioDiv = window.document.getElementById('ref-' + cite);
+                if (biblioDiv) {
+                  citeDiv.innerHTML = biblioDiv.innerHTML;
+                }
+                popup.appendChild(citeDiv);
+              });
+              return popup.innerHTML;
+            });
+          }
+        }
+      });
+      </script>
+    
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions"><ul><li><a href="https://github.com/jeffersonrodriguezc/deep-learning-en-3-semanas/issues/new" class="toc-action"><i class="bi bi-github"></i>Report an issue</a></li></ul></div></div></div></footer></body></html>

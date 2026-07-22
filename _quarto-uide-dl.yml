@@ -1,0 +1,13 @@
+# Perfil: UIDE — Maestría en Deep Learning
+# Activar con: quarto render --profile uide-dl  (o QUARTO_PROFILE=uide-dl)
+# Audiencia de contenido: solo aplicado (no ve secciones marcadas
+# when-profile con "uide-dl" en su lista de exclusión, ej. academico).
+
+website:
+  title: "Deep Learning Aplicado · UIDE"
+
+format:
+  revealjs:
+    theme: [default, assets/uide.scss]
+    logo: assets/logos/uide.png
+    footer: "Deep Learning Aplicado · UIDE · Jefferson Rodríguez"

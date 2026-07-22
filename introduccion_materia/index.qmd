@@ -1,0 +1,15 @@
+---
+title: "Introducción a la Materia"
+---
+Contexto de qué es el Deep Learning, cómo se relaciona con el Machine Learning y por qué es relevante hoy.
+
+**Temas Clave:**
+
+* Qué es Deep Learning y su relación con IA/ML.
+* Diferencias entre Machine Learning y Deep Learning.
+* Panorama actual y avances recientes.
+* Estructuración de proyectos de Deep Learning *(Universidad de Montevideo)*.
+
+**Materiales:**
+
+* [Slides: Introducción a la Materia](slides/slides_introduccion_materia.html)

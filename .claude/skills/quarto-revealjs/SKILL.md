@@ -24,40 +24,47 @@ Lee `references/yaml-options.md` para opciones YAML avanzadas y
 
 ```
 deep-learning-en-3-semanas/
-├── _quarto.yml                     ← sitio maestro (no tocar navbar/theme)
+├── _quarto.yml                     ← sitio maestro: navbar + defaults revealjs (footer/theme del perfil BASE)
+├── _quarto-uide-ds.yml             ← override de perfil: UIDE Ciencia de Datos (académico+aplicado)
+├── _quarto-uide-dl.yml             ← override de perfil: UIDE Deep Learning (solo aplicado)
+├── _quarto-montevideo.yml          ← override de perfil: Universidad de Montevideo (más aplicada)
 ├── index.qmd
+├── introduccion_curso/
+│   ├── index.qmd
+│   └── slides/slides_introduccion_curso.qmd   ← bienvenida, instructor, hoja de ruta
+├── introduccion_materia/
+│   ├── index.qmd
+│   ├── dl_timeline.png, ml_vs_dl.png
+│   └── slides/slides_introduccion_materia.qmd ← qué es DL (universal) + contenido exclusivo por perfil
 ├── semana_1/
 │   ├── index.qmd
 │   └── slides/
-│       ├── slides_semana_1.qmd     ← FUENTE MAESTRA con todos los tags
+│       ├── slides_semana_1.qmd     ← FUENTE MAESTRA con divs content-visible/content-hidden
 │       ├── nn-animation.html       ← recursos interactivos junto al .qmd
 │       ├── perceptron_estructura_basica.html
 │       └── perceptron_clasificador_basico.html
-├── semana_2/slides/slides_semana_2.qmd
-├── semana_3/slides/slides_semana_3.qmd
+├── semana_2/slides/slides_semana_2.qmd   ← (pendiente de crear)
+├── semana_3/slides/slides_semana_3.qmd   ← (pendiente de crear)
 │
-├── uide/                           ← versión UIDE (include del base)
-│   ├── _quarto.yml                 ← config UIDE
-│   ├── index.qmd
-│   └── semana_1/slides/slides.qmd  ← solo YAML + {{< include >}}
-│
-├── montevideo/                     ← versión Montevideo (include del base)
-│   ├── _quarto.yml
-│   ├── index.qmd
-│   └── semana_1/slides/slides.qmd
-│
-├── params/
+├── params/                          ← metadata de referencia (institución, programa, color) usada al escribir los _quarto-<profile>.yml
 │   ├── uide-ds.yml
 │   ├── uide-dl.yml
 │   └── montevideo.yml
 └── assets/
+    ├── uide.scss                    ← tema visual UIDE (compartido por uide-ds y uide-dl)
+    ├── montevideo.scss              ← tema visual Montevideo
     └── logos/
         ├── uide.png
         └── montevideo.png
 ```
 
-**Regla fundamental:** el contenido siempre se escribe en `semana_N/slides/slides_semana_N.qmd`.
-Las carpetas `uide/` y `montevideo/` nunca contienen contenido propio — solo incluyen el base.
+**Regla fundamental:** el contenido siempre se escribe en el archivo maestro
+(`semana_N/slides/slides_semana_N.qmd`, `introduccion_curso/...`, `introduccion_materia/...`).
+No existen carpetas `uide/` ni `montevideo/` con copias del contenido — **no se necesita
+`{{< include >}}` de nada.** Una sola fuente por sección; lo que cambia entre
+instituciones es (a) qué tan visible es cada bloque de contenido, resuelto con
+divs `content-visible`/`content-hidden` + `when-profile`, y (b) el branding
+(logo/color/footer), resuelto por el `_quarto-<profile>.yml` activo.
 
 ---
 
@@ -219,161 +226,177 @@ def forward(X, W, b):
 
 ---
 
-## Sistema de tags por audiencia
+## Sistema de visibilidad por perfil (content-visible / content-hidden)
 
-Cada slide con `###` o `##` puede llevar un tag de audiencia.
-**Sin tag → se incluye siempre en todos los cursos.**
+**Sin div → la slide se ve siempre, en los 4 perfiles (base, uide-ds, uide-dl, montevideo).**
+Solo se envuelve una sección cuando necesita comportarse distinto en algún perfil.
+
+Los 4 perfiles activos hoy: `base` (sin `--profile`, es la versión completa de
+referencia), `uide-ds`, `uide-dl`, `montevideo`.
 
 ```markdown
-### Derivación del gradiente {tags="academico"}
-
-Contenido matemático denso.
-
 ---
 
-### Demo en PyTorch {tags="aplicado"}
+:::: {.content-hidden .academico when-profile="uide-dl,montevideo"}
 
-Contenido práctico.
+### Derivación del gradiente
+
+Contenido matemático denso. Se ve en base y uide-ds; se oculta en uide-dl y montevideo.
+
+::::
 
 ---
 
 ### Introducción a la semana
 
-Sin tag — va en todos los cursos.
+Sin div — se ve en los 4 perfiles.
+
+---
+
+:::: {.content-visible when-profile="montevideo"}
+
+### Caso de negocio: DL aplicado a scoring crediticio
+
+Contenido exclusivo, solo existe para Montevideo.
+
+::::
+
+---
 ```
 
-| Tag | Cursos que lo incluyen |
-|-----|----------------------|
-| `academico` | UIDE Ciencia de Datos |
-| `aplicado` | UIDE Ciencia de Datos, UIDE Deep Learning, Montevideo |
-| sin tag | Todos |
+**Reglas de anidado (Pandoc):** el fence exterior necesita MÁS colones que
+cualquier fence anidado dentro (ej. una tabla `.nonincremental` o un `.fragment`
+dentro de una sección condicionada). Usa `::::` (4) por fuera cuando adentro
+hay un `:::` (3) de otro div — si no, Pandoc cierra el div exterior de más.
+
+| Necesito que... | Div a usar |
+|---|---|
+| ...se vea en TODOS los perfiles | ningún div (default) |
+| ...se oculte solo en algunos perfiles | `.content-hidden` + `when-profile="perfil1,perfil2"` (lista = donde se OCULTA) |
+| ...se vea solo en algunos perfiles | `.content-visible` + `when-profile="perfil1,perfil2"` (lista = donde se VE) |
+
+**Activar un perfil al renderizar:**
+```bash
+quarto render semana_1/slides/slides_semana_1.qmd --profile montevideo
+# o vía variable de entorno:
+QUARTO_PROFILE=montevideo quarto render semana_1/slides/slides_semana_1.qmd
+```
 
 ---
 
 ## Perfiles por institución
 
-### `params/uide-ds.yml` — UIDE Maestría Ciencia de Datos con mención en IA
+Cada perfil es un archivo `_quarto-<profile>.yml` en la raíz del proyecto,
+que Quarto fusiona sobre `_quarto.yml` cuando se activa con `--profile`.
+Solo contiene lo que CAMBIA (branding); nunca contenido.
+Los `params/*.yml` existentes se conservan como metadata de referencia
+humana (de dónde salieron estos valores) pero Quarto no los lee directamente.
+
+### `_quarto-uide-ds.yml` — UIDE Maestría Ciencia de Datos con mención en IA
 ```yaml
-institucion: "Universidad Internacional del Ecuador"
-programa: "Maestría en Ciencia de Datos con mención en IA"
-curso: "Neural Networks y Deep Learning"
-logo: "../../assets/logos/uide.png"
-color_primario: "#003087"
-footer: "Neural Networks y Deep Learning · UIDE · Jefferson Rodríguez"
-audiencia: ["academico", "aplicado"]
-```
-
-### `params/uide-dl.yml` — UIDE Maestría Deep Learning
-```yaml
-institucion: "Universidad Internacional del Ecuador"
-programa: "Maestría en Deep Learning"
-curso: "Deep Learning Aplicado"
-logo: "../../assets/logos/uide.png"
-color_primario: "#003087"
-footer: "Deep Learning Aplicado · UIDE · Jefferson Rodríguez"
-audiencia: ["aplicado"]
-```
-
-### `params/montevideo.yml` — Universidad de Montevideo
-```yaml
-institucion: "Universidad de Montevideo"
-programa: "Maestría en Ciencia de Datos · Facultad Empresarial y Economía"
-curso: "Deep Learning"
-logo: "../../assets/logos/montevideo.png"
-color_primario: "#8B0000"
-footer: "Deep Learning · UM · Jefferson Rodríguez"
-audiencia: ["aplicado"]
-```
-
----
-
-## Archivos institucionales (include del base)
-
-Las carpetas `uide/` y `montevideo/` contienen archivos mínimos que
-solo personalizan el YAML e incluyen el contenido base con `{{< include >}}`.
-
-### `uide/semana_1/slides/slides.qmd`
-```yaml
----
-title: "Semana 1: Fundamentos de Redes Neuronales"
-subtitle: "Neural Networks y Deep Learning"
-author: "Jefferson Rodriguez"
+website:
+  title: "Neural Networks y Deep Learning · UIDE"
 format:
   revealjs:
-    sanitize: false
-    self-contained: false
-    incremental: true
-    theme: [default, ../../../assets/uide.scss]
-    slide-number: true
-    show-slide-number: all
-    mouse-wheel: true
-    transition: fade
+    theme: [default, assets/uide.scss]
+    logo: assets/logos/uide.png
     footer: "Neural Networks y Deep Learning · UIDE · Jefferson Rodríguez"
-    logo: ../../../assets/logos/uide.png
-    dependencies:
-      - src: https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.min.js
-        defer: true
-resources:
-  - ../../../semana_1/slides/nn-animation.html
-  - ../../../semana_1/slides/perceptron_estructura_basica.html
-  - ../../../semana_1/slides/perceptron_clasificador_basico.html
-audiencia: ["academico", "aplicado"]
----
-
-{{< include ../../../semana_1/slides/slides_semana_1.qmd >}}
 ```
+Ve contenido `academico` y `aplicado` (es decir: no oculta nada tagueado como academico).
 
-Mismo patrón para `montevideo/semana_1/slides/slides.qmd` cambiando
-footer, logo, scss y audiencia.
+### `_quarto-uide-dl.yml` — UIDE Maestría Deep Learning
+```yaml
+website:
+  title: "Deep Learning Aplicado · UIDE"
+format:
+  revealjs:
+    theme: [default, assets/uide.scss]
+    logo: assets/logos/uide.png
+    footer: "Deep Learning Aplicado · UIDE · Jefferson Rodríguez"
+```
+Solo aplicado: cualquier bloque `.content-hidden` que liste `uide-dl` en su
+`when-profile` se oculta aquí.
+
+### `_quarto-montevideo.yml` — Universidad de Montevideo
+```yaml
+website:
+  title: "Deep Learning · Universidad de Montevideo"
+format:
+  revealjs:
+    theme: [default, assets/montevideo.scss]
+    logo: assets/logos/montevideo.png
+    footer: "Deep Learning · Universidad de Montevideo · Jefferson Rodríguez"
+```
+La más aplicada, y además tiene contenido EXCLUSIVO (marcado
+`.content-visible when-profile="montevideo"`) que ningún otro perfil ve.
 
 ---
 
 ## Flujo de trabajo completo
 
-### Escribir contenido nuevo (siempre en el base)
-1. Editar `semana_N/slides/slides_semana_N.qmd`
-2. Taggear cada slide nueva con `{tags="academico"}`, `{tags="aplicado"}` o sin tag
-3. Si hay HTML interactivo nuevo, añadirlo a `resources:` del YAML base
+### Escribir contenido nuevo (siempre en el archivo maestro)
+1. Editar `semana_N/slides/slides_semana_N.qmd` (o `introduccion_curso/...`,
+   `introduccion_materia/...`).
+2. Si la slide debe verse distinto según institución, envolverla en
+   `.content-hidden`/`.content-visible` + `when-profile` (ver sección anterior).
+   Si no, no tocar nada — se ve en todos.
+3. Si hay HTML interactivo nuevo, añadirlo a `resources:` del YAML del archivo.
 
 ### Renderizar para una institución
 ```bash
-# Solo semana 1 para UIDE
-quarto render uide/semana_1/slides/slides.qmd
+# Solo semana 1 para Montevideo
+quarto render semana_1/slides/slides_semana_1.qmd --profile montevideo
 
-# Todo el sitio UIDE
-quarto render uide/
+# Todo el sitio para UIDE Ciencia de Datos
+quarto render --profile uide-ds
 
-# Todo el sitio Montevideo
-quarto render montevideo/
+# Todo el sitio base (sin profile = versión completa de referencia)
+quarto render
 ```
 
 ### Publicar
 ```bash
-quarto render          # sitio maestro
-quarto render uide/
-quarto render montevideo/
+quarto render                        # sitio base
+quarto render --profile uide-ds      # (si se publica una versión UIDE-DS aparte)
+quarto render --profile uide-dl
+quarto render --profile montevideo
 git add -A
 git commit -m "feat: semana N actualizada"
 git push origin main
 ```
+Nota: publicar varias versiones institucionales en GitHub Pages requiere
+decidir dónde vive cada build (subcarpetas de salida distintas vía
+`output-dir` por perfil, o sitios/repos separados) — pendiente de definir
+cuando toque publicar Montevideo por primera vez.
 
 ### Añadir semana nueva (ej. semana 2)
-1. Crear `semana_2/slides/slides_semana_2.qmd` con contenido taggeado
-2. Crear `uide/semana_2/slides/slides.qmd` (solo YAML + include)
-3. Crear `montevideo/semana_2/slides/slides.qmd` (solo YAML + include)
-4. Renderizar y verificar
+1. Crear `semana_2/slides/slides_semana_2.qmd` con el contenido, envolviendo
+   en `content-hidden`/`content-visible` solo lo que diverja por institución.
+2. Crear `semana_2/index.qmd` (mismo patrón que `semana_1/index.qmd`).
+3. Renderizar con cada `--profile` y verificar visualmente.
+
+### Añadir contenido exclusivo de una institución (ej. "Estructuración de proyectos" en Montevideo)
+1. Escribirlo directamente en el archivo maestro de la sección que le
+   corresponda (ej. `introduccion_materia/slides/slides_introduccion_materia.qmd`).
+2. Envolver en `:::: {.content-visible when-profile="montevideo"} ... ::::`
+   (o `.content-hidden` listando los perfiles que NO deben verlo — ambas
+   formas son válidas, usar la que resulte más legible según cuántos
+   perfiles quedan afuera vs. adentro).
 
 ---
 
 ## Pitfalls críticos de este repo
 
 - `self-contained: false` + `resources:` es el patrón correcto para iframes locales.
-  En los archivos institucionales, las rutas en `resources:` deben ser relativas
-  al `.qmd` institucional, apuntando a los HTML en `semana_N/slides/`.
-- `sanitize: false` debe estar en TODOS los YAMLs (base e institucionales)
-  o los iframes no renderizan.
-- Los HTML interactivos (p5.js, animaciones) viven en `semana_N/slides/` —
-  nunca duplicarlos en las carpetas institucionales.
-- Al renderizar un archivo institucional, Quarto resuelve el `{{< include >}}`
-  desde la ruta del archivo institucional — verificar que las rutas relativas
-  de iframes dentro del base sean correctas desde esa perspectiva.
+- `sanitize: false` debe estar en el YAML de cada archivo maestro que use
+  iframes, o no renderizan.
+- Los HTML interactivos (p5.js, animaciones) viven junto a su `.qmd`.
+- **No fijar `theme:` ni `footer:` en el YAML de un archivo maestro** — deben
+  heredarse de `_quarto.yml` (base) o del `_quarto-<profile>.yml` activo.
+  Si un `.qmd` los fija localmente, bloquea el override institucional.
+- **Anidado de fences (`:::`):** el div exterior siempre necesita más colones
+  que cualquier div anidado adentro. Con `.content-hidden`/`.content-visible`
+  envolviendo secciones que ya tienen `.fragment` o `.nonincremental` adentro,
+  usar `::::` (4) por fuera y `:::` (3) para el div interior existente.
+- No existen carpetas `uide/` ni `montevideo/` — si aparecen en una sesión
+  vieja de Claude Code, es plan obsoleto; ignorar y usar `_quarto-<profile>.yml`.

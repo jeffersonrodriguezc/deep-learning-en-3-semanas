@@ -1,0 +1,38 @@
+/*-- scss:defaults --*/
+
+// Universidad de Montevideo — Maestría en Ciencia de Datos
+// Facultad Empresarial y Economía
+$primary:   #8B0000 !default;   // rojo institucional UM
+$secondary: #c23616 !default;   // acento más cálido, para links/detalles
+$light:     #f7f5f3 !default;   // fondo de slide
+$dark:      #1e1e1e !default;   // texto
+
+$presentation-font-size-root: 32px !default;
+$heading-color: $primary !default;
+$link-color: $secondary !default;
+
+/*-- scss:rules --*/
+
+.reveal .slide-background-content {
+  background-color: $light;
+}
+
+.reveal h1, .reveal h2 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.reveal h1 {
+  font-size: 1.8em;
+  color: $primary;
+  border-bottom: 3px solid $secondary;
+  padding-bottom: 0.2em;
+}
+
+.reveal h2, .reveal h3 {
+  color: $primary;
+}
+
+.reveal .footer {
+  color: $primary;
+}

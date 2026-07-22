@@ -1,0 +1,50 @@
+---
+title: "Curso Práctico de Deep Learning en 3 Semanas"
+subtitle: "Introducción al Curso"
+author: "Jefferson Rodriguez"
+format:
+  revealjs:
+    sanitize: false
+    self-contained: false
+    incremental: true
+    # theme y footer NO se fijan aquí: los define _quarto.yml (base) o el
+    # _quarto-<profile>.yml activo (uide-ds / uide-dl / montevideo).
+    slide-number: true
+    show-slide-number: all
+    mouse-wheel: true
+    transition: fade
+editor: visual
+---
+
+### ¡Bienvenidos al Curso!
+
+-   👤 Jefferson Rodríguez, Colombiano.
+-   💼 Ingeniero en Sistemas, MSc en Ciencias de la Computación, actualmente doctorando en Deep Learning y Ciberseguridad en la Universidad de Cagliari. Experiencia en ciencia de datos, Visión por computadora, biometría, esteganografía y watermarking.
+-   🎯 Mi intención es contribuir con el desarrollo de su formación en esta maestría y ser un apoyo para sus proyectos de grado.
+
+------------------------------------------------------------------------
+
+### Nuestro Viaje en 3 Semanas: La Hoja de Ruta
+
+-   **Semana 1:** Fundamentos (Perceptrón, MLP, Entrenamiento básico, Tu primer proyecto práctico).
+-   **Semana 2:** Arquitecturas Especializadas (CNNs, RNNs, etc.) y sus aplicaciones prácticas.
+-   **Semana 3:** Temas Avanzados (Transfer Learning, Modelos Fundacionales, Ética del DL, Proyecto Final).
+-   **Enfoque PRÁCTICO:** Cada semana, ¡manos a la obra con código y ejercicios!
+
+------------------------------------------------------------------------
+
+### ¿Qué esperamos de ustedes?
+
+::: nonincremental
+-   Participación activa en los ejercicios prácticos.
+-   Explorar y experimentar más allá de lo mostrado en clase.
+-   Preguntar todo lo que no quede claro — no hay preguntas tontas.
+:::
+
+------------------------------------------------------------------------
+
+### Empecemos
+
+[Ir a Introducción a la Materia](../../introduccion_materia/index.html)
+
+[Ir a las Diapositivas de la Semana 1](../../semana_1/slides/slides_semana_1.html)

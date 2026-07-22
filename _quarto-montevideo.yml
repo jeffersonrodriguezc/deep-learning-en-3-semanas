@@ -1,0 +1,15 @@
+# Perfil: Universidad de Montevideo — Maestría en Ciencia de Datos
+# Facultad Empresarial y Economía
+# Activar con: quarto render --profile montevideo  (o QUARTO_PROFILE=montevideo)
+# Audiencia de contenido: la más aplicada. Además tiene contenido EXCLUSIVO
+# (ej. "Estructuración de proyectos de DL" en introduccion_materia) que no
+# ven ni base ni UIDE, marcado with when-profile="montevideo".
+
+website:
+  title: "Deep Learning · Universidad de Montevideo"
+
+format:
+  revealjs:
+    theme: [default, assets/montevideo.scss]
+    logo: assets/logos/montevideo.png
+    footer: "Deep Learning · Universidad de Montevideo · Jefferson Rodríguez"

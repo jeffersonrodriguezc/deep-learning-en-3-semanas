@@ -25,6 +25,8 @@ Cada semana incluye componentes prácticos diseñados para consolidar tu aprendi
 
 ## Estructura del Sitio
 
+* [Introducción al Curso](introduccion_curso/index.html)
+* [Introducción a la Materia](introduccion_materia/index.html)
 * [Semana 1: Fundamentos y MLP](semana_1/index.html) 
 * [Semana 2: Arquitecturas neuronales profundas](semana_2/index.html) 
 * [Semana 3: Técnicas Avanzadas y Robustez](semana_3/index.html) 

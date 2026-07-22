@@ -9,6 +9,10 @@ website:
     left:
       - href: index.qmd
         text: Inicio
+      - href: introduccion_curso/index.qmd
+        text: Introducción al curso
+      - href: introduccion_materia/index.qmd
+        text: Introducción a la materia
       - href: semana_1/index.qmd
         text: Semana 1
       - href: semana_2/index.qmd
@@ -27,6 +31,12 @@ format:
       dark: darkly
     css: styles.css
     toc: true
+  revealjs:
+    # Defaults del sitio BASE (sin --profile). Los perfiles institucionales
+    # (_quarto-uide-ds.yml, _quarto-uide-dl.yml, _quarto-montevideo.yml)
+    # sobreescriben theme/logo/footer — no los redefinas en cada .qmd.
+    footer: "Deep Learning en 3 Semanas · Jefferson Rodríguez"
+    theme: default
 
 
 

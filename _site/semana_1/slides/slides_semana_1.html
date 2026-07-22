@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.7.29">
 
   <meta name="author" content="Jefferson Rodriguez">
-  <title>Deep Learning Practico en 3 Semanas – Semana 1: Fundamentos de Redes Neuronales</title>
+  <title>Deep Learning · Universidad de Montevideo – Semana 1: Fundamentos de Redes Neuronales</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, minimal-ui">
@@ -95,7 +95,7 @@
     code span.vs { color: #20794d; } /* VerbatimString */
     code span.wa { color: #5e5e5e; font-style: italic; } /* Warning */
   </style>
-  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-f563837468303362081e247dddd440d0.css">
+  <link rel="stylesheet" href="../../site_libs/revealjs/dist/theme/quarto-32f7186d2caa3dc8772e3382bfdf7969.css">
   <link href="../../site_libs/revealjs/plugin/quarto-line-highlight/line-highlight.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/menu.css" rel="stylesheet">
   <link href="../../site_libs/revealjs/plugin/reveal-menu/quarto-menu.css" rel="stylesheet">
@@ -304,7 +304,8 @@ z = \mathbf{x} \cdot \mathbf{w} + b
 <h3 id="perceptrón-componente-fundamental">Perceptrón: componente fundamental</h3>
 <div class="fragment">
 <div style="text-align:center; margin:1em 0;">
-<p><iframe src="perceptron_estructura_basica.html" width="450" height="200" style="border:none; margin:auto; display:block;" scrolling="no"></iframe></p>
+<iframe src="perceptron_estructura_basica.html" width="450" height="200" style="border:none; margin:auto; display:block;" scrolling="no">
+</iframe>
 </div>
 </div>
 <div class="fragment">
@@ -481,8 +482,8 @@ h_2 = f(h_1W_2 + b_2)
 </section>
 <section class="slide level2">
 
-<h3 data-tags="aplicado" id="forward-en-código">Forward en código</h3>
-<div id="45a09ac0" class="cell" data-execution_count="1">
+<h3 id="forward-en-código">Forward en código</h3>
+<div id="b3a06cb6" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1" data-code-line-numbers="|2|3|4"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a></a></span>
 <span id="cb1-3"><a></a><span class="kw">def</span> forward(X, W, b, activation):</span>
@@ -574,7 +575,7 @@ y \quad \text{vs} \quad \hat{y}
 </section>
 <section class="slide level2">
 
-<h3 data-tags="academico" id="por-qué-se-penaliza-tanto-un-error-seguro">¿Por qué se penaliza tanto un error seguro?</h3>
+<h3 id="por-qué-se-penaliza-tanto-un-error-seguro">¿Por qué se penaliza tanto un error seguro?</h3>
 <p>Porque el logaritmo castiga predicciones cercanas a cero cuando la clase real es 1.</p>
 <p><span class="math display">\[
 -\log(0.99) \approx 0.01
@@ -615,7 +616,7 @@ y \quad \text{vs} \quad \hat{y}
 </section>
 <section class="slide level2">
 
-<h3 data-tags="academico" id="interpretación-del-gradiente">Interpretación del gradiente</h3>
+<h3 id="interpretación-del-gradiente">Interpretación del gradiente</h3>
 <ul>
 <li class="fragment">Gradiente positivo: aumentar el peso puede aumentar la pérdida.</li>
 <li class="fragment">Gradiente negativo: aumentar el peso puede reducir la pérdida.</li>
@@ -635,7 +636,7 @@ y \quad \text{vs} \quad \hat{y}
 </section>
 <section class="slide level2">
 
-<h3 data-tags="academico" id="la-regla-de-la-cadena">La regla de la cadena</h3>
+<h3 id="la-regla-de-la-cadena">La regla de la cadena</h3>
 <p>La pérdida depende de muchas operaciones encadenadas.</p>
 <p><span class="math display">\[
 \mathcal{L} \rightarrow \hat{y} \rightarrow h_2 \rightarrow h_1 \rightarrow W
@@ -646,8 +647,8 @@ y \quad \text{vs} \quad \hat{y}
 </section>
 <section class="slide level2">
 
-<h3 data-tags="aplicado" id="backward-en-pytorch">Backward en PyTorch</h3>
-<div id="47fd49a2" class="cell" data-execution_count="2">
+<h3 id="backward-en-pytorch">Backward en PyTorch</h3>
+<div id="9270816e" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2" data-code-line-numbers="|3|4|5|6"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a></a><span class="co"># predicción</span></span>
 <span id="cb2-2"><a></a>pred <span class="op">=</span> model(X_batch)</span>
 <span id="cb2-3"><a></a>loss <span class="op">=</span> loss_fn(pred, y_batch)</span>
@@ -740,7 +741,7 @@ w_{nuevo} = w_{actual} - \alpha \frac{\partial \mathcal{L}}{\partial w}
 </section>
 <section class="slide level2">
 
-<h3 data-tags="academico" id="optimizadores">Optimizadores</h3>
+<h3 id="optimizadores">Optimizadores</h3>
 <table class="caption-top">
 <thead>
 <tr class="header">
@@ -787,8 +788,8 @@ w_{nuevo} = w_{actual} - \alpha \frac{\partial \mathcal{L}}{\partial w}
 </section>
 <section class="slide level2">
 
-<h3 data-tags="aplicado" id="training-loop-en-pytorch">Training loop en PyTorch</h3>
-<div id="778d3a48" class="cell" data-execution_count="3">
+<h3 id="training-loop-en-pytorch">Training loop en PyTorch</h3>
+<div id="1f0fc921" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4" data-code-line-numbers="|1|2|3|5|6|7|8|9"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(num_epochs):</span>
 <span id="cb4-2"><a></a>    <span class="cf">for</span> X_batch, y_batch <span class="kw">in</span> train_loader:</span>
 <span id="cb4-3"><a></a>        pred <span class="op">=</span> model(X_batch)</span>
@@ -801,7 +802,7 @@ w_{nuevo} = w_{actual} - \alpha \frac{\partial \mathcal{L}}{\partial w}
 </section>
 <section class="slide level2">
 
-<h3 data-tags="aplicado" id="equivalencia-concepto-código">Equivalencia concepto-código</h3>
+<h3 id="equivalencia-concepto-código">Equivalencia concepto-código</h3>
 <table class="caption-top">
 <thead>
 <tr class="header">
@@ -912,7 +913,7 @@ w_{nuevo} = w_{actual} - \alpha \frac{\partial \mathcal{L}}{\partial w}
 </section>
 <section class="slide level2">
 
-<h3 data-tags="academico" id="leer-curvas-de-entrenamiento">Leer curvas de entrenamiento</h3>
+<h3 id="leer-curvas-de-entrenamiento">Leer curvas de entrenamiento</h3>
 <table class="caption-top">
 <thead>
 <tr class="header">
@@ -989,8 +990,8 @@ x' = \frac{x - \mu}{\sigma}
 </section>
 <section class="slide level2">
 
-<h3 data-tags="aplicado" id="mlp-mínima-en-keras">MLP mínima en Keras</h3>
-<div id="831713e8" class="cell" data-execution_count="4">
+<h3 id="mlp-mínima-en-keras">MLP mínima en Keras</h3>
+<div id="417576df" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb6" data-code-line-numbers="|3|4|5|7|8"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a></a><span class="im">from</span> tensorflow <span class="im">import</span> keras</span>
 <span id="cb6-2"><a></a></span>
 <span id="cb6-3"><a></a>model <span class="op">=</span> keras.Sequential([</span>
@@ -1007,8 +1008,8 @@ x' = \frac{x - \mu}{\sigma}
 </section>
 <section class="slide level2">
 
-<h3 data-tags="aplicado" id="entrenar-en-keras">Entrenar en Keras</h3>
-<div id="24d9f6a4" class="cell" data-execution_count="5">
+<h3 id="entrenar-en-keras">Entrenar en Keras</h3>
+<div id="dd57a3f5" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb7" data-code-line-numbers="|1|2|3|4|5"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a></a>history <span class="op">=</span> model.fit(</span>
 <span id="cb7-2"><a></a>    X_train, y_train,</span>
 <span id="cb7-3"><a></a>    validation_data<span class="op">=</span>(X_val, y_val),</span>
@@ -1057,8 +1058,9 @@ x' = \frac{x - \mu}{\sigma}
 </section></section>
     </div>
   <div class="quarto-auto-generated-content" style="display: none;">
+<p><img src="../../assets/logos/montevideo.png" class="slide-logo"></p>
 <div class="footer footer-default">
-<p>Deep Learning en 3 Semanas - Jefferson Rodríguez</p>
+<p>Deep Learning · Universidad de Montevideo · Jefferson Rodríguez</p>
 </div>
 </div></div>
 

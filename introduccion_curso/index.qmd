@@ -1,0 +1,14 @@
+---
+title: "Introducción al Curso"
+---
+Bienvenida, presentación del instructor y hoja de ruta de las tres semanas del curso.
+
+**Contenido:**
+
+* Quién dicta el curso y su experiencia.
+* Qué esperar de las tres semanas.
+* Qué se espera de los participantes.
+
+**Materiales:**
+
+* [Slides: Introducción al Curso](slides/slides_introduccion_curso.html)

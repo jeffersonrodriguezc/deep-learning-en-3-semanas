@@ -1,0 +1,37 @@
+/*-- scss:defaults --*/
+
+// Universidad Internacional del Ecuador
+$primary:   #003087 !default;   // azul institucional UIDE
+$secondary: #4a90d9 !default;   // acento medio, para links/detalles
+$light:     #f4f6f9 !default;   // fondo de slide
+$dark:      #1e1e2e !default;   // texto
+
+$presentation-font-size-root: 32px !default;
+$heading-color: $primary !default;
+$link-color: $secondary !default;
+
+/*-- scss:rules --*/
+
+.reveal .slide-background-content {
+  background-color: $light;
+}
+
+.reveal h1, .reveal h2 {
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.reveal h1 {
+  font-size: 1.8em;
+  color: $primary;
+  border-bottom: 3px solid $secondary;
+  padding-bottom: 0.2em;
+}
+
+.reveal h2, .reveal h3 {
+  color: $primary;
+}
+
+.reveal .footer {
+  color: $primary;
+}
