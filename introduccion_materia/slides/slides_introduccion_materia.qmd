@@ -7,8 +7,6 @@ format:
     sanitize: false
     self-contained: false
     incremental: true
-    # theme y footer NO se fijan aquí: los define _quarto.yml (base) o el
-    # _quarto-<profile>.yml activo (uide-ds / uide-dl / montevideo).
     slide-number: true
     show-slide-number: all
     mouse-wheel: true
@@ -28,18 +26,18 @@ editor: visual
 ### ¿Cómo se conecta con otras áreas? y su evolución
 
 ::: small
--   Inteligencia Artificial (IA) ⟶ Aprendizaje Automático (ML) ⟶ Deep Learning (DL)
+-   Inteligencia Artificial ⟶ Aprendizaje Automático ⟶ Deep Learning
 :::
 
 ::: fragment
-![DL Timeline](../imagenes/dl_timeline.webp){width="100%"}
+![](../imagenes/dl_timeline.webp){width="100%"}
 :::
 
 ------------------------------------------------------------------------
 
 ### ¿En qué se diferencia de Machine Learning?
 
-![Comparación entre ML y DL](../imagenes/ml_vs_dl.png){width="100%"}
+![](../imagenes/ml_vs_dl.png){width="100%"}
 
 ------------------------------------------------------------------------
 
@@ -68,19 +66,18 @@ editor: visual
 -   Vehículos autónomos (Tesla, Waymo).
 -   Diagnóstico médico asistido por IA (detección de cáncer, retinopatía).
 -   Traducción y reconocimiento de voz en tiempo real.
-
-------------------------------------------------------------------------
+-   Agentes de IA
 
 ::::::::::::::::::::::::::::::::::::::::::: {.content-hidden .solo-base-montevideo when-profile="uide-ds,uide-dl"}
-# Estructuración de Proyectos de Deep Learning {background-color="#1a3a5c"}
+# Estructuración de Proyectos de Deep Learning
 
 ------------------------------------------------------------------------
 
 ### ¿De qué trata esta lección?
 
-**Mensaje central:** un buen proyecto de Deep Learning no es solo un modelo entrenado. Es un sistema listo para producción que conecta datos, algoritmos, infraestructura, evaluación, usuarios, monitoreo y valor de negocio.
+- **Mensaje central:** un buen proyecto de Deep Learning no es solo un modelo entrenado. Es un sistema listo para producción que conecta datos, algoritmos, infraestructura, evaluación, usuarios, monitoreo y valor de negocio.
 
-**Objetivo:** entender cuándo conviene usar DL, cómo elegir proyectos de alto impacto y costo viable, y cómo estructurar el ciclo de vida completo de un proyecto.
+- **Objetivo:** entender cuándo conviene usar DL, cómo elegir proyectos de alto impacto y costo viable, y cómo estructurar el ciclo de vida completo de un proyecto.
 
 ::: notes
 Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1: Course Vision and When to Use ML, pp. 1-5; Huyen, Designing Machine Learning Systems, Cap. 1, pp. 5-8.
@@ -94,52 +91,50 @@ Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1: Course Vision and When to Use ML
 -   Lo difícil ya no es solo entrenar un modelo: es traducir avances de investigación en productos reales.
 -   Muchos proyectos de ML/DL fracasan antes de empezar: son técnicamente inviables, están mal definidos, nunca llegan a producción, no tienen criterios de éxito compartidos, o resuelven un problema que no vale la complejidad que introducen.
 
-![Ciclos de hype e "inviernos" de la IA (Tobin, Le & Rachakonda, *FSDL Lecture 1: Course Vision and When to Use ML*, p. 3)](../imagenes/fsdl-hype-invierno-ia.png){width="70%"}
+------------------------------------------------------------------------
+### Pensar en modelo vs Pensar en producto
 
-![Pensar en modelo: el ciclo académico de "tierra plana" (FSDL Lecture 1, "ML-Powered Products Require a Different Process")](/introduccion_materia/imagenes\fsdl-tierra-plana-ml-academico.png){width="65%"}
+<div style="
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:0.3rem;
+  margin:0;
+  padding:0;
+">
 
-![Pensar en producto: el "outer loop" que cierra con el flywheel de datos (FSDL Lecture 1, misma sección)](/introduccion_materia/imagenes\fsdl-outer-loop-producto-ml.png){width="65%"}
+<img src="/introduccion_materia/imagenes/fsdl-tierra-plana-ml-academico.png"
+     style="width:120%; margin:0; padding:0;">
 
-::: fragment
+<img src="/introduccion_materia/imagenes/fsdl-outer-loop-producto-ml.png"
+     style="width:120%; margin:0; padding:0;">
+
+</div>
+
+<div style="font-size:0.45em; color:#666; margin-top:0.2rem; line-height:1.1;">
+  Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 2-5, 9-10.
+</div>
+
+::: {.fragment}
 El valor de un proyecto de ML debe superar no solo su costo de desarrollo, sino también la complejidad adicional que agrega al sistema de software.
 :::
 
-::: notes
+::: {.notes}
 Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 2-5, 9-10
 :::
 
 ------------------------------------------------------------------------
 
-### De pensar en modelos a pensar en sistemas
+### Componentes de un sistema de ML en producción
+
+![Diferentes componentes de un sistema de ML (Huyen, *Designing Machine Learning Systems*, Fig. 1-1, p. 7)](../imagenes/huyen-fig1-1-componentes-sistema-ml.png){width="75%"}
 
 -   Un algoritmo de machine learning es solo una pequeña parte de un sistema de ML en producción.
 -   Un sistema en producción también incluye la interfaz de usuario/desarrollador, el stack de datos, el hardware, y la infraestructura de desarrollo, despliegue, monitoreo y actualización.
 -   Enfocarse solo en el algoritmo no alcanza para un sistema en producción.
 
-![Diferentes componentes de un sistema de ML (Huyen, *Designing Machine Learning Systems*, Fig. 1-1, p. 7)](../imagenes/huyen-fig1-1-componentes-sistema-ml.png){width="75%"}
-
 ::: notes
 Fuente: Huyen, Designing Machine Learning Systems, Cap. 1, pp. 6-8.
-:::
-
-------------------------------------------------------------------------
-
-### ¿Qué problema intenta resolver el Machine Learning?
-
-El machine learning es un enfoque para:
-
-::: nonincremental
-1.  Aprender
-2.  patrones complejos
-3.  a partir de datos existentes
-4.  para hacer predicciones
-5.  sobre datos nuevos (no vistos).
-:::
-
-Un problema es más adecuado para ML cuando estas condiciones tienen sentido para la aplicación.
-
-::: notes
-Fuente: Huyen, Cap. 1, pp. 9-13.
 :::
 
 ------------------------------------------------------------------------
@@ -149,21 +144,23 @@ Fuente: Huyen, Cap. 1, pp. 9-13.
 ::: nonincremental
 **ML/DL suele brillar cuando:**
 
--   la tarea es repetitiva;
--   el costo de una predicción equivocada es bajo o manejable;
--   el problema ocurre a gran escala;
+-   la tarea es repetitiva
+-   el costo de una predicción equivocada es bajo o manejable
+-   el problema ocurre a gran escala
 -   los patrones cambian con el tiempo y las reglas fijas quedan obsoletas.
 :::
 
 ::: {.fragment .nonincremental}
 **Evitar ML/DL cuando:**
 
--   el caso de uso no es ético;
--   soluciones más simples ya resuelven el problema lo suficientemente bien;
+-   el caso de uso no es ético
+-   soluciones más simples ya resuelven el problema lo suficientemente bien
 -   la solución no es costo-efectiva.
 :::
 
+::: {.fragment .nonincremental}
 Si el ML no puede resolver todo el problema, puede resolver una parte más pequeña de él.
+:::
 
 ::: notes
 Fuente: Huyen, Cap. 1, pp. 13-15; Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 9-10.
@@ -171,192 +168,50 @@ Fuente: Huyen, Cap. 1, pp. 13-15; Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 9-
 
 ------------------------------------------------------------------------
 
-### Antes de empezar: 3 preguntas y un checklist de viabilidad
+### Selección de proyectos: impacto, viabilidad y bajo costo
 
-::: nonincremental
-1.  **¿Estamos listos para usar ML?** ¿Tenemos un producto, una recolección de datos usable, almacenamiento sano y las personas correctas?
-2.  **¿Realmente necesitamos ML?** ¿Ya probamos reglas, estadística simple o líneas base más sencillas?
-3.  **¿Es ético usar ML para este problema?**
+<div style="
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:0.2rem;
+  margin:0;
+  padding:0;
+">
+
+  <img src="../imagenes/fsdl-matriz-impacto-viabilidad.png"
+        style="width:100%; margin:0; padding:0;">
+
+  <img src="../imagenes/lectura0-matriz-impacto-viabilidad-arquetipos.png"
+        style="width:100%; margin:0; padding:0;">
+
+</div>
+
+<div style="font-size:0.45em; color:#666; margin-top:0.2rem; line-height:1.1;">
+  Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 10-13.
+</div>
+
+- **Alto impacto:** predicciones baratas que generan valor o reducen fricción.
+- **Alta viabilidad / bajo costo:** datos disponibles, errores tolerables y precisión alcanzable.
+- **Software 2.0:** reemplazar reglas manuales por comportamientos aprendidos.
+
+::: {.notes}
+Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 10-13.
 :::
-
-::: {.fragment .nonincremental}
-**Checklist rápido de viabilidad:**
-
--   Confirma que el ML realmente es necesario.
--   Define criterios de éxito con todos los interesados.
--   Considera la ética de usar ML.
--   Haz una revisión de literatura.
--   Construye rápido un dataset etiquetado de referencia.
--   Construye un modelo mínimo viable con reglas o heurísticas simples.
--   Vuelve a preguntarte: "¿de verdad necesitamos ML?"
-:::
-
-::: notes
-Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 9-10, 14
-:::
-
-------------------------------------------------------------------------
-
-### Selección de proyectos: impacto vs. viabilidad
-
-Prioriza casos de uso con:
-
-::: nonincremental
--   **Alto impacto:** fricción en el producto, partes complejas del pipeline, lugares donde una predicción barata es valiosa, o patrones ya validados por la industria.
--   **Alta viabilidad / bajo costo:** datos disponibles, errores tolerables, y dificultad manejable del problema.
-:::
-
-![Matriz de impacto vs. viabilidad (Tobin, Le & Rachakonda, *FSDL Lecture 1*, p. 11; también en Lectura 0, p. 3)](../imagenes/fsdl-matriz-impacto-viabilidad.png){width="65%"}
-
-::: notes
-Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 10-12
-:::
-
-------------------------------------------------------------------------
-
-### ¿Qué hace a un proyecto de alto impacto y bajo costo?
-
-::: nonincremental
-**Alto impacto:**
-
--   Busca problemas donde predecir más barato cambie lo que es económicamente viable.
--   Identifica qué necesita el producto.
--   Busca comportamientos complejos definidos manualmente que puedan volverse "Software 2.0".
--   Estudia qué hacen otros equipos de la industria (papers, blogs técnicos).
-:::
-
-::: {.fragment .nonincremental}
-**Bajo costo (viabilidad):**
-
--   **Datos:** adquisición, costo de etiquetado, volumen, estabilidad, seguridad.
--   **Precisión exigida:** costo de una predicción errónea, umbral útil, consecuencias éticas.
--   **Dificultad del problema:** qué tan bien definido está, si existe trabajo previo, cuánto cómputo se necesita.
-:::
-
-![Los 3 drivers de costo de un proyecto de ML (FSDL Lecture 1, sección "Low-Cost Projects")](../imagenes/fsdl-drivers-costo-proyecto.png){width="55%"}
-
-El costo de un proyecto de ML tiende a escalar más que linealmente con la exigencia de precisión.
-
-::: notes
-Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 11-13
-:::
-
-------------------------------------------------------------------------
-
-### ¿Qué hace que el ML sea difícil?
-
-Tres razones por las que el ML puede ser especialmente difícil:
-
-::: nonincremental
-1.  **Salidas complejas o ambiguas.**
-2.  **Necesidad de alta confiabilidad** — los sistemas de ML pueden fallar de forma inesperada.
-3.  **Necesidad de generalizar** fuera de la distribución de entrenamiento (razonamiento, planeación, causalidad).
-:::
-
-![Los 3 tipos de problemas difíciles en ML (FSDL Lecture 1, sección "What's Hard in ML?")](../imagenes/fsdl-tipos-problemas-dificiles.png){width="55%"}
-
-::: notes
-Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 13-14.
-:::
-
-------------------------------------------------------------------------
-
-### Arquetipos de producto de ML
-
-::: nonincremental
-| Arquetipo | Definición | Pregunta clave |
-|------------------------|------------------------|------------------------|
-| **Software 2.0** | Usar ML para potenciar automatización que el software/producto ya hace | ¿El modelo es realmente mejor que el sistema anterior? |
-| **Humano en el ciclo** | Usar ML para complementar el juicio humano en tareas no totalmente automatizadas | ¿Qué tan bueno debe ser el sistema para mejorar el trabajo del usuario? |
-| **Sistemas autónomos** | Usar ML para implementar procesos sin intervención humana | ¿Qué tasa de fallos es aceptable, y cómo se monitorean? |
-:::
-
-![Impacto vs. viabilidad de cada arquetipo de producto (Lectura 0, p. 5)](../imagenes/lectura0-matriz-impacto-viabilidad-arquetipos.png){width="60%"}
-
-```{=html}
-![Jerarquía de necesidades de la ciencia de datos (Huyen, Fig. 1-3, p. 22)](../imagenes/huyen-fig1-3-jerarquia-necesidades-datos.webp){width=60%}
-```
-
-::: fragment
-**El volante de datos (data flywheel):** en arquitecturas Software 2.0, el modelo mejora → el producto mejora → más usuarios lo usan → se genera más data útil → la nueva data vuelve a mejorar el modelo. Pregúntate: ¿tenemos un ciclo de datos etiquetados escalable?
-:::
-
-![El ciclo del data flywheel (FSDL Lecture 1, sección "Data Flywheels")](../imagenes/fsdl-data-flywheel-ciclo.png){width="55%"}
-
-::: notes
-Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 14-17
-:::
-
-------------------------------------------------------------------------
-
-### ML de investigación vs. ML de producción
-
-::: nonincremental
-| Dimensión | ML de investigación | ML de producción |
-|------------------------|------------------------|------------------------|
-| Requisitos | Desempeño de punta en datasets de benchmark | Distintos interesados, distintos requisitos |
-| Prioridad computacional | Entrenamiento rápido, alto throughput | Inferencia rápida, baja latencia |
-| Datos | Estáticos | Cambian constantemente |
-| Equidad (fairness) | Frecuentemente "bueno tenerlo" | Importante |
-| Interpretabilidad | Frecuentemente "bueno tenerlo" | Importante |
-:::
-
-::: notes
-Fuente: Huyen, Cap. 1, pp. 19-28 (incluye la idea de la Data Science Hierarchy of Needs).
-:::
-
 ------------------------------------------------------------------------
 
 ### El ciclo de vida de un proyecto de DL
 
 Un sistema de ML en producción se desarrolla mediante un ciclo con idas y vueltas entre etapas:
 
-::: nonincremental
-1.  Alcance del proyecto (scoping)
-2.  Ingeniería de datos
-3.  Desarrollo del modelo
-4.  Despliegue
-5.  Monitoreo y aprendizaje continuo
-6.  Análisis de negocio
-:::
+![Desarrollo de ML de doble pipeline (Reddi, *Introduction to Machine Learning Systems*, Fig. 3.1, p. 86)](../imagenes/reddi-fig3-1-pipeline-dual.png){width="70%"}
 
-![El desarrollo de un sistema de ML es más un ciclo que una línea recta (Huyen, *Designing Machine Learning Systems*, Fig. 1-7)](../imagenes/huyen-fig1-7-ciclo-desarrollo-ml.webp){width="70%"}
-
-```{=html}
-![Desarrollo de ML de doble pipeline (Reddi, *Introduction to Machine Learning Systems*, Fig. 3.1, p. 86)](../imagenes/reddi-fig3-1-pipeline-dual.png){width=70%}
-```
-
+::: {.notes}
 Cada etapa retroalimenta a las anteriores: el desempeño del modelo se degrada después del despliegue. A diferencia del software tradicional, que suele degradarse cuando cambia el código, el ML puede degradarse cuando **el mundo cambia**. El despliegue es el inicio del ciclo de retroalimentación, no el final.
+:::
 
-::: fragment
+::: {.notes}
 Dentro de este ciclo conviven dos pipelines conectados: uno de **datos** (recolección, ingesta, curación, etiquetado, validación) y uno de **modelo** (entrenamiento, evaluación, validación del sistema, despliegue). Los caminos de retroalimentación devuelven la experiencia de producción a la recolección y curación de datos.
-:::
-
-::: notes
-Fuente: Huyen, Cap. 1, pp. 33-35; Reddi, Introduction to Machine Learning Systems, Cap. 3, pp. 84-86, 111.
-:::
-
-------------------------------------------------------------------------
-
-### De los pesos al sistema reproducible
-
-**Una falla real:** un equipo entrena un modelo de diagnóstico y logra alta precisión en test. Al desplegarlo, los ingenieros descubren que el modelo necesita más memoria de la que tiene el dispositivo objetivo. La precisión era excelente, las habilidades de ML eran excelentes — la falla fue de **flujo de trabajo**.
-
-::: fragment
-Un flujo de trabajo maduro entrega un artefacto de sistema reproducible, no solo pesos entrenados:
-:::
-
-::: {.fragment .nonincremental}
--   pesos del modelo;
--   código de inferencia, incluyendo preprocesamiento;
--   especificación del entorno (dependencias, contenedor, drivers);
--   configuración, hiperparámetros y ajustes de runtime.
-:::
-
-En ML, un desajuste de dependencias o preprocesamiento puede no tumbar el sistema — puede simplemente **desplazar en silencio** la distribución de las salidas.
-
-::: notes
-Fuente: Reddi, Introduction to Machine Learning Systems, Cap. 3, pp. 84, 99.
 :::
 
 ------------------------------------------------------------------------
@@ -379,8 +234,6 @@ Fuente: Reddi, Introduction to Machine Learning Systems, Cap. 3, pp. 84, 99.
 -   Los datos en producción pueden alejarse de los de entrenamiento.
 -   El reentrenamiento y la validación son problemas recurrentes de ingeniería y presupuesto.
 :::
-
-Un modelo con excelente desempeño en benchmark puede seguir siendo inadecuado para producción si viola restricciones operativas.
 
 ::: notes
 Fuente: Huyen, Cap. 1, pp. 25-35, Cap. 8; Reddi, Cap. 3, pp. 84-86, 99, 111.
@@ -415,57 +268,113 @@ Los principios de IA responsable deben integrarse en todo el ciclo de vida:
 -   robustez.
 :::
 
-![Ciclo de vida de la IA responsable (Reddi, *Machine Learning Systems at Scale*, Tabla 16.1, p. 937)](../imagenes/reddi-tabla16-1-ia-responsable.svg){width="70%"}
+La IA responsable es un compromiso arquitectónico en todas las fases, no un paso de cumplimiento posterior.
 
-Estos principios crean obligaciones de ingeniería en la recolección de datos, el entrenamiento, la evaluación, el despliegue y el monitoreo. La IA responsable es un compromiso arquitectónico en todas las fases, no un paso de cumplimiento posterior.
+------------------------------------------------------------------------
 
-::: notes
-Fuente: Reddi, Machine Learning Systems at Scale, Cap. 16, pp. 936-938.
+### Herramientas en proyectos de Deep Learning
+
+![Lecture 2: Development, Infrastructure & Tooling (Karayev, FSDL 2022 course)](../imagenes/ds-tools.png){width="100%"}
+
+::: {.notes}
+Usar esta slide para mostrar que un proyecto de Deep Learning no depende solo del modelo. También requiere herramientas para datos, experimentación, entrenamiento, seguimiento, despliegue, monitoreo y mantenimiento.
 :::
 
 ------------------------------------------------------------------------
 
-### Canvas práctico de estructuración de proyectos
+### En resúmen: Antes de empezar preguntar ¿vale la pena usar ML?
 
-Para cualquier proyecto de DL propuesto, documenta:
+Antes de escribir código, responde:
 
-::: nonincremental
-1.  Problema y fricción del usuario/producto.
-2.  Por qué predecir es valioso aquí.
-3.  Por qué reglas o estadística simple no bastan.
-4.  Disponibilidad de datos, costo de etiquetado, estabilidad, seguridad.
-5.  Interesados y criterios de éxito.
-6.  Arquetipo de producto: Software 2.0, humano en el ciclo, o autónomo.
-7.  Requisitos de precisión, latencia, memoria, costo y confiabilidad.
-8.  Plan de ciclo de vida: pipeline de datos, pipeline de modelo, despliegue, monitoreo, reentrenamiento, análisis de negocio.
-9.  Restricciones de IA responsable: equidad, explicabilidad, privacidad, rendición de cuentas, robustez.
+1. **¿Estamos listos?** Producto, datos, almacenamiento y equipo adecuados.
+2. **¿Realmente necesitamos ML?** Comparar contra reglas, heurísticas o estadística simple.
+3. **¿Es ético usar ML aquí?** Evaluar riesgos, privacidad, sesgos y consecuencias.
+
+::: {.fragment .nonincremental}
+**Checklist mínimo:** criterios de éxito, dataset de referencia, línea base simple y revisión rápida de literatura.
 :::
 
-::: notes
+::: {.notes}
+Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 9-10, 14.
+:::
+
+------------------------------------------------------------------------
+
+### Canvas práctico del proyecto de DL
+
+Documenta lo esencial:
+
+- **Problema:** fricción del usuario/producto y valor de predecir.
+- **Datos:** disponibilidad, etiquetado, estabilidad, seguridad y calidad.
+- **Sistema:** tipo de producto, precisión, latencia, costo y confiabilidad.
+- **Ciclo de vida:** despliegue, monitoreo, reentrenamiento y métricas de negocio.
+- **Responsabilidad:** privacidad, equidad, explicabilidad, robustez y rendición de cuentas.
+
+::: {.fragment}
+**Pregunta guía:** ¿qué debes definir antes de entrenar el primer modelo?
+:::
+
+::: {.notes}
 Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 9-17; Huyen, Cap. 1, pp. 9-35; Reddi, Cap. 3, pp. 84-111; Reddi, Machine Learning Systems at Scale, Cap. 16, pp. 936-938.
 :::
 
 ------------------------------------------------------------------------
 
-### Ideas clave
+### Caso de uso: reconocimiento de objetos con Ultralytics
 
-::: nonincremental
--   El ML/DL agrega complejidad; úsalo solo cuando el valor la justifique.
--   Un modelo es solo un componente de un sistema de ML en producción.
--   Prioriza proyectos de alto impacto y viabilidad razonable.
--   Estructura los proyectos alrededor de los datos, el contexto de producto, las restricciones de despliegue y los ciclos de retroalimentación.
--   La evaluación debe incluir qué tan listo está para producción, no solo el desempeño en benchmark.
--   El despliegue inicia el ciclo de monitoreo, reentrenamiento y mantenimiento.
--   La responsabilidad y la ética deben diseñarse dentro del ciclo de vida, no agregarse después.
-:::
+<div style="text-align:center; margin:0; padding:0;">
 
-::: notes
-Fuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 9-17; Huyen, Cap. 1, pp. 6-35; Reddi, Cap. 3, pp. 84-111; Reddi, Machine Learning Systems at Scale, Cap. 12 y 16.
+<img src="../imagenes/yolo.png"
+     style="width:68%; margin:0 auto 0.5rem auto; display:block;">
+
+<iframe
+  src="https://www.youtube.com/embed/N8TxB43y-xM?si=u10dq6Gb7Yj9Q1Bp"
+  width="600"
+  height="400"
+  style="border:none; display:block; margin:0 auto;"
+  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+  allowfullscreen>
+</iframe>
+
+</div>
+
+::: {.notes}
+Usar esta slide para mostrar cómo los modelos de detección de objetos permiten localizar y clasificar objetos dentro de una imagen o video. Con Ultralytics/YOLO, el foco está en pasar rápidamente de un modelo entrenado a una aplicación usable: inferencia sobre imágenes, video o cámara, despliegue y experimentación práctica.
 :::
-:::::::::::::::::::::::::::::::::::::::::::
 
 ------------------------------------------------------------------------
 
-### Pregunta guía
+### Caso de uso: predictor de precio de una casa
 
-Antes de empezar Semana 1, piensa: ¿qué necesitas definir de tu proyecto de Deep Learning *antes* de escribir la primera línea de código?
+<div style="text-align:center; margin:0; padding:0;">
+
+<iframe
+  src="https://poryectofinalpreciocasas.streamlit.app/?embed=true"
+  width="900"
+  height="500"
+  style="border:none; display:block; margin:0 auto;"
+  allowfullscreen>
+</iframe>
+
+</div>
+
+::: {.fragment}
+<div style="font-size:0.72em; line-height:1.15; text-align:center; margin-top:0.3rem;">
+Aplicación interactiva para transformar datos de entrada en una predicción útil.
+</div>
+:::
+
+# ¡Gracias!
+
+<div style="text-align:center; margin-top:2rem; font-size:1.2em; line-height:1.4;">
+
+**Preguntas y discusión**
+
+<br>
+
+<span style="font-size:0.8em;">
+Deep Learning en 3 Semanas  
+Jefferson Rodríguez
+</span>
+
+</div>

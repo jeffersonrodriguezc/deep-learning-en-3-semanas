@@ -5,5 +5,12 @@
     "title": "Semana 1: Fundamentos de Redes Neuronales",
     "section": "Un vistazo inicia interactivo",
     "text": "Un vistazo inicia interactivo"
+  },
+  {
+    "objectID": "introduccion_materia/slides/slides_introduccion_materia.html#section",
+    "href": "introduccion_materia/slides/slides_introduccion_materia.html#section",
+    "title": "Curso Práctico de Deep Learning en 3 Semanas",
+    "section": "————————————————————————",
+    "text": "————————————————————————\n\nArquetipos de producto de ML\n\n\n\n\n\n\n\n\nArquetipo\nDefinición\nPregunta clave\n\n\n\n\nSoftware 2.0\nUsar ML para potenciar automatización que el software/producto ya hace\n¿El modelo es realmente mejor que el sistema anterior?\n\n\nHumano en el ciclo\nUsar ML para complementar el juicio humano en tareas no totalmente automatizadas\n¿Qué tan bueno debe ser el sistema para mejorar el trabajo del usuario?\n\n\nSistemas autónomos\nUsar ML para implementar procesos sin intervención humana\n¿Qué tasa de fallos es aceptable, y cómo se monitorean?\n\n\n\n\n\n\nImpacto vs. viabilidad de cada arquetipo de producto (Lectura 0, p. 5)\n\n\n![Jerarquía de necesidades de la ciencia de datos (Huyen, Fig. 1-3, p. 22)](../imagenes/huyen-fig1-3-jerarquia-necesidades-datos.webp){width=60%}\n\nEl volante de datos (data flywheel): en arquitecturas Software 2.0, el modelo mejora → el producto mejora → más usuarios lo usan → se genera más data útil → la nueva data vuelve a mejorar el modelo. Pregúntate: ¿tenemos un ciclo de datos etiquetados escalable?\n\n\n\n\nEl ciclo del data flywheel (FSDL Lecture 1, sección “Data Flywheels”)\n\n\n\nFuente: Tobin, Le & Rachakonda, FSDL Lecture 1, pp. 14-17"
   }
 ]
